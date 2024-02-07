@@ -12,7 +12,6 @@ public class AuthenticateUserCommandValidator : AbstractValidator<AuthenticateUs
 {
     public AuthenticateUserCommandValidator(IUserRepository userRepository)
     {
-
         RuleFor(s => s.Email)
             .NotNull()
             .ChildRules(s => s.RuleFor(x => x).EmailAddress())

@@ -10,13 +10,6 @@ public sealed record AuthenticationResponse(
     long? Id,
     string? Name,
     string? Email,
-    string? Token)
-{
-    public static implicit operator AuthenticationResponse(DomainUser user)
-   => new AuthenticationResponse(
-           user.Id,
-           user.Name.Value,
-           user.Email.Value,
-           null
-           );
-}
+    string? Token,
+    string? RefreshToken)
+{ }

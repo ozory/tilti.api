@@ -10,7 +10,7 @@ namespace Infrastructure.Data.Postgreesql.Features.Users.Maps;
 
 public static class UserMaps
 {
-    public static User ToPersistanceUser(this DomainUser user)
+    internal static User ToPersistanceUser(this DomainUser user)
     {
         User persistanceUser = new User
         {

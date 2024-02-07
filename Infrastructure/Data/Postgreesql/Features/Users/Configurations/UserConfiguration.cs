@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Domain.Entities;
-using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using InfrastructureUser = Infrastructure.Data.Postgreesql.Features.Users.Entities.User;
+
 
 namespace Infrastructure.Data.Postgresql.Features.Users.Configurations;
-using InfrastructureUser = Infrastructure.Data.Postgreesql.Features.Users.Entities.User;
 
 public class UserConfiguration : IEntityTypeConfiguration<InfrastructureUser>
 {

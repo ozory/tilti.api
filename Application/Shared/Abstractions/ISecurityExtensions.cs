@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using DomainUser = Domain.Features.User.Entities.User;
 
@@ -15,5 +16,9 @@ public interface ISecurityExtensions
     string GenerateSalt();
 
     string GenerateToken(DomainUser user);
+
+    string GenerateRefreshToken();
+
+    ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token);
 
 }

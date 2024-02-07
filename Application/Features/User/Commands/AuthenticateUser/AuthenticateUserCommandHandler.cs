@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Features.Security.Entities;
 using Application.Features.User.Contracts;
-using Application.Features.User.Extensions;
 using Application.Shared.Abstractions;
 using Domain.Features.User.Entities;
 using Domain.Features.User.Repository;
@@ -22,17 +22,20 @@ public class AuthenticateUserCommandHandler
     private readonly ILogger<CreateUserCommandHandler> _logger;
     private readonly IValidator<AuthenticateUserCommand> _validator;
     private readonly ISecurityExtensions _securityExtensions;
+    private readonly ISecurityRepository _securityRepository;
 
     public AuthenticateUserCommandHandler(
         ILogger<CreateUserCommandHandler> logger,
         IUserRepository repository,
         IValidator<AuthenticateUserCommand> validator,
-        ISecurityExtensions securityExtensions)
+        ISecurityExtensions securityExtensions,
+        ISecurityRepository securityRepository)
     {
         _repository = repository;
         _logger = logger;
         _validator = validator;
         _securityExtensions = securityExtensions;
+        _securityRepository = securityRepository;
     }
 
     public async Task<Result<AuthenticationResponse>> Handle(
@@ -56,11 +59,23 @@ public class AuthenticateUserCommandHandler
         }
 
         _logger.LogInformation($"Usuário {request.Email} logado com sucesso");
+
+        RefreshTokens refreshToken = new()
+        {
+            UserId = user!.Id,
+            RefreshToken = _securityExtensions.GenerateRefreshToken(),
+            LastLogin = DateTime.Now
+        };
+
         var authenticateResponse = new AuthenticationResponse(
             user.Id,
             user.Name.Value,
             user.Email.Value,
-            _securityExtensions.GenerateToken(user));
+            _securityExtensions.GenerateToken(user),
+            refreshToken.RefreshToken);
+
+        await _securityRepository.DeleteToken(user.Id);
+        await _securityRepository.SaveToken(refreshToken);
 
         return Result.Ok(authenticateResponse);
     }
