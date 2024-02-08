@@ -49,7 +49,6 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("admin", policy => policy.RequireRole("admin"));
     options.AddPolicy("default", policy => policy.RequireRole("default"));
-    //options.AddPolicy("multi", policy => policy.RequireRole("default", "admin"));
 });
 
 
@@ -76,5 +75,6 @@ app.UseAuthorization();
 
 app.MapUsersEndpoint();
 app.MapSecurityEndpoint();
+app.MapPlansEndpoint();
 
 app.Run();
