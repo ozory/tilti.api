@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Shared.Abstractions;
+using Domain.Features.Plans.Entities;
 using Domain.Features.Subscription.Entities;
 using Domain.Features.Subscription.Repository;
-using Domain.Features.User.Repository;
+using Domain.Features.Users.Repository;
 using FluentResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -39,7 +40,7 @@ public class CreateSubscriptionCommandHandler : ICommandHandler<CreateSubscripti
         // TODO: Implementar essas validações usando FluentValidation, usando Polly\
 
         var user = await _userRepository.GetByIdAsync(request.userId);
-        var createResult = Subscription.Create(user!, new Domain.Plans.Entities.Plan());
+        var createResult = Subscription.Create(user!, null);
 
         return createResult;
     }

@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Application.Features.Security.Entities;
 using Application.Features.User.Contracts;
 using Application.Shared.Abstractions;
-using Domain.Features.User.Entities;
-using Domain.Features.User.Repository;
+using Domain.Features.Users.Entities;
+using Domain.Features.Users.Repository;
 using FluentResults;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using DomainUser = Domain.Features.User.Entities.User;
+using DomainUser = Domain.Features.Users.Entities.User;
 
 namespace Application.Features.User.Commands.CreateUser;
 

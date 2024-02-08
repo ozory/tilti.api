@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Features.User.Repository;
+using Domain.Features.Users.Repository;
 using FluentValidation;
-using DomainUser = Domain.Features.User.Entities.User;
+using DomainUser = Domain.Features.Users.Entities.User;
 
 namespace Application.Features.User.Commands.CreateUser;
 

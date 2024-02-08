@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Application.Shared.Abstractions;
-using Domain.Features.User.Repository;
+using Domain.Features.Users.Repository;
 using FluentValidation;
 
 namespace Application.Features.User.Commands.RefreshToken;

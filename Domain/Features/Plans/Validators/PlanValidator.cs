@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Plans.Entities;
+using Domain.Features.Plans.Entities;
 using Domain.Plans.Enums;
 using FluentValidation;
 

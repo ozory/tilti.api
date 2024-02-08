@@ -10,7 +10,7 @@ using Application.Shared.Abstractions;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
-using DomainUser = Domain.Features.User.Entities.User;
+using DomainUser = Domain.Features.Users.Entities.User;
 namespace Application.Configurations;
 
 public static class DependencyInjection

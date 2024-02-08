@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Features.User.Contracts;
 using Application.Shared.Abstractions;
-using DomainUser = Domain.Features.User.Entities.User;
+using DomainUser = Domain.Features.Users.Entities.User;
 namespace Application.Features.User.Commands.UpdateUser;
 
 public sealed record UpdateUserCommand

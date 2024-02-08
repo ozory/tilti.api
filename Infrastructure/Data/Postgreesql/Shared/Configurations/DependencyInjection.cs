@@ -1,7 +1,7 @@
 using System.Reflection;
 using Application.Shared.Abstractions;
 using Domain.Features.Subscription.Repository;
-using Domain.Features.User.Repository;
+using Domain.Features.Users.Repository;
 using Infrastructure.Data.Postgreesql.Features.Security.Repository;
 using Infrastructure.Data.Postgreesql.Features.Subscriptions.Repository;
 using Infrastructure.Data.Postgreesql.Features.Users.Repository;

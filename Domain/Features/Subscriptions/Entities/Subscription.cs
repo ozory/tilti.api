@@ -1,7 +1,7 @@
 
 using Domain.Abstractions;
-using DomainUser = Domain.Features.User.Entities.User;
-using Domain.Plans.Entities;
+using Domain.Features.Users.Entities;
+using Domain.Features.Plans.Entities;
 using Domain.Subscriptions.Enums;
 using Domain.ValueObjects;
 using FluentResults;
@@ -14,12 +14,12 @@ namespace Domain.Features.Subscription.Entities;
 /// </summary>
 public class Subscription : Entity<Subscription>
 {
-    public DomainUser User { get; private set; } = null!;
+    public User User { get; private set; } = null!;
     public SubscriptionStatus Status { get; private set; } = SubscriptionStatus.Active;
     public Plan Plan { get; private set; } = null!;
     public DateTime DueDate { get; private set; }
 
-    private Subscription(DomainUser user, Plan plan)
+    private Subscription(User user, Plan plan)
     {
         User = user;
         Plan = plan;
@@ -32,7 +32,7 @@ public class Subscription : Entity<Subscription>
     /// <param name="user">Cliente</param>
     /// <param name="plan">Plano</param>
     /// <returns></returns>
-    public static Result<Subscription> Create(DomainUser user, Plan plan)
+    public static Result<Subscription> Create(User user, Plan plan)
     {
         return new Subscription(user, plan);
     }

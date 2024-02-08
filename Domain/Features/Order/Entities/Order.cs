@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using Domain.Abstractions;
 using Domain.Enums;
-using DomainUser = Domain.Features.User.Entities.User;
+using Domain.Features.Users.Entities;
 using Domain.ValueObjects;
 using FluentResults;
 
@@ -13,8 +13,8 @@ public class Order : Entity<Order>
     internal List<Item> _items = new();
     internal List<Address> _addresses = new();
 
-    public DomainUser Client { get; protected set; } = null!;
-    public DomainUser? Attendant { get; protected set; }
+    public User Client { get; protected set; } = null!;
+    public User? Attendant { get; protected set; }
 
     public Amount Amount { get; protected set; } = null!;
 

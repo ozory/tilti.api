@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Application.Features.Security.Entities;
 using Application.Features.User.Contracts;
 using Application.Shared.Abstractions;
-using Domain.Features.User.Repository;
+using Domain.Features.Users.Repository;
 using FluentResults;
 using FluentValidation;
 using Microsoft.IdentityModel.Tokens;

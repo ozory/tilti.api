@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Features.User.Commands.CreateUser;
 using Application.Features.User.Contracts;
-using Domain.Features.User.Repository;
+using Domain.Features.Users.Repository;
 using FluentResults;
 using MediatR;
 using Microsoft.Extensions.Logging;

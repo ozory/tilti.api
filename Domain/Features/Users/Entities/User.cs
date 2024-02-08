@@ -6,7 +6,7 @@ using Domain.ValueObjects;
 using FluentResults;
 using FluentValidation.Results;
 
-namespace Domain.Features.User.Entities;
+namespace Domain.Features.Users.Entities;
 
 public class User : Entity<User>
 {
