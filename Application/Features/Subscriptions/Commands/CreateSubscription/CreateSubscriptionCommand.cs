@@ -1,5 +1,4 @@
 using Application.Shared.Abstractions;
-using Domain.Entities;
 using FluentResults;
 using DomainSubscription = Domain.Features.Subscription.Entities.Subscription;
 

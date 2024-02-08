@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Shared.Abstractions;
-using Domain.Entities;
 using Domain.Features.Subscription.Entities;
 using Domain.Features.Subscription.Repository;
 using Domain.Features.User.Repository;

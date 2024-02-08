@@ -3,7 +3,6 @@ using Domain.Abstractions;
 using DomainUser = Domain.Features.User.Entities.User;
 using Domain.Plans.Entities;
 using Domain.Subscriptions.Enums;
-using Domain.Validators;
 using Domain.ValueObjects;
 using FluentResults;
 using FluentValidation.Results;
@@ -19,8 +18,6 @@ public class Subscription : Entity<Subscription>
     public SubscriptionStatus Status { get; private set; } = SubscriptionStatus.Active;
     public Plan Plan { get; private set; } = null!;
     public DateTime DueDate { get; private set; }
-
-    internal SubscriptionValidator Validator = new SubscriptionValidator();
 
     private Subscription(DomainUser user, Plan plan)
     {

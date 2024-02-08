@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Application.Features.Security.Extensions;
 using Application.Features.User.Commands.CreateUser;
 using Application.Shared.Abstractions;
-using Domain.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;

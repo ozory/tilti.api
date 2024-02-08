@@ -10,6 +10,7 @@ public class User
     // Campos de usuário
     public long Id { get; set; }
     public string Name { get; set; } = null!;
+    public bool DriveEnable { get; set; } = false;
     public string Email { get; set; } = null!;
     public string Password { get; set; } = null!;
     public string Document { get; set; } = null!;

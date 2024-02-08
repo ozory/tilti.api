@@ -14,7 +14,8 @@ public record UserResponse
     string? Document,
     DateTime? CreatedAt,
     DateTime? UpdatedAt,
-    string Status
+    string Status,
+    bool DriveEnable
 )
 {
     public static implicit operator UserResponse(DomainUser user)
@@ -25,5 +26,6 @@ public record UserResponse
                 user.Document.Value,
                 user.CreatedAt,
                 user.UpdatedAt,
-                user.Status.ToString());
+                user.Status.ToString(),
+                user.DriveEnable);
 }

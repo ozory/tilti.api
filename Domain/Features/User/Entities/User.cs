@@ -11,11 +11,13 @@ namespace Domain.Features.User.Entities;
 public class User : Entity<User>
 {
     public Name Name { get; protected set; } = null!;
+    public Boolean DriveEnable { get; protected set; } = false;
     public Transport? Transport { get; protected set; }
     public Email Email { get; protected set; } = null!;
     public Document Document { get; protected set; } = null!;
     public Password? Password { get; protected set; } = null!;
     public UserStatus Status { get; protected set; }
+
 
     public string? Photo { get; protected set; }
     public string? VerificationCode { get; protected set; }
@@ -106,6 +108,12 @@ public class User : Entity<User>
     public void SetPhoto(string photo) => this.Photo = photo;
 
     public void SetPassword(string password) => this.Password!.SetValue(password);
+
+    /// <summary>
+    /// Indicates when a user can be a drive
+    /// </summary>
+    /// <param name="driveEnable"></param>
+    public void SetDriveEnable(bool driveEnable) => this.DriveEnable = driveEnable;
 
     /// <summary>
     /// 

@@ -1,4 +1,3 @@
-using Domain.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 
