@@ -7,10 +7,9 @@ using Application.Features.User.Contracts;
 using FluentResults;
 using MediatR;
 
-namespace Application.Features.User.Queries.GetAllUsers
-{
-    public class GetAllUsersQuery : IRequest<Result<ImmutableList<UserResponse>>>
-    {
+namespace Application.Features.User.Queries.GetAllUsers;
 
-    }
+public class GetAllUsersQuery : IRequest<Result<ImmutableList<UserResponse>>>
+{
+
 }

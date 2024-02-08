@@ -41,10 +41,11 @@ public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand, UserR
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
         var user = await _repository.GetByIdAsync(request.id);
+        if (user == null) return Result.Fail("User not found");
 
-        user!.SetName(request.Name);
-        user!.SetEmail(request.Email);
-        user!.SetDocument(request.Document);
+        user.SetName(request.Name);
+        user.SetEmail(request.Email);
+        user.SetDocument(request.Document);
 
         if (request.Status is not null && (ushort)user.Status != request.Status)
             user.SetStatus((UserStatus)request.Status);

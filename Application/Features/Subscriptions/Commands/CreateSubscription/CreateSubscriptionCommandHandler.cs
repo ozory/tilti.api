@@ -39,10 +39,12 @@ public class CreateSubscriptionCommandHandler : ICommandHandler<CreateSubscripti
 
         // TODO: Implementar essas validações usando FluentValidation, usando Polly\
 
-        var user = await _userRepository.GetByIdAsync(request.userId);
-        var createResult = Subscription.Create(user!, null);
+        // var user = await _userRepository.GetByIdAsync(request.userId);
+        // var createResult = Subscription.Create(user!, null);
 
-        return createResult;
+        // return createResult;
+
+        return await Task.FromResult(Result.Ok());
     }
 
 }

@@ -30,6 +30,15 @@ public class PlanRepository : IPlanRepository
         return plan?.ToDomainPlan() ?? null;
     }
 
+    public async Task<Plan?> GetPlanByNameOrAmount(string name, decimal amount)
+    {
+        var plan = await _context.Plans.AsNoTracking()
+            .FirstOrDefaultAsync(u =>
+            u.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase) ||
+            u.Amount == amount);
+        return plan?.ToDomainPlan() ?? null;
+    }
+
     public async Task<Plan> SaveAsync(Plan entity)
     {
         var plan = entity.ToPersistencePlan();
