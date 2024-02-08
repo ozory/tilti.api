@@ -9,5 +9,5 @@ public record UpdatePlanCommand
     string Name,
     string Description,
     decimal Amount,
-    ushort Status
+    ushort Status = 0
 ) : ICommand<PlanResponse>;

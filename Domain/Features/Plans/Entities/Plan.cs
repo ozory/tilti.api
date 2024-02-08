@@ -61,4 +61,14 @@ public class Plan : Entity<Plan>
         plan.CreatedAt = createdDate ?? DateTime.Now;
         return plan;
     }
+
+    public void SetUpdatedAt(DateTime updatedAt) => this.UpdatedAt = updatedAt;
+
+    public void SetName(string name) => this.Name.SetValue(name);
+
+    public void SetDescription(string description) => this.Description.SetValue(description);
+
+    public void SetAmount(decimal amount) => this.Amount.SetValue(amount);
+
+    public void SetStatus(PlanStatus planStatus) => this.Status = planStatus;
 }

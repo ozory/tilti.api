@@ -34,7 +34,7 @@ public class PlanRepository : IPlanRepository
     {
         var plan = await _context.Plans.AsNoTracking()
             .FirstOrDefaultAsync(u =>
-            u.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase) ||
+            u.Name.ToLower() == name.ToLower() ||
             u.Amount == amount);
         return plan?.ToDomainPlan() ?? null;
     }

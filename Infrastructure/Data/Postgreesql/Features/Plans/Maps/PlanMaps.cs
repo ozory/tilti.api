@@ -15,6 +15,8 @@ public static class PlanMaps
             Name = plan.Name.Value!,
             Description = plan.Description.Value!,
             Status = (ushort)plan.Status,
+            Amount = plan.Amount.Value,
+            Created = plan.CreatedAt,
         };
 
         return persistencePlan;
@@ -29,6 +31,8 @@ public static class PlanMaps
             plan.Amount,
             plan.Status,
             plan.Created);
+
+        domainUser.SetUpdatedAt(plan.Updated);
 
         return domainUser;
     }
