@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Infrastructure.Data.Postgreesql.Features.Subscriptions.Entities;
 
 namespace Infrastructure.Data.Postgreesql.Features.Plans.Entities;
 
 public class Plan
 {
-    // Campos de usuário
     public long Id { get; set; }
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
@@ -17,5 +17,7 @@ public class Plan
 
     public DateTime Created { get; set; }
     public DateTime Updated { get; set; } = DateTime.Now;
+
+    public ICollection<Subscription>? Subscriptions { get; } = [];
 
 }

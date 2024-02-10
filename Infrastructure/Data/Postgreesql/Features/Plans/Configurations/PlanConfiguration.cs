@@ -37,5 +37,10 @@ public class PlanConfiguration : IEntityTypeConfiguration<InfrastructurePlan>
 
         builder.Property(b => b.Status);
 
+        builder.HasMany(s => s.Subscriptions)
+            .WithOne(p => p.Plan)
+            .HasForeignKey(p => p.PlanId)
+            .IsRequired(false);
+
     }
 }

@@ -33,7 +33,9 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Infrastructure
             .WithOne();
 
         builder.HasOne(e => e.Plan)
-            .WithOne();
+            .WithMany(s => s.Subscriptions)
+            .HasForeignKey(e => e.PlanId)
+            .IsRequired(false);
 
         builder.Property(b => b.Status);
     }
