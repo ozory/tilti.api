@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Application.Shared.Abstractions;
 using Domain.Subscriptions.Enums;
 
-namespace Application.Features.Subscriptions.Commands.UpdateSubscription;
+namespace Application.Features.Subscriptions.Commands.Update;
 
 public sealed record UpdateSubscriptionCommand
 (

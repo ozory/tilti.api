@@ -26,7 +26,7 @@ public class Subscription : Entity<Subscription>
 
     #region CONSTRUCTORS
 
-    private Subscription(User user, Plan plan)
+    private Subscription(long? Id, User user, Plan plan)
     {
         User = user;
         Plan = plan;
@@ -39,9 +39,9 @@ public class Subscription : Entity<Subscription>
     /// <param name="user">Cliente</param>
     /// <param name="plan">Plano</param>
     /// <returns></returns>
-    public static Subscription Create(User user, Plan plan)
+    public static Subscription Create(long? id, User user, Plan plan)
     {
-        return new Subscription(user, plan);
+        return new Subscription(id, user, plan);
     }
 
     #endregion

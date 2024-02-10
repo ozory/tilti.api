@@ -28,6 +28,7 @@ public static class SubscriptionMaps
     internal static DomainSubscription ToDomainSub(this Subscription subscription)
     {
         var domainSub = DomainSubscription.Create(
+            subscription.Id,
             subscription.User.ToDomainUser(),
             subscription.Plan.ToDomainPlan()
         );

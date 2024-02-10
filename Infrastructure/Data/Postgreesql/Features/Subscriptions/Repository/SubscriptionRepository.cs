@@ -47,10 +47,10 @@ public class SubscriptionRepository : ISubscriptionRepository
 
     public async Task<Subscription> SaveAsync(Subscription entity)
     {
-        var plan = entity.ToPersistenceSub();
-        _context.Add(plan);
+        var subscription = entity.ToPersistenceSub();
+        _context.Add(subscription);
         await _context.SaveChangesAsync();
-        return plan?.ToDomainSub()!;
+        return subscription?.ToDomainSub()!;
     }
 
     public async Task<Subscription> UpdateAsync(Subscription entity)
