@@ -13,11 +13,11 @@ namespace Application.Features.Subscriptions.Commands.Create
             this.ClassLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(s => s.userId)
-               .LessThanOrEqualTo(0)
+               .GreaterThanOrEqualTo(0)
                .WithMessage("UserId is required");
 
             RuleFor(s => s.planId)
-               .LessThanOrEqualTo(0)
+               .GreaterThanOrEqualTo(0)
                .WithMessage("PlanId is required");
         }
 

@@ -12,10 +12,11 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Domain.Features.Plans.Repository;
 using FluentValidation;
+using Application.Features.Subscriptions.Contracts;
 
 namespace Application.Features.Subscriptions.Commands.Create;
 
-public class CreateSubscriptionCommandHandler : ICommandHandler<CreateSubscriptionCommand, Subscription>
+public class CreateSubscriptionCommandHandler : ICommandHandler<CreateSubscriptionCommand, SubscriptionResponse>
 {
     private readonly ISubscriptionRepository _repository;
     private readonly IUserRepository _userRepository;
@@ -37,30 +38,36 @@ public class CreateSubscriptionCommandHandler : ICommandHandler<CreateSubscripti
         _validator = validator;
     }
 
-    public async Task<Result<Subscription>> Handle(CreateSubscriptionCommand request, CancellationToken cancellationToken)
+    public async Task<Result<SubscriptionResponse>> Handle(CreateSubscriptionCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation($"Criando assinatura");
 
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        var currentSubscription = _repository.GetSubscriptionByUser(request.userId);
-        if (currentSubscription != null) return Result.Fail("This user allready have a Subscription");
+        var currentSubscription = await _repository.GetSubscriptionByUser(request.userId);
+        if (currentSubscription != null) return Result.Fail("This user allready have a Subscription!");
 
         var user = await _userRepository.GetByIdAsync(request.userId);
         if (user == null) return Result.Fail("User not Found");
-        if (user.Status != Domain.Enums.UserStatus.Active) return Result.Fail("This user can't get a subscription");
+        if (user.Status != Domain.Enums.UserStatus.Active) return Result.Fail("This user can't get a Subscription!");
+        if (!user.DriveEnable) return Result.Fail("Only a driver can use Subscription!");
 
         var plan = await _planRepository.GetByIdAsync(request.planId);
         if (plan == null) return Result.Fail("Plan not Found");
-        if (plan.Status != Domain.Plans.Enums.PlanStatus.Active) return Result.Fail("Its not possible to use this Plan");
+        if (plan.Status != Domain.Plans.Enums.PlanStatus.Active) return Result.Fail("Its not possible to use this Plan!");
 
-        var subscription = Subscription.Create(null, user!, plan!);
-        subscription = await _repository.SaveAsync(subscription);
+        var subscription = Subscription.Create(
+            null,
+            user!,
+            plan!,
+            DateTime.Now);
 
-        _logger.LogInformation($"Assinatura criada com sucesso: {subscription.Id}");
+        Subscription savedSub = await _repository.SaveAsync(subscription);
 
-        return subscription;
+        _logger.LogInformation($"Assinatura criada com sucesso: {savedSub.Id}");
+
+        return Result.Ok((SubscriptionResponse)(savedSub));
     }
 
 }

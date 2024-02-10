@@ -76,5 +76,6 @@ app.UseAuthorization();
 app.MapUsersEndpoint();
 app.MapSecurityEndpoint();
 app.MapPlansEndpoint();
+app.MapSubscriptionsEndpoint();
 
 app.Run();

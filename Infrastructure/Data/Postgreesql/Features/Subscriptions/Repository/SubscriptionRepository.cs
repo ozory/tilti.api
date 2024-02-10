@@ -35,13 +35,21 @@ public class SubscriptionRepository : ISubscriptionRepository
 
     public async Task<Subscription?> GetByIdAsync(long id)
     {
-        var subscriptions = await _context.Subscriptions.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
+        var subscriptions = await _context.Subscriptions
+            .Include(u => u.User)
+            .Include(p => p.Plan)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == id);
         return subscriptions?.ToDomainSub() ?? null;
     }
 
     public async Task<Subscription?> GetSubscriptionByUser(long idUser)
     {
-        var subscriptions = await _context.Subscriptions.AsNoTracking().FirstOrDefaultAsync(u => u.UserId == idUser);
+        var subscriptions = await _context.Subscriptions
+            .Include(u => u.User)
+            .Include(p => p.Plan)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.UserId == idUser);
         return subscriptions?.ToDomainSub() ?? null;
     }
 
@@ -50,7 +58,9 @@ public class SubscriptionRepository : ISubscriptionRepository
         var subscription = entity.ToPersistenceSub();
         _context.Add(subscription);
         await _context.SaveChangesAsync();
-        return subscription?.ToDomainSub()!;
+
+        var sub = await this.GetByIdAsync(subscription.Id);
+        return sub!;
     }
 
     public async Task<Subscription> UpdateAsync(Subscription entity)

@@ -42,7 +42,7 @@ public static class UserMaps
             user.Name,
             user.Email,
             user.Document,
-            user.Password,
+            null,
             user.Created);
 
         domainUser.SetUpdatedAt(user.Updated);

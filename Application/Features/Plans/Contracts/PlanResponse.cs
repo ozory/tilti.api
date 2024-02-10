@@ -17,13 +17,13 @@ public record PlanResponse
     DateTime? UpdatedAt
 )
 {
-    public static implicit operator PlanResponse(Plan user)
+    public static implicit operator PlanResponse(Plan plan)
         => new PlanResponse(
-                user.Id,
-                user.Name.Value!,
-                user.Description.Value!,
-                user.Amount.Value,
-                user.Status.ToString(),
-                user.CreatedAt,
-                user.UpdatedAt);
+                plan.Id,
+                plan.Name.Value!,
+                plan.Description.Value!,
+                plan.Amount.Value,
+                plan.Status.ToString(),
+                plan.CreatedAt,
+                plan.UpdatedAt);
 }

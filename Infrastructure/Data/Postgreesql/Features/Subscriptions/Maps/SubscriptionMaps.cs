@@ -18,6 +18,7 @@ public static class SubscriptionMaps
             UserId = subscription.User.Id,
             PlanId = subscription.Plan.Id,
             DueDate = subscription.DueDate,
+            Status = (ushort)subscription.Status,
             Created = subscription.CreatedAt,
             Updated = subscription.UpdatedAt
         };
@@ -30,10 +31,12 @@ public static class SubscriptionMaps
         var domainSub = DomainSubscription.Create(
             subscription.Id,
             subscription.User.ToDomainUser(),
-            subscription.Plan.ToDomainPlan()
+            subscription.Plan.ToDomainPlan(),
+            subscription.Created
         );
 
         domainSub.SetUpdatedAt(subscription.Updated);
+        domainSub.UpdateDueDate(subscription.DueDate);
 
         return domainSub;
     }

@@ -1,3 +1,4 @@
+using Application.Features.Subscriptions.Contracts;
 using Application.Shared.Abstractions;
 using FluentResults;
 using DomainSubscription = Domain.Features.Subscriptions.Entities.Subscription;
@@ -8,4 +9,4 @@ public sealed record CreateSubscriptionCommand
 (
     long userId,
     long planId
-) : ICommand<DomainSubscription>;
+) : ICommand<SubscriptionResponse>;
