@@ -1,6 +1,6 @@
 using Application.Shared.Abstractions;
 using FluentResults;
-using DomainSubscription = Domain.Features.Subscription.Entities.Subscription;
+using DomainSubscription = Domain.Features.Subscriptions.Entities.Subscription;
 
 namespace Application.Features.Subscriptions.Commands.CreateSubscription;
 

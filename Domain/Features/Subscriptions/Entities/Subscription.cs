@@ -7,17 +7,24 @@ using Domain.ValueObjects;
 using FluentResults;
 using FluentValidation.Results;
 
-namespace Domain.Features.Subscription.Entities;
+namespace Domain.Features.Subscriptions.Entities;
 
 /// <summary>
-/// Representa uma assinatura
+/// Represents a subscription
 /// </summary>
 public class Subscription : Entity<Subscription>
 {
+
+    #region PROPERTIES
+
     public User User { get; private set; } = null!;
     public SubscriptionStatus Status { get; private set; } = SubscriptionStatus.Active;
     public Plan Plan { get; private set; } = null!;
     public DateTime DueDate { get; private set; }
+
+    #endregion
+
+    #region CONSTRUCTORS
 
     private Subscription(User user, Plan plan)
     {
@@ -32,10 +39,14 @@ public class Subscription : Entity<Subscription>
     /// <param name="user">Cliente</param>
     /// <param name="plan">Plano</param>
     /// <returns></returns>
-    public static Result<Subscription> Create(User user, Plan plan)
+    public static Subscription Create(User user, Plan plan)
     {
         return new Subscription(user, plan);
     }
+
+    #endregion
+
+    #region  METHODS
 
     /// <summary>
     /// Altera o status da assinatura
@@ -46,7 +57,7 @@ public class Subscription : Entity<Subscription>
         if (status != this.Status)
         {
             this.Status = status;
-            UpdatedAt = DateTime.Now;
+            SetUpdatedAt(DateTime.Now);
         }
         return;
     }
@@ -61,4 +72,12 @@ public class Subscription : Entity<Subscription>
         if (newDueDate < DateTime.Now) AddError("A data não pode ser menor");
         DueDate = newDueDate;
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="date"></param>
+    public void SetUpdatedAt(DateTime date) => this.UpdatedAt = date;
+
+    #endregion
 }

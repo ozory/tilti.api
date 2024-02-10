@@ -2,10 +2,10 @@ using System.Collections.Immutable;
 using Domain.Features.Plans.Entities;
 using Domain.Features.Plans.Repository;
 using Domain.Features.Users.Repository;
-using Infrastructure.Data.Postgreesql.Features.Users.Maps;
+using Infrastructure.Data.Postgreesql.Features.Plans.Maps;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Data.Postgreesql.Features.Users.Repository;
+namespace Infrastructure.Data.Postgreesql.Features.Plans.Repository;
 
 public class PlanRepository : IPlanRepository
 {

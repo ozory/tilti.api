@@ -8,8 +8,13 @@ using FluentValidation.Results;
 
 namespace Domain.Features.Users.Entities;
 
+/// <summary>
+/// Represents an user
+/// </summary>
 public class User : Entity<User>
 {
+    #region PROPERTIES
+
     public Name Name { get; protected set; } = null!;
     public Boolean DriveEnable { get; protected set; } = false;
     public Transport? Transport { get; protected set; }
@@ -25,6 +30,10 @@ public class User : Entity<User>
 
     // public virtual ICollection<Order> Orders { get; protected set; } = null!;
     // public virtual ICollection<Subscription> Subscriptions { get; protected set; } = null!;
+
+    #endregion
+
+    #region CONSTRUCTORS
 
     /// <summary>
     /// Cria um novo usuário
@@ -70,6 +79,10 @@ public class User : Entity<User>
         user.CreatedAt = createdDate ?? DateTime.Now;
         return user;
     }
+
+    #endregion
+
+    #region METHODS
 
     /// <summary>
     /// 
@@ -138,4 +151,6 @@ public class User : Entity<User>
 
     public void SetVerificationSalt(string verificationSalt)
     => this.VerificationSalt = verificationSalt;
+
+    #endregion METHODS
 }

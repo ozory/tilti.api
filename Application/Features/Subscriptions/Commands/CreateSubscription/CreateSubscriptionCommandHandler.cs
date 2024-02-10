@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Shared.Abstractions;
 using Domain.Features.Plans.Entities;
-using Domain.Features.Subscription.Entities;
+using Domain.Features.Subscriptions.Entities;
 using Domain.Features.Subscription.Repository;
 using Domain.Features.Users.Repository;
 using FluentResults;

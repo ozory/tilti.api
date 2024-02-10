@@ -43,7 +43,7 @@ public class Plan : Entity<Plan>
     /// <param name="status"></param>
     /// <param name="createdDate"></param>
     /// <returns></returns>
-    public static Plan CreatePlan(
+    public static Plan Create(
         long? id,
         string name,
         string description,

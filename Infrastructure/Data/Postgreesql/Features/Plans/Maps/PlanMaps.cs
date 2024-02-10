@@ -3,7 +3,7 @@ using Infrastructure.Data.Postgreesql.Features.Plans.Entities;
 using Infrastructure.Data.Postgreesql.Features.Users.Entities;
 using DomainPlan = Domain.Features.Plans.Entities.Plan;
 
-namespace Infrastructure.Data.Postgreesql.Features.Users.Maps;
+namespace Infrastructure.Data.Postgreesql.Features.Plans.Maps;
 
 public static class PlanMaps
 {
@@ -24,7 +24,7 @@ public static class PlanMaps
 
     internal static DomainPlan ToDomainPlan(this Plan plan)
     {
-        var domainUser = DomainPlan.CreatePlan(
+        var domainPlan = DomainPlan.Create(
             plan.Id,
             plan.Name,
             plan.Description,
@@ -32,8 +32,8 @@ public static class PlanMaps
             plan.Status,
             plan.Created);
 
-        domainUser.SetUpdatedAt(plan.Updated);
+        domainPlan.SetUpdatedAt(plan.Updated);
 
-        return domainUser;
+        return domainPlan;
     }
 }

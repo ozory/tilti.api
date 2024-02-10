@@ -39,7 +39,7 @@ public class CreatePlanCommandHandler : ICommandHandler<CreatePlanCommand, PlanR
         var pl = await _repository.GetPlanByNameOrAmount(request.Name, request.Amount);
         if (pl != null) return Result.Fail("A plan with this name or amount allready exists");
 
-        var plan = Plan.CreatePlan(
+        var plan = Plan.Create(
             null,
             request.Name,
             request.Description,
