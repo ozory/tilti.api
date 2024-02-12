@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using Application.Features.Users.Commands.CreateUser;
+using Application.Features.Security.Commands.Authenticate;
 using Application.Features.Users.Commands.RefreshToken;
 
 namespace Api.Endpoints;
@@ -11,6 +11,7 @@ public static class SecurityEndpoint
     {
         RouteGroupBuilder security = app.MapGroup("/security")
             .WithTags("Security");
+
         security.MapPost("/auth", Authenticate)
             .AllowAnonymous()
             .WithOpenApi();

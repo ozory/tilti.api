@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain.Features.Users.Repository;
 using FluentValidation;
-using DomainUser = Domain.Features.Users.Entities.User;
 
-namespace Application.Features.Security.Commands.CreateUser;
+namespace Application.Features.Security.Commands.Authenticate;
 
 public class AuthenticateUserCommandValidator : AbstractValidator<AuthenticateUserCommand>
 {

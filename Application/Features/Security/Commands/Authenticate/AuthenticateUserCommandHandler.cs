@@ -11,9 +11,8 @@ using FluentResults;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using DomainUser = Domain.Features.Users.Entities.User;
 
-namespace Application.Features.Security.Commands.CreateUser;
+namespace Application.Features.Security.Commands.Authenticate;
 
 public class AuthenticateUserCommandHandler
     : ICommandHandler<AuthenticateUserCommand, AuthenticationResponse>

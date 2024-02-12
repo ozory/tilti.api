@@ -1,4 +1,5 @@
 using Domain.Enums;
+using Domain.Subscriptions.Enums;
 using Infrastructure.Data.Postgreesql.Features.Plans.Entities;
 using Infrastructure.Data.Postgreesql.Features.Plans.Maps;
 using Infrastructure.Data.Postgreesql.Features.Subscriptions.Entities;
@@ -35,8 +36,9 @@ public static class SubscriptionMaps
             subscription.Created
         );
 
+        domainSub.SetDueDate(subscription.DueDate);
+        domainSub.SetStatus((SubscriptionStatus)subscription.Status);
         domainSub.SetUpdatedAt(subscription.Updated);
-        domainSub.UpdateDueDate(subscription.DueDate);
 
         return domainSub;
     }
