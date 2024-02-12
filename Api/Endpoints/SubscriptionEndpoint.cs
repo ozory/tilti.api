@@ -12,7 +12,8 @@ namespace Api.Endpoints
     {
         public static void MapSubscriptionsEndpoint(this WebApplication app)
         {
-            RouteGroupBuilder subs = app.MapGroup("/subscriptions");
+            RouteGroupBuilder subs = app.MapGroup("/subscriptions")
+                .WithTags("Subscriptions");
             // subs.MapGet("/", GetAllUsers).WithOpenApi();
             subs.MapPost("/", CreatePlan).WithOpenApi();
             // subs.MapPut("/", UpdatePlan).WithOpenApi();

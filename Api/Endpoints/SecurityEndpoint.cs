@@ -9,7 +9,8 @@ public static class SecurityEndpoint
 {
     public static void MapSecurityEndpoint(this WebApplication app)
     {
-        RouteGroupBuilder security = app.MapGroup("/security");
+        RouteGroupBuilder security = app.MapGroup("/security")
+            .WithTags("Security");
         security.MapPost("/auth", Authenticate)
             .AllowAnonymous()
             .WithOpenApi();

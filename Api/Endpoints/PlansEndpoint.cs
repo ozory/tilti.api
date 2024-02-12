@@ -14,7 +14,8 @@ public static class PlansEndpoint
 {
     public static void MapPlansEndpoint(this WebApplication app)
     {
-        RouteGroupBuilder users = app.MapGroup("/plans");
+        RouteGroupBuilder users = app.MapGroup("/plans")
+            .WithTags("Plans");
         users.MapGet("/", GetAllUsers).WithOpenApi();
         users.MapPost("/", CreatePlan).WithOpenApi();
         users.MapPut("/", UpdatePlan).WithOpenApi();

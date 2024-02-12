@@ -17,7 +17,8 @@ public static class UserEndpoint
     public static void MapUsersEndpoint(this WebApplication app)
     {
         RouteGroupBuilder users = app.MapGroup("/users")
-            .RequireAuthorization("multi");
+            .RequireAuthorization("multi")
+            .WithTags("Users");
         users.MapGet("/", GetAllUsers).WithOpenApi();
         users.MapPost("/", CreateUser).WithOpenApi();
         users.MapPut("/", UpdateUser).WithOpenApi();
