@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Application.Features.Security.Extensions;
-using Application.Features.User.Commands.CreateUser;
+using Application.Features.Users.Commands.CreateUser;
 using Application.Shared.Abstractions;
 using FluentValidation;
 using FluentValidation.AspNetCore;

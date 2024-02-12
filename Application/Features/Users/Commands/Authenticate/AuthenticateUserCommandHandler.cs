@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Features.Security.Entities;
-using Application.Features.User.Contracts;
+using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Users.Entities;
 using Domain.Features.Users.Repository;
@@ -13,7 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using DomainUser = Domain.Features.Users.Entities.User;
 
-namespace Application.Features.User.Commands.CreateUser;
+namespace Application.Features.Users.Commands.CreateUser;
 
 public class AuthenticateUserCommandHandler
     : ICommandHandler<AuthenticateUserCommand, AuthenticationResponse>

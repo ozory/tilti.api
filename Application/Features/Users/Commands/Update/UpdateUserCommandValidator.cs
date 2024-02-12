@@ -6,7 +6,7 @@ using Domain.Features.Users.Repository;
 using FluentValidation;
 using DomainUser = Domain.Features.Users.Entities.User;
 
-namespace Application.Features.User.Commands.UpdateUser;
+namespace Application.Features.Users.Commands.UpdateUser;
 
 public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
 {

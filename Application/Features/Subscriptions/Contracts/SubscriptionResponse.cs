@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Features.Plans.Contracts;
-using Application.Features.User.Contracts;
+using Application.Features.Users.Contracts;
 using Domain.Features.Subscriptions.Entities;
 
 namespace Application.Features.Subscriptions.Contracts;

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using Application.Features.User.Commands.CreateUser;
-using Application.Features.User.Commands.RefreshToken;
+using Application.Features.Users.Commands.CreateUser;
+using Application.Features.Users.Commands.RefreshToken;
 
 namespace Api.Endpoints;
 

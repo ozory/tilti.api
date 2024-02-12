@@ -7,7 +7,7 @@ using Application.Shared.Abstractions;
 using Domain.Features.Users.Repository;
 using FluentValidation;
 
-namespace Application.Features.User.Commands.RefreshToken;
+namespace Application.Features.Users.Commands.RefreshToken;
 
 public class RefreshTokenCommandValidator : AbstractValidator<RefreshTokenCommand>
 {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Features.User.Contracts;
+using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Enums;
 using Domain.Features.Users.Entities;
@@ -12,7 +12,7 @@ using FluentValidation;
 using Microsoft.Extensions.Logging;
 using DomainUser = Domain.Features.Users.Entities.User;
 
-namespace Application.Features.User.Commands.UpdateUser;
+namespace Application.Features.Users.Commands.UpdateUser;
 
 public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand, UserResponse>
 {

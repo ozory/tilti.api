@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Features.User.Commands.CreateUser;
-using Application.Features.User.Contracts;
+using Application.Features.Users.Commands.CreateUser;
+using Application.Features.Users.Contracts;
 using Domain.Features.Users.Repository;
 using FluentResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Features.User.Queries.GetAllUsers;
+namespace Application.Features.Users.Queries.GetAllUsers;
 
 public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Result<ImmutableList<UserResponse>>>
 {

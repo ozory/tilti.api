@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Features.Plans.Contracts;
-using Application.Features.User.Contracts;
+using Application.Features.Users.Contracts;
 using Domain.Features.Plans.Repository;
 using Domain.Features.Users.Repository;
 using FluentResults;
