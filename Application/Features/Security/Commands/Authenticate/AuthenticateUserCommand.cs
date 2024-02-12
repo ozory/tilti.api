@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
 using DomainUser = Domain.Features.Users.Entities.User;
-namespace Application.Features.Users.Commands.CreateUser;
+namespace Application.Features.Security.Commands.CreateUser;
 
 public sealed record AuthenticateUserCommand
 (

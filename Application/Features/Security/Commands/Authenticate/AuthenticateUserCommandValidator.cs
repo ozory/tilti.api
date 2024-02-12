@@ -6,7 +6,7 @@ using Domain.Features.Users.Repository;
 using FluentValidation;
 using DomainUser = Domain.Features.Users.Entities.User;
 
-namespace Application.Features.Users.Commands.CreateUser;
+namespace Application.Features.Security.Commands.CreateUser;
 
 public class AuthenticateUserCommandValidator : AbstractValidator<AuthenticateUserCommand>
 {

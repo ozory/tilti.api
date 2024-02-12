@@ -59,7 +59,7 @@ public class Subscription : Entity<Subscription>
     /// Altera o status da assinatura
     /// </summary>
     /// <param name="status"></param> 
-    public void ChangeStatus(SubscriptionStatus status)
+    public void SetStatus(SubscriptionStatus status)
     {
         if (status != this.Status)
         {
@@ -74,7 +74,7 @@ public class Subscription : Entity<Subscription>
     /// </summary>
     /// <param name="newDueDate">Nova data</param>
     /// <returns></returns>
-    public void UpdateDueDate(DateTime newDueDate)
+    public void SetDueDate(DateTime newDueDate)
     {
         if (newDueDate < DateTime.Now) AddError("A data não pode ser menor");
         DueDate = newDueDate;

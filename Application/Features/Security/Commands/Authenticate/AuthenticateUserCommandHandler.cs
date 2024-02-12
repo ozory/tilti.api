@@ -13,19 +13,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using DomainUser = Domain.Features.Users.Entities.User;
 
-namespace Application.Features.Users.Commands.CreateUser;
+namespace Application.Features.Security.Commands.CreateUser;
 
 public class AuthenticateUserCommandHandler
     : ICommandHandler<AuthenticateUserCommand, AuthenticationResponse>
 {
     private readonly IUserRepository _repository;
-    private readonly ILogger<CreateUserCommandHandler> _logger;
+    private readonly ILogger<AuthenticateUserCommandHandler> _logger;
     private readonly IValidator<AuthenticateUserCommand> _validator;
     private readonly ISecurityExtensions _securityExtensions;
     private readonly ISecurityRepository _securityRepository;
 
     public AuthenticateUserCommandHandler(
-        ILogger<CreateUserCommandHandler> logger,
+        ILogger<AuthenticateUserCommandHandler> logger,
         IUserRepository repository,
         IValidator<AuthenticateUserCommand> validator,
         ISecurityExtensions securityExtensions,
