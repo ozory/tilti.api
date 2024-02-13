@@ -6,9 +6,10 @@ using Domain.Abstractions;
 using Domain.ValueObjects;
 using FluentResults;
 using Domain.Features.Users.Entities;
-namespace Domain.Features.Order.Entities;
 
-public class Item : Entity<Item>
+namespace Domain.ValueObjects;
+
+public class Item
 {
     public User? User { get; protected set; }
     public uint Quantity { get; protected set; }
