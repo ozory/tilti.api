@@ -30,5 +30,6 @@ public class User
     public ushort? VehicleYear { get; set; }
     public string? VerificationCode { get; set; }
 
-    public ICollection<Order>? Orders { get; } = [];
+    public ICollection<Order>? UserOrders { get; } = [];
+    public ICollection<Order>? DriverOrders { get; } = [];
 }

@@ -15,6 +15,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.ToTable("Orders");
 
         builder.HasKey(b => b.Id);
+        builder.Property(b => b.Status);
 
         builder.Property(x => x.Created)
             .HasColumnName("Created")
@@ -45,13 +46,13 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             builder => { builder.ToJson(); });
 
         builder.HasOne(e => e.User)
-            .WithMany(s => s.Orders)
+            .WithMany(s => s.UserOrders)
             .HasForeignKey(e => e.UserId)
             .IsRequired(true);
 
         builder.HasOne(e => e.Driver)
-            .WithMany(s => s.Orders)
-            .HasForeignKey(e => e.UserId)
+            .WithMany(s => s.DriverOrders)
+            .HasForeignKey(e => e.DriverId)
             .IsRequired(false);
     }
 }
