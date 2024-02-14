@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Features.Security.Entities;
+using Application.Features.Security.Contracts;
 using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Users.Entities;

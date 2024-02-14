@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Application.Features.Security.Entities
+namespace Application.Features.Security.Contracts
 {
     public class RefreshTokens
     {

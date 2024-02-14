@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Application.Features.Security.Entities;
+using Application.Features.Security.Contracts;
 using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Users.Repository;
