@@ -17,9 +17,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasKey(b => b.Id);
         builder.Property(b => b.Status);
 
-        builder.Property(x => x.Created)
-            .HasColumnName("Created")
-            .HasColumnType("timestamp");
+        builder.Property(x => x.Created).HasColumnName("Created").HasColumnType("timestamp");
 
         builder.Property(x => x.Updated)
            .HasColumnName("Updated")

@@ -37,7 +37,7 @@ public static class UserMaps
 
     internal static DomainUser ToDomainUser(this User user)
     {
-        var domainUser = DomainUser.CreateUser(
+        var domainUser = DomainUser.Create(
             user.Id,
             user.Name,
             user.Email,

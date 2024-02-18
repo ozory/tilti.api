@@ -3,6 +3,7 @@ using Infrastructure.Data.Postgreesql.Features.Orders.Entities;
 using Infrastructure.Data.Postgreesql.Features.Users.Maps;
 using DomainOrder = Domain.Features.Orders.Entities.Order;
 using DomainAddress = Domain.ValueObjects.Address;
+using Domain.Features.Users.Entities;
 
 namespace Infrastructure.Data.Postgreesql.Features.Subscriptions.Maps;
 
@@ -13,14 +14,14 @@ public static class OrderMap
         Order persistenceOrder = new()
         {
             Id = order.Id,
-            UserId = order.User.Id,
+            UserId = order.User!.Id,
             DriverId = order.Driver?.Id,
             RequestedTime = order.RequestedTime,
             AcceptanceTime = order.AcceptanceTime,
             CancelationTime = order.CancelationTime,
             CompletionTime = order.CompletionTime,
             Created = order.CreatedAt,
-            Updated = order.UpdatedAt,
+            Status = (ushort)order.Status,
         };
 
         persistenceOrder.Addresses.AddRange(order.ToPersistenceAddress());
@@ -32,6 +33,7 @@ public static class OrderMap
     {
         return order.Addresses.Select(x => new Address()
         {
+            AddressType = (ushort)x.AddressType,
             City = x.City,
             Street = x.Street,
             Number = x.Number,
@@ -47,8 +49,8 @@ public static class OrderMap
     {
         var domainOrder = DomainOrder.Create(
             order.Id,
-            order.User.ToDomainUser(),
-            order.RequestedTime ?? DateTime.Now,
+            order.User?.ToDomainUser(),
+            order.RequestedTime!.Value,
             order.ToDomainAddress().ToList(),
             order.Created
         );
@@ -59,7 +61,9 @@ public static class OrderMap
 
         domainOrder.SetAcceptanceTime(order.AcceptanceTime);
         domainOrder.SetCompletionTime(order.CompletionTime);
+
         if (order.CancelationTime is not null) domainOrder.SetCancelationTime(order.CancelationTime);
+        if (domainOrder.User == null) domainOrder.SetUser(User.Create(order.UserId));
 
         return domainOrder;
     }

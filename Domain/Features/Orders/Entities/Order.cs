@@ -16,7 +16,7 @@ public class Order : Entity<Order>
     internal List<Item> _items = new();
     internal List<Address> _addresses = new();
 
-    public User User { get; protected set; } = null!;
+    public User? User { get; protected set; } = null!;
     public User? Driver { get; protected set; }
     public Amount Amount { get; protected set; } = null!;
 
@@ -36,7 +36,7 @@ public class Order : Entity<Order>
 
     public static Order Create(
         long? id,
-        User user,
+        User? user,
         DateTime requestedTime,
         List<Address> address,
         DateTime? createdAt)
@@ -50,6 +50,7 @@ public class Order : Entity<Order>
 
         order._addresses.AddRange(address);
         order.CreatedAt = createdAt ?? DateTime.Now;
+        order.RequestedTime = DateTime.Now;
         order.Status = OrderStatus.PendingPayment;
         return order;
     }
@@ -57,6 +58,15 @@ public class Order : Entity<Order>
     #endregion
 
     #region METHODS
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="user"></param>
+    public void SetUser(User? user)
+    {
+        this.User = user;
+    }
 
     /// <summary>
     /// Altera o status da assinatura

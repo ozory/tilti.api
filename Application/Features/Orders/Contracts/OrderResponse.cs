@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using Domain.Enums;
+using Domain.ValueObjects;
 using DomainOrder = Domain.Features.Orders.Entities.Order;
 
 namespace Application.Features.Orders.Contracts;
@@ -13,8 +15,8 @@ public record OrderResponse
     long UserId,
     long? DriverId,
     ushort Status,
+    List<AddressResponse> Addresses,
     decimal Amount,
-
     DateTime Created,
 
     DateTime? RequestedTime,
@@ -23,17 +25,18 @@ public record OrderResponse
     DateTime? CancelationTime
 )
 {
-    public static implicit operator OrderResponse(DomainOrder order)
-       => new OrderResponse(
-                order.Id,
-                order.User.Id,
-                order.Driver?.Id,
-                (ushort)order.Status,
-                order.Amount.Value,
-                order.CreatedAt,
+    public static implicit operator OrderResponse(DomainOrder order) =>
+        new OrderResponse(
+                 order.Id,
+                 order.User!.Id,
+                 order.Driver?.Id,
+                 (ushort)order.Status,
+                 order.Addresses.Select(x => (AddressResponse)x).ToList(),
+                 order.Amount.Value,
+                 order.CreatedAt,
+                 order.RequestedTime,
+                 order.AcceptanceTime,
+                 order.CompletionTime,
+                 order.CancelationTime);
 
-                order.RequestedTime,
-                order.AcceptanceTime,
-                order.CompletionTime,
-                order.CancelationTime);
 }

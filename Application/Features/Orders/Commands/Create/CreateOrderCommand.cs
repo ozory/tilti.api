@@ -1,14 +1,14 @@
 using Application.Features.Orders.Contracts;
 using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
+using Domain.ValueObjects;
 namespace Application.Features.Orders.Commands.CreateOrder;
 
 public sealed record CreateOrderCommand
 (
-    string Name,
-    string Email,
-    string Document,
-    string Password
+    long UserId,
+    DateTime requestedTime,
+    List<Address> address
 
 ) : ICommand<OrderResponse>;
 

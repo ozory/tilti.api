@@ -45,6 +45,20 @@ public class OrdersRepository : IOrderRepository
         return orderLists!;
     }
 
+    public async Task<IReadOnlyList<Order?>> GetOpenedOrdersByUser(long idUser)
+    {
+        int[] status = [1, 2, 3];
+        // Pending
+        // Accepted
+        // InTransit
+
+        var orders = await _context.Orders.AsNoTracking()
+            .Where(u => u.UserId == idUser && status.Contains(u.Status)).ToListAsync();
+        var orderLists = orders.Select(u => u.ToDomainOrder()).ToImmutableList();
+
+        return orderLists!;
+    }
+
     public async Task<Order> SaveAsync(Order entity)
     {
         var order = entity.ToPersistenceOrder();

@@ -52,6 +52,11 @@ public class User : Entity<User>
         Password = password;
     }
 
+    private User(long? id)
+    {
+        Id = id ?? 0;
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -60,7 +65,7 @@ public class User : Entity<User>
     /// <param name="document"></param>
     /// <param name="password"></param>
     /// <returns></returns>
-    public static User CreateUser(
+    public static User Create(
         long? id,
         string name,
         string email,
@@ -77,6 +82,12 @@ public class User : Entity<User>
 
         user.Status = UserStatus.PendingApproval;
         user.CreatedAt = createdDate ?? DateTime.Now;
+        return user;
+    }
+
+    public static User Create(long? id)
+    {
+        var user = new User(id);
         return user;
     }
 

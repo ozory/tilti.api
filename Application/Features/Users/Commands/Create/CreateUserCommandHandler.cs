@@ -42,7 +42,7 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, UserR
         _logger.LogInformation($"Criando usuário {request.Email}");
 
         // Hash password to save
-        var user = User.CreateUser
+        var user = User.Create
             (
                 null,
                 request.Name,

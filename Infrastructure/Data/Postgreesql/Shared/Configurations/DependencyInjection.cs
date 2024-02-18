@@ -1,8 +1,10 @@
 using System.Reflection;
 using Application.Shared.Abstractions;
+using Domain.Features.Orders.Repository;
 using Domain.Features.Plans.Repository;
 using Domain.Features.Subscription.Repository;
 using Domain.Features.Users.Repository;
+using Infrastructure.Data.Postgreesql.Features.Orders.Repository;
 using Infrastructure.Data.Postgreesql.Features.Plans.Repository;
 using Infrastructure.Data.Postgreesql.Features.Security.Repository;
 using Infrastructure.Data.Postgreesql.Features.Subscriptions.Repository;
@@ -27,6 +29,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IPlanRepository, PlanRepository>();
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+        services.AddScoped<IOrderRepository, OrdersRepository>();
         services.AddScoped<ISecurityRepository, SecurityRepository>();
 
         return services;

@@ -1,3 +1,4 @@
+using System;
 using Domain.Features.Users.Repository;
 using FluentValidation;
 
@@ -7,42 +8,9 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 {
     public CreateOrderCommandValidator(IUserRepository userRepository)
     {
-        RuleFor(s => s.Name)
-                    .NotNull()
-                    .NotEmpty()
-                    .WithMessage("Name is required");
-
-        RuleFor(s => s.Email)
-            .NotNull()
-            .ChildRules(s => s.RuleFor(x => x).EmailAddress())
-            .WithMessage("Email is required");
-
-        RuleFor(s => s.Email)
-        .MustAsync(async (email, _) =>
-            {
-                var user = await userRepository.GetByEmail(email);
-                return user == null;
-            })
-        .WithMessage("Email allready in use");
-
-        RuleFor(s => s.Document)
-            .NotNull()
-            .NotEmpty()
-            .WithMessage("Document is required");
-
-        RuleFor(s => s.Document)
-        .MustAsync(async (document, _) =>
-            {
-                var user = await userRepository.GetByDocument(document);
-                return user == null;
-            })
-        .WithMessage("Document allready in use");
-
-        RuleFor(s => s.Password)
-            .NotNull()
-            .ChildRules(s => s.RuleFor(x => x)
-                .NotNull()
-                .NotEmpty())
-            .WithMessage("Password is required");
+        RuleLevelCascadeMode = CascadeMode.Stop;
+        RuleFor(s => s.UserId).GreaterThanOrEqualTo(0).WithMessage("UserId is required");
+        RuleFor(s => s.requestedTime).GreaterThan(d => DateTime.Today).WithMessage("It's not possible to request in specific time");
+        RuleFor(s => s.address).NotNull().Must(x => x.Count > 1).WithMessage("The order must have two address, from A point to B point");
     }
 }
