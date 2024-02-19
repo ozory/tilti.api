@@ -58,6 +58,7 @@ public static class OrderMap
         domainOrder.SetDriver(order.Driver?.ToDomainUser());
         domainOrder.SetStatus((OrderStatus)order.Status);
         domainOrder.SetUpdatedAt(order.Updated);
+        domainOrder.SetAmount(order.Amount);
 
         domainOrder.SetAcceptanceTime(order.AcceptanceTime);
         domainOrder.SetCompletionTime(order.CompletionTime);

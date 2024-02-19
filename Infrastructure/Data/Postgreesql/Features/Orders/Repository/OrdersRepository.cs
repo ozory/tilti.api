@@ -48,6 +48,7 @@ public class OrdersRepository : IOrderRepository
     public async Task<IReadOnlyList<Order?>> GetOpenedOrdersByUser(long idUser)
     {
         int[] status = [1, 2, 3];
+
         // Pending
         // Accepted
         // InTransit

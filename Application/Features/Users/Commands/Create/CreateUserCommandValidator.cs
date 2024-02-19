@@ -38,7 +38,7 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
         var user = await userRepository.GetByIdAsync(userId);
 
         if (user == null) return Result.Fail("User not Found");
-        if (user.Status != Domain.Enums.UserStatus.Active) return Result.Fail("This user can't get a Subscription!");
+        if (user.Status != Domain.Enums.UserStatus.Active) return Result.Fail("User not active");
 
         return user;
     }
