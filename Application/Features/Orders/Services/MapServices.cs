@@ -12,33 +12,55 @@ using GoogleApi.Entities.Maps.Directions.Response;
 using Address = GoogleApi.Entities.Common.Address;
 using RequestWayPoint = GoogleApi.Entities.Maps.Directions.Request.WayPoint;
 using DirectionsResponse = GoogleApi.Entities.Maps.Directions.Response.DirectionsResponse;
+using GoogleApi.Entities.Maps.Common.Enums;
+using System.Text;
+using GoogleApi.Entities.Maps.DistanceMatrix.Request;
 
 namespace Application.Features.Orders.Services;
 
 public class MapServices : IMapServices
 {
+    private readonly decimal pricePerKM;
+    private readonly decimal pricePerDuration;
+    private readonly string apiKey;
+
+    public MapServices(decimal pricePerKM, decimal pricePerDuration, string apiKey)
+    {
+        this.apiKey = apiKey;
+        this.pricePerKM = pricePerKM;
+        this.pricePerDuration = pricePerDuration;
+    }
+
+    public decimal PricePerKM { get; }
+
     public async Task<Order> CalculateOrderAsync(Order order)
     {
-        DirectionsRequest request = new DirectionsRequest();
-
-        request.Key = "AIzaSyAJgBs8LYok3rt15rZUg4aUxYIAYyFzNcw";
-
         var orderAddress = order.Addresses.OrderBy(x => x.AddressType).ToList();
 
-        foreach (var item in orderAddress)
-        {
-            Address address = new Address(item.Street);
-            LocationEx location = new LocationEx(address);
-            RequestWayPoint wayPoint = new RequestWayPoint(location);
+        DistanceMatrixRequest dm = new DistanceMatrixRequest();
+        dm.Key = apiKey;
+        dm.TravelMode = TravelMode.Driving;
+        dm.DepartureTime = DateTime.UtcNow;
 
-            request.WayPoints.Append(wayPoint);
-        }
+        dm.Origins = orderAddress.SkipLast(1).Select(x => new LocationEx(new Address(x.Street))).ToList();
 
-        DirectionsResponse response = await GoogleApi.GoogleMaps.Directions.QueryAsync(request);
+        var Destination = orderAddress.Last();
+        dm.Destinations = new List<LocationEx> { new LocationEx(new Address(Destination.Street)) };
 
-        var routes = response.Routes.FirstOrDefault();
-        var distance = routes!.Legs.First().Distance.Text;
+        var response = await GoogleApi.GoogleMaps.DistanceMatrix.QueryAsync(dm);
 
-        throw new NotImplementedException();
+        var result = response.Rows.First().Elements.First();
+        var distance = result.Distance.Value;
+        var duration = result.Duration.Value;
+
+        order.SetDistanceInKM(distance);
+        order.SetDurationInSeconds(duration);
+
+        var valuePerKM = (pricePerKM * order.DistanceInKM) / 1000;
+        var valuePerDuration = (pricePerDuration * (order.DurationInSeconds / 60));
+
+        order.SetAmount(valuePerKM + valuePerDuration);
+
+        return order;
     }
 }

@@ -20,6 +20,9 @@ public class Order : Entity<Order>
     public User? Driver { get; protected set; }
     public Amount Amount { get; protected set; } = null!;
 
+    public int DistanceInKM { get; protected set; }
+    public int DurationInSeconds { get; protected set; }
+
     public DateTime? RequestedTime { get; protected set; }
     public DateTime? AcceptanceTime { get; protected set; }
     public DateTime? CompletionTime { get; protected set; }
@@ -119,6 +122,18 @@ public class Order : Entity<Order>
     /// </summary>
     /// <param name="amount"></param>
     public void SetAmount(Decimal value) => this.Amount = new Amount(value);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetDistanceInKM(int value) => this.DistanceInKM = value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetDurationInSeconds(int value) => this.DurationInSeconds = value;
 
     #endregion
 }

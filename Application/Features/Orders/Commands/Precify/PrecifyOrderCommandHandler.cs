@@ -42,7 +42,9 @@ public class PrecifyOrderCommandHandler : ICommandHandler<PrecifyOrderCommand, O
         _mapServices = mapServices;
     }
 
-    public async Task<Result<OrderResponse>> Handle(PrecifyOrderCommand request, CancellationToken cancellationToken)
+    public async Task<Result<OrderResponse>> Handle(
+        PrecifyOrderCommand request,
+        CancellationToken cancellationToken)
     {
         _logger.LogInformation($"Precifying an Order {request.UserId}");
 
@@ -51,9 +53,6 @@ public class PrecifyOrderCommandHandler : ICommandHandler<PrecifyOrderCommand, O
 
         var userValidate = await CreateUserCommandValidator.ValidateUser(_userRepository, request.UserId);
         if (userValidate.IsFailed) return Result.Fail(userValidate.Errors);
-
-        var openedOrder = await _repository.GetOpenedOrdersByUser(request.UserId);
-        if (openedOrder.Any()) return Result.Fail(new List<string> { "Usuário já possui uma ordem aberta" });
 
         var user = userValidate.Value;
         var currentDate = DateTime.Now;
