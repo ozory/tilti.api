@@ -1,29 +1,39 @@
 
 using Domain.Abstractions;
-using DomainUser = Domain.Features.User.Entities.User;
-using Domain.Plans.Entities;
+using Domain.Features.Users.Entities;
+using Domain.Features.Plans.Entities;
 using Domain.Subscriptions.Enums;
 using Domain.ValueObjects;
 using FluentResults;
 using FluentValidation.Results;
 
-namespace Domain.Features.Subscription.Entities;
+namespace Domain.Features.Subscriptions.Entities;
 
 /// <summary>
-/// Representa uma assinatura
+/// Represents a subscription
 /// </summary>
 public class Subscription : Entity<Subscription>
 {
-    public DomainUser User { get; private set; } = null!;
+
+    #region PROPERTIES
+
+    public User User { get; private set; } = null!;
     public SubscriptionStatus Status { get; private set; } = SubscriptionStatus.Active;
     public Plan Plan { get; private set; } = null!;
     public DateTime DueDate { get; private set; }
 
-    private Subscription(DomainUser user, Plan plan)
+    #endregion
+
+    #region CONSTRUCTORS
+
+    private Subscription(long? id, User user, Plan plan, DateTime? createdAt)
     {
+        Id = id ?? 0;
         User = user;
         Plan = plan;
         DueDate = DateTime.Now.AddMonths(1);
+        CreatedAt = createdAt ?? DateTime.Now;
+        Status = SubscriptionStatus.PendingApproval;
     }
 
     /// <summary>
@@ -32,21 +42,29 @@ public class Subscription : Entity<Subscription>
     /// <param name="user">Cliente</param>
     /// <param name="plan">Plano</param>
     /// <returns></returns>
-    public static Result<Subscription> Create(DomainUser user, Plan plan)
+    public static Subscription Create(
+        long? id,
+        User user,
+        Plan plan,
+        DateTime? createdAt)
     {
-        return new Subscription(user, plan);
+        return new Subscription(id, user, plan, createdAt);
     }
+
+    #endregion
+
+    #region  METHODS
 
     /// <summary>
     /// Altera o status da assinatura
     /// </summary>
     /// <param name="status"></param> 
-    public void ChangeStatus(SubscriptionStatus status)
+    public void SetStatus(SubscriptionStatus status)
     {
         if (status != this.Status)
         {
             this.Status = status;
-            UpdatedAt = DateTime.Now;
+            SetUpdatedAt(DateTime.Now);
         }
         return;
     }
@@ -56,9 +74,17 @@ public class Subscription : Entity<Subscription>
     /// </summary>
     /// <param name="newDueDate">Nova data</param>
     /// <returns></returns>
-    public void UpdateDueDate(DateTime newDueDate)
+    public void SetDueDate(DateTime newDueDate)
     {
         if (newDueDate < DateTime.Now) AddError("A data não pode ser menor");
         DueDate = newDueDate;
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="date"></param>
+    public void SetUpdatedAt(DateTime date) => this.UpdatedAt = date;
+
+    #endregion
 }

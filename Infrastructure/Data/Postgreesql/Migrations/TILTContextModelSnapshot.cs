@@ -23,6 +23,102 @@ namespace Infrastructure.Data.Postgreesql.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Infrastructure.Data.Postgreesql.Features.Orders.Entities.Order", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime?>("AcceptanceTime")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("AcceptanceTime");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime?>("CancelationTime")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("CancelationTime");
+
+                    b.Property<DateTime?>("CompletionTime")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("CompletionTime");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("Created");
+
+                    b.Property<long?>("DriverId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("RequestedTime")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("RequestedTime");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Updated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp")
+                        .HasDefaultValue(new DateTime(2024, 2, 18, 18, 53, 26, 141, DateTimeKind.Local).AddTicks(3490))
+                        .HasColumnName("Updated");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders", "tilt");
+                });
+
+            modelBuilder.Entity("Infrastructure.Data.Postgreesql.Features.Plans.Entities.Plan", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric")
+                        .HasColumnName("Amount");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("Created");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("Name");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Updated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp")
+                        .HasDefaultValue(new DateTime(2024, 2, 18, 18, 53, 26, 144, DateTimeKind.Local).AddTicks(370))
+                        .HasColumnName("Updated");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Plans", "tilt");
+                });
+
             modelBuilder.Entity("Infrastructure.Data.Postgreesql.Features.Security.Entities.RefreshTokens", b =>
                 {
                     b.Property<long>("Id")
@@ -50,6 +146,47 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .IsUnique();
 
                     b.ToTable("RefeshTokens", "security");
+                });
+
+            modelBuilder.Entity("Infrastructure.Data.Postgreesql.Features.Subscriptions.Entities.Subscription", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("Created");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("DueDate");
+
+                    b.Property<long>("PlanId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Updated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp")
+                        .HasDefaultValue(new DateTime(2024, 2, 18, 18, 53, 26, 143, DateTimeKind.Local).AddTicks(7840))
+                        .HasColumnName("Updated");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlanId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Subscriptions", "tilt");
                 });
 
             modelBuilder.Entity("Infrastructure.Data.Postgreesql.Features.Users.Entities.User", b =>
@@ -102,7 +239,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.Property<DateTime>("Updated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
-                        .HasDefaultValue(new DateTime(2024, 2, 8, 12, 12, 30, 344, DateTimeKind.Local).AddTicks(4020))
+                        .HasDefaultValue(new DateTime(2024, 2, 18, 18, 53, 26, 144, DateTimeKind.Local).AddTicks(2950))
                         .HasColumnName("Updated");
 
                     b.Property<string>("ValidationCode")
@@ -137,6 +274,77 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.ToTable("Users", "tilt");
                 });
 
+            modelBuilder.Entity("Infrastructure.Data.Postgreesql.Features.Orders.Entities.Order", b =>
+                {
+                    b.HasOne("Infrastructure.Data.Postgreesql.Features.Users.Entities.User", "Driver")
+                        .WithMany("DriverOrders")
+                        .HasForeignKey("DriverId");
+
+                    b.HasOne("Infrastructure.Data.Postgreesql.Features.Users.Entities.User", "User")
+                        .WithMany("UserOrders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsMany("Infrastructure.Data.Postgreesql.Features.Orders.Entities.Address", "Addresses", b1 =>
+                        {
+                            b1.Property<long>("OrderId")
+                                .HasColumnType("bigint");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("AddressType")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Complment")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<double>("Latitude")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double>("Longitude")
+                                .HasColumnType("double precision");
+
+                            b1.Property<string>("Neighborhood")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Number")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("ZipCode")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("OrderId", "Id");
+
+                            b1.ToTable("Orders", "tilt");
+
+                            b1.ToJson("Addresses");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
+                    b.Navigation("Addresses");
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Infrastructure.Data.Postgreesql.Features.Security.Entities.RefreshTokens", b =>
                 {
                     b.HasOne("Infrastructure.Data.Postgreesql.Features.Users.Entities.User", "User")
@@ -146,6 +354,35 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Infrastructure.Data.Postgreesql.Features.Subscriptions.Entities.Subscription", b =>
+                {
+                    b.HasOne("Infrastructure.Data.Postgreesql.Features.Plans.Entities.Plan", "Plan")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("PlanId");
+
+                    b.HasOne("Infrastructure.Data.Postgreesql.Features.Users.Entities.User", "User")
+                        .WithOne()
+                        .HasForeignKey("Infrastructure.Data.Postgreesql.Features.Subscriptions.Entities.Subscription", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Infrastructure.Data.Postgreesql.Features.Plans.Entities.Plan", b =>
+                {
+                    b.Navigation("Subscriptions");
+                });
+
+            modelBuilder.Entity("Infrastructure.Data.Postgreesql.Features.Users.Entities.User", b =>
+                {
+                    b.Navigation("DriverOrders");
+
+                    b.Navigation("UserOrders");
                 });
 #pragma warning restore 612, 618
         }

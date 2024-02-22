@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Infrastructure.Data.Postgreesql.Features.Security.Entities;
-using ApplicationRefreshToken = Application.Features.Security.Entities.RefreshTokens;
+using ApplicationRefreshToken = Application.Features.Security.Contracts.RefreshTokens;
 
 namespace Infrastructure.Data.Postgreesql.Features.Security.Maps
 {

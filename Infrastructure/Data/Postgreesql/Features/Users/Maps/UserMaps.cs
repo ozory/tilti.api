@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain.Enums;
 using Infrastructure.Data.Postgreesql.Features.Users.Entities;
-using DomainUser = Domain.Features.User.Entities.User;
+using DomainUser = Domain.Features.Users.Entities.User;
 
 namespace Infrastructure.Data.Postgreesql.Features.Users.Maps;
 
@@ -37,12 +37,12 @@ public static class UserMaps
 
     internal static DomainUser ToDomainUser(this User user)
     {
-        var domainUser = DomainUser.CreateUser(
+        var domainUser = DomainUser.Create(
             user.Id,
             user.Name,
             user.Email,
             user.Document,
-            user.Password,
+            null,
             user.Created);
 
         domainUser.SetUpdatedAt(user.Updated);

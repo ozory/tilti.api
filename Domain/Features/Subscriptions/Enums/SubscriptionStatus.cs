@@ -4,5 +4,7 @@ public enum SubscriptionStatus : ushort
 {
     Active = 1,
     Renewed = 2,
-    Inactive = 3,
+    PendingApproval = 3,
+    Inactive = 4,
+
 }

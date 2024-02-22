@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Application.Shared.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using DomainUser = Domain.Features.User.Entities.User;
+using DomainUser = Domain.Features.Users.Entities.User;
 
 namespace Application.Features.Security.Extensions;
 

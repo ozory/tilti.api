@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Infrastructure.Data.Postgreesql.Features.Orders.Entities;
 
 namespace Infrastructure.Data.Postgreesql.Features.Users.Entities;
 
@@ -28,4 +29,7 @@ public class User
     public string? VehicleModel { get; set; }
     public ushort? VehicleYear { get; set; }
     public string? VerificationCode { get; set; }
+
+    public ICollection<Order>? UserOrders { get; } = [];
+    public ICollection<Order>? DriverOrders { get; } = [];
 }
