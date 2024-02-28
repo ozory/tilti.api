@@ -26,6 +26,7 @@ public static class UserMaps
             VerificationCode = user.VerificationCode,
             ValidationSalt = user.VerificationSalt,
             DriveEnable = user.DriveEnable,
+            PaymentToken = user.PaymentToken,
         };
 
         return persistanceUser;
@@ -45,6 +46,7 @@ public static class UserMaps
         domainUser.SetVerificationSalt(user.ValidationSalt!);
         domainUser.SetStatus((UserStatus)user.Status);
         domainUser.SetDriveEnable(user.DriveEnable);
+        domainUser.SetPaymentToken(user.PaymentToken);
 
         return domainUser;
     }

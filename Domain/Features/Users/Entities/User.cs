@@ -18,6 +18,7 @@ public class User : Entity<User>
     public Document Document { get; protected set; } = null!;
     public Password? Password { get; protected set; } = null!;
     public UserStatus Status { get; protected set; }
+    public string? PaymentToken { get; protected set; }
 
 
     public string? Photo { get; protected set; }
@@ -158,6 +159,9 @@ public class User : Entity<User>
 
     public void SetVerificationSalt(string verificationSalt)
     => this.VerificationSalt = verificationSalt;
+
+    public void SetPaymentToken(string? paymentToken)
+    => this.PaymentToken = paymentToken;
 
     #endregion METHODS
 }

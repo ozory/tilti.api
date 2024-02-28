@@ -66,6 +66,10 @@ public class UserConfiguration : IEntityTypeConfiguration<InfrastructureUser>
             .HasColumnName("ValidationSalt")
             .HasMaxLength(250);
 
+        builder.Property(x => x.PaymentToken)
+            .HasColumnName("PaymentToken")
+            .HasMaxLength(1000);
+
         builder.Property(b => b.Status);
 
     }

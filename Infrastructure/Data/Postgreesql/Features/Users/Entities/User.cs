@@ -13,6 +13,7 @@ public class User
     public string Document { get; set; } = null!;
     public string? ValidationCode { get; set; }
     public string? ValidationSalt { get; set; }
+    public string? PaymentToken { get; set; }
 
     public ushort Status { get; set; }
     public string? Photo { get; set; } = null!;
