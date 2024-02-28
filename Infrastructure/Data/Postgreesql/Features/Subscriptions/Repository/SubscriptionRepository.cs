@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Domain.Features.Subscriptions.Entities;
 using Domain.Features.Subscription.Repository;
-using Infrastructure.Data.Postgreesql;
-using Infrastructure.Data.Postgreesql.Shared;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Data.Postgreesql.Features.Subscriptions.Maps;
 using System.Collections.Immutable;

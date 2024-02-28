@@ -1,6 +1,4 @@
-using Domain.Enums;
 using Infrastructure.Data.Postgreesql.Features.Plans.Entities;
-using Infrastructure.Data.Postgreesql.Features.Users.Entities;
 using DomainPlan = Domain.Features.Plans.Entities.Plan;
 
 namespace Infrastructure.Data.Postgreesql.Features.Plans.Maps;

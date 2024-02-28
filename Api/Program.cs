@@ -1,12 +1,8 @@
-using FluentValidation;
-using FluentValidation.AspNetCore;
-
 using Application.Configurations;
 using Serilog;
 using Infrastructure.Data.Postgreesql.Shared.Configurations;
 using Api.Endpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 

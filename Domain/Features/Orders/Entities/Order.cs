@@ -4,8 +4,6 @@ using Domain.Abstractions;
 using Domain.Enums;
 using Domain.Features.Users.Entities;
 using Domain.ValueObjects;
-using FluentResults;
-using Microsoft.VisualBasic;
 
 namespace Domain.Features.Orders.Entities;
 

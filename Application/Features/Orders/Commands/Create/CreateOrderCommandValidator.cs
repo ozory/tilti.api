@@ -1,4 +1,3 @@
-using System;
 using Domain.Features.Users.Repository;
 using FluentValidation;
 

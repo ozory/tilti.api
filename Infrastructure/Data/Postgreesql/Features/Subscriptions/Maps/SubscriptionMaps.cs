@@ -1,9 +1,6 @@
-using Domain.Enums;
 using Domain.Subscriptions.Enums;
-using Infrastructure.Data.Postgreesql.Features.Plans.Entities;
 using Infrastructure.Data.Postgreesql.Features.Plans.Maps;
 using Infrastructure.Data.Postgreesql.Features.Subscriptions.Entities;
-using Infrastructure.Data.Postgreesql.Features.Users.Entities;
 using Infrastructure.Data.Postgreesql.Features.Users.Maps;
 using DomainSubscription = Domain.Features.Subscriptions.Entities.Subscription;
 

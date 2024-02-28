@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Domain.Features.Plans.Entities;
 using Domain.Features.Plans.Repository;
-using Domain.Features.Users.Repository;
 using Infrastructure.Data.Postgreesql.Features.Plans.Maps;
 using Microsoft.EntityFrameworkCore;
 

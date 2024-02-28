@@ -1,18 +1,16 @@
 using Application.Features.Orders.Contracts;
 using Application.Shared.Abstractions;
 using Domain.ValueObjects;
-namespace Application.Features.Orders.Commands.UpdateOrder;
+namespace Application.Features.Orders.Commands.CancelOrder;
 
-public sealed record UpdateOrderCommand
+public sealed record CancelOrderCommand
 (
     long UserId,
     long OrderId,
     DateTime requestedTime,
-    List<Address> address,
+    List<string> reason,
+    string description
 
-    decimal amount,
-    int totalDiscance,
-    int totalDuration
 ) : ICommand<OrderResponse>;
 
 

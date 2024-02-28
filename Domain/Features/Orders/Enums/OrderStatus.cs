@@ -3,9 +3,10 @@ namespace Domain.Enums
     public enum OrderStatus : int
     {
         PendingPayment = 1,
-        Accepted = 2,
-        InTransit = 3,
-        Finished = 4,
-        Canceled = 5
+        ReadyToAccept = 2,
+        Accepted = 3,
+        InTransit = 4,
+        Finished = 5,
+        Canceled = 6
     }
 }

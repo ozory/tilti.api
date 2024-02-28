@@ -1,18 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Features.Orders.Contracts;
 using Application.Features.Users.Commands.CreateUser;
-using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Orders.Entities;
 using Domain.Features.Orders.Repository;
-using Domain.Features.Users.Entities;
 using Domain.Features.Users.Repository;
 using FluentResults;
 using FluentValidation;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Orders.Commands.PrecifyOrder;

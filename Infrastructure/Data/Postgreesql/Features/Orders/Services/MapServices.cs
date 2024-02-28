@@ -1,17 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Shared.Abstractions;
 using Domain.Features.Orders.Entities;
-using Domain.ValueObjects;
-using GoogleApi.Entities.Common;
 using GoogleApi.Entities.Maps.Common;
-using GoogleApi.Entities.Maps.Directions.Request;
-using GoogleApi.Entities.Maps.Directions.Response;
 using Address = GoogleApi.Entities.Common.Address;
-using RequestWayPoint = GoogleApi.Entities.Maps.Directions.Request.WayPoint;
-using DirectionsResponse = GoogleApi.Entities.Maps.Directions.Response.DirectionsResponse;
 using GoogleApi.Entities.Maps.Common.Enums;
 using System.Text;
 using GoogleApi.Entities.Maps.DistanceMatrix.Request;
@@ -100,9 +90,15 @@ public class MapServices : IMapServices
 
     private void ApplyValues(Order order, DistanceMatrixResponse distanceMatrixResponse)
     {
-        var result = distanceMatrixResponse.Rows.First().Elements.First();
-        var distance = result.Distance.Value;
-        var duration = result.Duration.Value;
+        var distance = 0;
+        var duration = 0;
+
+        // Somando distancia e duração de cada ponto de parada
+        distanceMatrixResponse.Rows.ToList().ForEach(row =>
+        {
+            distance += row.Elements.First().Distance.Value;
+            duration += row.Elements.First().Duration.Value;
+        });
 
         order.SetDistanceInKM(distance);
         order.SetDurationInSeconds(duration);
@@ -110,6 +106,6 @@ public class MapServices : IMapServices
         var valuePerKM = (pricePerKM * order.DistanceInKM) / 1000;
         var valuePerDuration = (pricePerDuration * (order.DurationInSeconds / 60));
 
-        order.SetAmount(valuePerKM + valuePerDuration);
+        order.SetAmount((valuePerKM + valuePerDuration));
     }
 }
