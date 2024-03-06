@@ -1,5 +1,8 @@
 using Domain.Abstractions;
 using Domain.Enums;
+using Domain.Features.Orders.Entities;
+using Domain.Features.Subscriptions.Entities;
+using Domain.Shared.Abstractions;
 using Domain.ValueObjects;
 
 namespace Domain.Features.Users.Entities;
@@ -25,8 +28,9 @@ public class User : Entity<User>
     public string? VerificationCode { get; protected set; }
     public string? VerificationSalt { get; protected set; }
 
-    // public virtual ICollection<Order> Orders { get; protected set; } = null!;
-    // public virtual ICollection<Subscription> Subscriptions { get; protected set; } = null!;
+    public virtual ICollection<Order> Orders { get; protected set; } = null!;
+    public virtual Subscription? Subscription { get; protected set; } = null!;
+
 
     #endregion
 

@@ -1,6 +1,7 @@
 using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Users.Entities;
+using Domain.Features.Users.Events;
 using Domain.Features.Users.Repository;
 using FluentResults;
 using FluentValidation;
@@ -37,21 +38,16 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, UserR
         _logger.LogInformation($"Criando usuário {request.Email}");
 
         // Hash password to save
-        var user = User.Create
-            (
-                null,
-                request.Name,
-                request.Email,
-                request.Document,
-                request.Password,
-                DateTime.Now
-            );
+        var user = User.Create(null, request.Name, request.Email, request.Document, request.Password, DateTime.Now);
 
         // Security Info
         var securitySalt = _securityExtensions.GenerateSalt();
         user.SetVerificationSalt(securitySalt);
         user.SetPassword(_securityExtensions.ComputeHash(securitySalt, request.Password));
         user.SetVerificationCode(_securityExtensions.ComputeValidationCode());
+
+        // Add events
+        user.AddDomainEvent(new UserCreatedDomainEvent(user));
 
         // Save user
         var savedUser = await _repository.SaveAsync(user);

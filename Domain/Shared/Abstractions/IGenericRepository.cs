@@ -1,9 +1,9 @@
 namespace Domain.Abstractions;
 
-public interface IGenericRepository<T> where T : class
+public interface IGenericRepository<TSource> where TSource : class
 {
-    Task<T> SaveAsync(T entity);
-    Task<T> UpdateAsync(T entity);
-    Task<T?> GetByIdAsync(long id);
-    Task<IReadOnlyList<T>> GetAllAsync();
+    Task<TSource> SaveAsync(TSource entity);
+    Task<TSource> UpdateAsync(TSource entity);
+    Task<TSource?> GetByIdAsync(long id);
+    Task<IReadOnlyList<TSource>> GetAllAsync();
 }

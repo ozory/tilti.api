@@ -1,7 +1,7 @@
 using Domain.Abstractions;
 using DomainSubscription = Domain.Features.Subscriptions.Entities.Subscription;
 
-namespace Domain.Features.Subscription.Repository;
+namespace Domain.Features.Subscriptions.Repository;
 
 public interface ISubscriptionRepository : IGenericRepository<DomainSubscription>
 {

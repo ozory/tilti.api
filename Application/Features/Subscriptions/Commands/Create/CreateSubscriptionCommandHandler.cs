@@ -1,6 +1,6 @@
 using Application.Shared.Abstractions;
 using Domain.Features.Subscriptions.Entities;
-using Domain.Features.Subscription.Repository;
+using Domain.Features.Subscriptions.Repository;
 using Domain.Features.Users.Repository;
 using FluentResults;
 using Microsoft.Extensions.Logging;

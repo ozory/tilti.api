@@ -1,7 +1,7 @@
 ﻿using Application.Features.Subscriptions.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Plans.Repository;
-using Domain.Features.Subscription.Repository;
+using Domain.Features.Subscriptions.Repository;
 using Domain.Features.Subscriptions.Entities;
 using Domain.Features.Users.Repository;
 using Domain.Subscriptions.Enums;

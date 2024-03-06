@@ -1,5 +1,8 @@
+using Domain.Enums;
 using Infrastructure.Data.Postgreesql.Features.Orders.Entities;
-
+using Infrastructure.Data.Postgreesql.Shared.Abstractions;
+using Npgsql.Replication;
+using DomainUser = Domain.Features.Users.Entities.User;
 namespace Infrastructure.Data.Postgreesql.Features.Users.Entities;
 
 public class User
@@ -29,4 +32,50 @@ public class User
 
     public ICollection<Order>? UserOrders { get; } = [];
     public ICollection<Order>? DriverOrders { get; } = [];
+
+    public static implicit operator User(DomainUser user)
+    {
+        User persistanceUser = new User
+        {
+            Id = user.Id,
+            Name = user.Name.Value!,
+            Document = user.Document.Value!,
+            Email = user.Email.Value!,
+            Password = user.Password!.Value!,
+            Status = (ushort)user.Status,
+            Created = user.CreatedAt,
+
+            Photo = user.Photo,
+            VehicleModel = user.Transport?.Model,
+            VehiclePlate = user.Transport?.Plate,
+            VehicleYear = user.Transport?.Year,
+
+            VerificationCode = user.VerificationCode,
+            ValidationSalt = user.VerificationSalt,
+            DriveEnable = user.DriveEnable,
+            PaymentToken = user.PaymentToken,
+        };
+
+        return persistanceUser;
+    }
+
+    public static implicit operator DomainUser(User? user)
+    {
+        if (user is null) return null!;
+        var domainUser = DomainUser.Create(
+            user.Id,
+            user.Name,
+            user.Email,
+            user.Document,
+            null,
+            user.Created);
+
+        domainUser.SetUpdatedAt(user.Updated);
+        domainUser.SetVerificationSalt(user.ValidationSalt!);
+        domainUser.SetStatus((UserStatus)user.Status);
+        domainUser.SetDriveEnable(user.DriveEnable);
+        domainUser.SetPaymentToken(user.PaymentToken);
+
+        return domainUser;
+    }
 }

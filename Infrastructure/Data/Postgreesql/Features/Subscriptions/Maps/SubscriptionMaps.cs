@@ -1,7 +1,6 @@
 using Domain.Subscriptions.Enums;
 using Infrastructure.Data.Postgreesql.Features.Plans.Maps;
 using Infrastructure.Data.Postgreesql.Features.Subscriptions.Entities;
-using Infrastructure.Data.Postgreesql.Features.Users.Maps;
 using DomainSubscription = Domain.Features.Subscriptions.Entities.Subscription;
 
 namespace Infrastructure.Data.Postgreesql.Features.Subscriptions.Maps;
@@ -28,7 +27,7 @@ public static class SubscriptionMaps
     {
         var domainSub = DomainSubscription.Create(
             subscription.Id,
-            subscription.User.ToDomainUser(),
+            subscription.User,
             subscription.Plan.ToDomainPlan(),
             subscription.Created
         );

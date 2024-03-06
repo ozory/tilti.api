@@ -1,6 +1,5 @@
 using Domain.Enums;
 using Infrastructure.Data.Postgreesql.Features.Orders.Entities;
-using Infrastructure.Data.Postgreesql.Features.Users.Maps;
 using DomainOrder = Domain.Features.Orders.Entities.Order;
 using DomainAddress = Domain.ValueObjects.Address;
 using Domain.Features.Users.Entities;
@@ -49,13 +48,13 @@ public static class OrderMap
     {
         var domainOrder = DomainOrder.Create(
             order.Id,
-            order.User?.ToDomainUser(),
+            order.User,
             order.RequestedTime!.Value,
             order.ToDomainAddress().ToList(),
             order.Created
         );
 
-        domainOrder.SetDriver(order.Driver?.ToDomainUser());
+        domainOrder.SetDriver(order.Driver);
         domainOrder.SetStatus((OrderStatus)order.Status);
         domainOrder.SetUpdatedAt(order.Updated);
         domainOrder.SetAmount(order.Amount);

@@ -1,5 +1,5 @@
 using Domain.Features.Subscriptions.Entities;
-using Domain.Features.Subscription.Repository;
+using Domain.Features.Subscriptions.Repository;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Data.Postgreesql.Features.Subscriptions.Maps;
 using System.Collections.Immutable;
