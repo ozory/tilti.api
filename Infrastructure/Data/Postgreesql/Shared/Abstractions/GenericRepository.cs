@@ -1,4 +1,6 @@
 using Domain.Abstractions;
+using Domain.Shared.Abstractions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 using DomainUser = Domain.Features.Users.Entities.User;
@@ -6,17 +8,19 @@ using InfrastructureUser = Infrastructure.Data.Postgreesql.Features.Users.Entiti
 
 namespace Infrastructure.Data.Postgreesql.Shared;
 
-public class GenericRepository<TSource, TDestination>
-    where TSource : class
-    where TDestination : class
+public abstract class GenericRepository<TSource, TDestination>
+    where TSource : Entity
+    where TDestination : AbstractEntity
 {
     protected readonly TILTContext _context;
+    private readonly IMediator _mediator;
 
     internal DbSet<TDestination> dbSet;
 
-    protected GenericRepository(TILTContext context)
+    protected GenericRepository(TILTContext context, IMediator mediatr)
     {
         _context = context;
+        _mediator = mediatr;
         this.dbSet = _context.Set<TDestination>();
     }
 
@@ -37,6 +41,26 @@ public class GenericRepository<TSource, TDestination>
     {
         await this.dbSet.AddAsync((entity as TDestination)!);
         return entity;
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        _context.SaveChanges();
+
+        var domainEntities = _context.ChangeTracker
+            .Entries<Entity>()
+            .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any());
+
+        var domainEvents = domainEntities
+            .SelectMany(x => x.Entity.DomainEvents)
+            .ToList();
+
+        domainEntities.ToList()
+            .ForEach(entity => entity.Entity.ClearEvents());
+
+        // Dispatch domain events after save changes
+        foreach (var domainEvent in domainEvents)
+            await _mediator.Publish(domainEvent);
     }
 
     public async Task<TSource> UpdateAsync(TSource entity)

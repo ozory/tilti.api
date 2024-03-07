@@ -7,7 +7,7 @@ namespace Domain.Features.Plans.Entities;
 /// <summary>
 /// Representa um plano
 /// </summary>
-public class Plan : Entity<Plan>
+public class Plan : Entity
 {
     public Name Name { get; private set; } = null!;
     public Description Description { get; private set; } = null!;

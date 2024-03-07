@@ -75,4 +75,9 @@ public class OrdersRepository : IOrderRepository
         await _context.SaveChangesAsync();
         return order?.ToDomainOrder()!;
     }
+
+    public Task SaveChangesAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

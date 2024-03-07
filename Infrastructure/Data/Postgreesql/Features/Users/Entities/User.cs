@@ -1,11 +1,11 @@
 using Domain.Enums;
+using Domain.Shared.Abstractions;
 using Infrastructure.Data.Postgreesql.Features.Orders.Entities;
-using Infrastructure.Data.Postgreesql.Shared.Abstractions;
 using Npgsql.Replication;
 using DomainUser = Domain.Features.Users.Entities.User;
 namespace Infrastructure.Data.Postgreesql.Features.Users.Entities;
 
-public class User
+public class User : AbstractEntity
 {
     // Campos de usuário
     public long Id { get; set; }
@@ -54,6 +54,7 @@ public class User
             ValidationSalt = user.VerificationSalt,
             DriveEnable = user.DriveEnable,
             PaymentToken = user.PaymentToken,
+            DomainEvents = user.DomainEvents
         };
 
         return persistanceUser;

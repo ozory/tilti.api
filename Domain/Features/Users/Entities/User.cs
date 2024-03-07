@@ -10,7 +10,7 @@ namespace Domain.Features.Users.Entities;
 /// <summary>
 /// Represents an user
 /// </summary>
-public class User : Entity<User>
+public class User : Entity
 {
     #region PROPERTIES
 

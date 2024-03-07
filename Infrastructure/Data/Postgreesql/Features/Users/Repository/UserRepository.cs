@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Domain.Features.Users.Entities;
 using Domain.Features.Users.Repository;
 using Infrastructure.Data.Postgreesql.Shared;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using DomainUser = Domain.Features.Users.Entities.User;
 using InfrastructureUser = Infrastructure.Data.Postgreesql.Features.Users.Entities.User;
@@ -12,7 +13,7 @@ public class UserRepository :
     GenericRepository<DomainUser, InfrastructureUser>,
     IUserRepository
 {
-    public UserRepository(TILTContext context) : base(context) { }
+    public UserRepository(TILTContext context, IMediator mediator) : base(context, mediator) { }
 
     public async Task<DomainUser?> GetByDocument(string document)
     {

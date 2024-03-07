@@ -9,7 +9,7 @@ using Domain.ValueObjects;
 
 namespace Domain.Features.Payments.Entities;
 
-public class Payment : Entity<Payment>
+public class Payment : Entity
 {
     public string? Identifier { get; protected set; } = null!;
     public User User { get; protected set; } = null!;

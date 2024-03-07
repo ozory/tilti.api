@@ -7,7 +7,7 @@ using Domain.ValueObjects;
 
 namespace Domain.Features.Orders.Entities;
 
-public class Order : Entity<Order>
+public class Order : Entity
 {
     #region PROPERTIES
 

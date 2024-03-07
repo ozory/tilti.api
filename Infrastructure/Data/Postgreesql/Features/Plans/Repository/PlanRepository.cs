@@ -46,6 +46,11 @@ public class PlanRepository : IPlanRepository
         return plan?.ToDomainPlan()!;
     }
 
+    public Task SaveChangesAsync()
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Plan> UpdateAsync(Plan entity)
     {
         var plan = entity.ToPersistencePlan();

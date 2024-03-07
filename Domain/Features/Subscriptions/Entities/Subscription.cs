@@ -9,7 +9,7 @@ namespace Domain.Features.Subscriptions.Entities;
 /// <summary>
 /// Represents a subscription
 /// </summary>
-public class Subscription : Entity<Subscription>
+public class Subscription : Entity
 {
 
     #region PROPERTIES
@@ -73,7 +73,6 @@ public class Subscription : Entity<Subscription>
     /// <returns></returns>
     public void SetDueDate(DateTime newDueDate)
     {
-        if (newDueDate < DateTime.Now) AddError("A data não pode ser menor");
         DueDate = newDueDate;
     }
 

@@ -57,6 +57,11 @@ public class SubscriptionRepository : ISubscriptionRepository
         return sub!;
     }
 
+    public Task SaveChangesAsync()
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Subscription> UpdateAsync(Subscription entity)
     {
         var plan = entity.ToPersistenceSub();
