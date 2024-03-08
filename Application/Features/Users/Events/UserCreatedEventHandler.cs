@@ -23,6 +23,7 @@ public class UserCreatedEventHandler : INotificationHandler<UserCreatedDomainEve
     {
         var sender = await _bus.GetSendEndpoint(new Uri(_configuration["Infrastructure:Queues:UserCreatedQueue"]!));
         await sender.Send(notification, cancellationToken);
+
         _logger.LogInformation($"Publicando evento de criação de usuário {notification.Email}");
     }
 }

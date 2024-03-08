@@ -20,6 +20,7 @@ public class UserCreatedConsumerDefinition :
 {
     public UserCreatedConsumerDefinition()
     {
+        EndpointName = "user-created";
         // limit the number of messages consumed concurrently
         // this applies to the consumer only, not the endpoint
         ConcurrentMessageLimit = 5;
