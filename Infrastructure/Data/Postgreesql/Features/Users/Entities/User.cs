@@ -1,11 +1,13 @@
+using Domain.Abstractions;
 using Domain.Enums;
 using Domain.Shared.Abstractions;
 using Infrastructure.Data.Postgreesql.Features.Orders.Entities;
+using Infrastructure.Data.Postgreesql.Shared.Abstractions;
 using Npgsql.Replication;
 using DomainUser = Domain.Features.Users.Entities.User;
 namespace Infrastructure.Data.Postgreesql.Features.Users.Entities;
 
-public class User : AbstractEntity
+public class User : InfrastructureEntity
 {
     // Campos de usuário
     public long Id { get; set; }
@@ -33,7 +35,7 @@ public class User : AbstractEntity
     public ICollection<Order>? UserOrders { get; } = [];
     public ICollection<Order>? DriverOrders { get; } = [];
 
-    public static implicit operator User(DomainUser user)
+    public static explicit operator User(DomainUser user)
     {
         User persistanceUser = new User
         {
@@ -54,6 +56,8 @@ public class User : AbstractEntity
             ValidationSalt = user.VerificationSalt,
             DriveEnable = user.DriveEnable,
             PaymentToken = user.PaymentToken,
+
+            // DomainEvents
             DomainEvents = user.DomainEvents
         };
 

@@ -70,6 +70,8 @@ public class UserConfiguration : IEntityTypeConfiguration<InfrastructureUser>
             .HasColumnName("PaymentToken")
             .HasMaxLength(1000);
 
+        builder.Ignore(x => x.DomainEvents);
+
         builder.Property(b => b.Status);
 
     }

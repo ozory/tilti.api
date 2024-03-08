@@ -46,7 +46,7 @@ public class PlanRepository : IPlanRepository
         return plan?.ToDomainPlan()!;
     }
 
-    public Task SaveChangesAsync()
+    public Task SaveChangesAsync(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

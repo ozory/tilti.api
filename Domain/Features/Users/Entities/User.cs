@@ -2,6 +2,7 @@ using Domain.Abstractions;
 using Domain.Enums;
 using Domain.Features.Orders.Entities;
 using Domain.Features.Subscriptions.Entities;
+using Domain.Features.Users.Events;
 using Domain.Shared.Abstractions;
 using Domain.ValueObjects;
 
@@ -83,6 +84,8 @@ public class User : Entity
 
         user.Status = UserStatus.PendingApproval;
         user.CreatedAt = createdDate ?? DateTime.Now;
+
+        user.AddDomainEvent(UserCreatedDomainEvent.Create(user));
         return user;
     }
 

@@ -1,5 +1,6 @@
 using Domain.Abstractions;
 using Domain.Shared.Abstractions;
+using Infrastructure.Data.Postgreesql.Shared.Abstractions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,9 +9,8 @@ using InfrastructureUser = Infrastructure.Data.Postgreesql.Features.Users.Entiti
 
 namespace Infrastructure.Data.Postgreesql.Shared;
 
-public abstract class GenericRepository<TSource, TDestination>
-    where TSource : Entity
-    where TDestination : AbstractEntity
+public abstract class GenericRepository<TDestination>
+    where TDestination : InfrastructureEntity
 {
     protected readonly TILTContext _context;
     private readonly IMediator _mediator;
@@ -24,32 +24,39 @@ public abstract class GenericRepository<TSource, TDestination>
         this.dbSet = _context.Set<TDestination>();
     }
 
-    public async Task<IReadOnlyList<TSource>> GetAllAsync()
+    public virtual async Task<IReadOnlyList<TDestination>> GetAllAsync()
     {
         var resources = await this.dbSet.AsNoTracking().ToListAsync();
-        var userList = resources.Select(u => u as TSource).ToList();
+        var userList = resources.Select(u => u).ToList();
         return userList!;
     }
 
-    public async Task<TSource?> GetByIdAsync(long id)
+    public virtual async Task<TDestination?> GetByIdAsync(long id)
     {
         var user = await this.dbSet.FindAsync(id);
-        return user as TSource;
+        return user;
     }
 
-    public async Task<TSource> SaveAsync(TSource entity)
+    public virtual async Task<TDestination> SaveAsync(TDestination entity)
     {
-        await this.dbSet.AddAsync((entity as TDestination)!);
+        await this.dbSet.AddAsync(entity);
         return entity;
     }
 
-    public async Task SaveChangesAsync()
+    public virtual async Task SaveChangesAsync(CancellationToken cancellationToken)
     {
-        _context.SaveChanges();
+        // _context.SaveChanges();
+        ExecuteDomainEvents();
 
+        // Dispatch domain events after save changes
+        await Task.CompletedTask;
+    }
+
+    private void ExecuteDomainEvents()
+    {
         var domainEntities = _context.ChangeTracker
-            .Entries<Entity>()
-            .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any());
+                    .Entries<InfrastructureEntity>()
+                    .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any());
 
         var domainEvents = domainEntities
             .SelectMany(x => x.Entity.DomainEvents)
@@ -58,18 +65,19 @@ public abstract class GenericRepository<TSource, TDestination>
         domainEntities.ToList()
             .ForEach(entity => entity.Entity.ClearEvents());
 
-        // Dispatch domain events after save changes
-        foreach (var domainEvent in domainEvents)
-            await _mediator.Publish(domainEvent);
+
+        _ = Task.Run(() =>
+        {
+            Parallel.ForEach(domainEvents, domainEvent => { _mediator.Publish(domainEvent); });
+        });
     }
 
-    public async Task<TSource> UpdateAsync(TSource entity)
+    public virtual async Task<TDestination> UpdateAsync(TDestination entity)
     {
-        var destination = entity as TDestination;
-        dbSet.Attach(destination!);
-        _context.Entry(destination!).State = EntityState.Modified;
+        dbSet.Attach(entity);
+        _context.Entry(entity).State = EntityState.Modified;
         await Task.CompletedTask;
-        return (destination as TSource)!;
+        return entity;
     }
 }
 

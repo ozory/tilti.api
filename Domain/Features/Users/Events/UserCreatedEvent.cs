@@ -16,13 +16,16 @@ public record UserCreatedDomainEvent : IDomainEvent
     public Boolean DriveEnable { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-    public UserCreatedDomainEvent(User user)
+    public static UserCreatedDomainEvent Create(User user)
     {
-        this.Id = user.Id;
-        this.Name = user.Name.Value!;
-        this.Email = user.Email.Value!;
-        this.Document = user.Document.Value!;
-        this.DriveEnable = user.DriveEnable;
-        this.CreatedAt = user.CreatedAt;
+        return new UserCreatedDomainEvent
+        {
+            Id = user.Id,
+            Name = user.Name.Value!,
+            Email = user.Email.Value!,
+            Document = user.Document.Value!,
+            DriveEnable = user.DriveEnable,
+            CreatedAt = user.CreatedAt
+        };
     }
 }

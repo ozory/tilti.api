@@ -57,7 +57,7 @@ public class SubscriptionRepository : ISubscriptionRepository
         return sub!;
     }
 
-    public Task SaveChangesAsync()
+    public Task SaveChangesAsync(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

@@ -3,6 +3,7 @@ using Infrastructure.Data.Postgreesql.Features.Orders.Entities;
 using DomainOrder = Domain.Features.Orders.Entities.Order;
 using DomainAddress = Domain.ValueObjects.Address;
 using Domain.Features.Users.Entities;
+using DomainUser = Domain.Features.Users.Entities.User;
 
 namespace Infrastructure.Data.Postgreesql.Features.Subscriptions.Maps;
 
@@ -54,7 +55,7 @@ public static class OrderMap
             order.Created
         );
 
-        domainOrder.SetDriver(order.Driver);
+        domainOrder.SetDriver((DomainUser?)order.Driver);
         domainOrder.SetStatus((OrderStatus)order.Status);
         domainOrder.SetUpdatedAt(order.Updated);
         domainOrder.SetAmount(order.Amount);

@@ -76,7 +76,7 @@ public class OrdersRepository : IOrderRepository
         return order?.ToDomainOrder()!;
     }
 
-    public Task SaveChangesAsync()
+    public Task SaveChangesAsync(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
