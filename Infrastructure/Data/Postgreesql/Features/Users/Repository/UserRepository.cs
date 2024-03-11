@@ -1,8 +1,11 @@
 using System.Collections.Immutable;
+using System.Linq;
+using System.Linq.Expressions;
 using Domain.Abstractions;
 using Domain.Features.Users.Entities;
 using Domain.Features.Users.Repository;
 using Infrastructure.Data.Postgreesql.Shared;
+using MassTransit.Internals;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using DomainUser = Domain.Features.Users.Entities.User;
@@ -14,7 +17,7 @@ public class UserRepository :
     GenericRepository<InfrastructureUser>,
     IUserRepository
 {
-    public UserRepository(TILTContext context, IMediator mediator) : base(context, mediator) { }
+    public UserRepository(TILTContext context) : base(context) { }
 
     public async Task<DomainUser> SaveAsync(DomainUser entity)
         => (DomainUser)await base.SaveAsync((InfrastructureUser)entity);

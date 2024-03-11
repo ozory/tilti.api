@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace Domain.Abstractions;
 
 public interface IGenericRepository<TSource> where TSource : class
@@ -6,5 +8,4 @@ public interface IGenericRepository<TSource> where TSource : class
     Task<TSource> UpdateAsync(TSource entity);
     Task<TSource?> GetByIdAsync(long id);
     Task<IReadOnlyList<TSource>> GetAllAsync();
-    Task SaveChangesAsync(CancellationToken cancellationToken);
 }

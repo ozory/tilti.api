@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data.Postgreesql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Data.Postgreesql.Migrations
 {
     [DbContext(typeof(TILTContext))]
-    partial class TILTContextModelSnapshot : ModelSnapshot
+    [Migration("20240311142519_Hilo")]
+    partial class Hilo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,10 +26,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.HasSequence("Sequence-Orders")
-                .IncrementsBy(10);
-
-            modelBuilder.HasSequence("Sequence-Users")
+            modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
                 .IncrementsBy(10);
 
             modelBuilder.Entity("Infrastructure.Data.Postgreesql.Features.Orders.Entities.Order", b =>
@@ -35,7 +35,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "Sequence-Orders");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime?>("AcceptanceTime")
                         .HasColumnType("timestamp")
@@ -69,7 +69,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.Property<DateTime>("Updated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
-                        .HasDefaultValue(new DateTime(2024, 3, 11, 11, 34, 3, 527, DateTimeKind.Local).AddTicks(8520))
+                        .HasDefaultValue(new DateTime(2024, 3, 11, 11, 25, 19, 211, DateTimeKind.Local).AddTicks(7410))
                         .HasColumnName("Updated");
 
                     b.Property<long>("UserId")
@@ -117,7 +117,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.Property<DateTime>("Updated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
-                        .HasDefaultValue(new DateTime(2024, 3, 11, 11, 34, 3, 530, DateTimeKind.Local).AddTicks(3530))
+                        .HasDefaultValue(new DateTime(2024, 3, 11, 11, 25, 19, 214, DateTimeKind.Local).AddTicks(3480))
                         .HasColumnName("Updated");
 
                     b.HasKey("Id");
@@ -179,7 +179,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.Property<DateTime>("Updated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
-                        .HasDefaultValue(new DateTime(2024, 3, 11, 11, 34, 3, 530, DateTimeKind.Local).AddTicks(1710))
+                        .HasDefaultValue(new DateTime(2024, 3, 11, 11, 25, 19, 214, DateTimeKind.Local).AddTicks(1590))
                         .HasColumnName("Updated");
 
                     b.Property<long>("UserId")
@@ -201,7 +201,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "Sequence-Users");
+                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "EntityFrameworkHiLoSequence");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp")
@@ -250,7 +250,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.Property<DateTime>("Updated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
-                        .HasDefaultValue(new DateTime(2024, 3, 11, 11, 34, 3, 530, DateTimeKind.Local).AddTicks(5030))
+                        .HasDefaultValue(new DateTime(2024, 3, 11, 11, 25, 19, 214, DateTimeKind.Local).AddTicks(5210))
                         .HasColumnName("Updated");
 
                     b.Property<string>("ValidationCode")

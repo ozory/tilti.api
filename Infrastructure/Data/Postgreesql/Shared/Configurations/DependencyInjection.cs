@@ -5,11 +5,13 @@ using Domain.Features.Orders.Repository;
 using Domain.Features.Plans.Repository;
 using Domain.Features.Subscriptions.Repository;
 using Domain.Features.Users.Repository;
+using Domain.Shared.Abstractions;
 using Infrastructure.Data.Postgreesql.Features.Orders.Repository;
 using Infrastructure.Data.Postgreesql.Features.Plans.Repository;
 using Infrastructure.Data.Postgreesql.Features.Security.Repository;
 using Infrastructure.Data.Postgreesql.Features.Subscriptions.Repository;
 using Infrastructure.Data.Postgreesql.Features.Users.Repository;
+using Infrastructure.Data.Postgreesql.Shared.Abstractions;
 using Infrastructure.Features.Orders.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
@@ -34,6 +36,7 @@ public static class DependencyInjection
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
         services.AddScoped<IOrderRepository, OrdersRepository>();
         services.AddScoped<ISecurityRepository, SecurityRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = configuration.GetSection("Infrastructure:Redis:Server").Value;

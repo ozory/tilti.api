@@ -13,6 +13,9 @@ public class UserConfiguration : IEntityTypeConfiguration<InfrastructureUser>
 
         builder.HasKey(b => b.Id);
 
+        builder.Property(x => x.Id)
+            .UseHiLo($"Sequence-Users");
+
         builder.Property(x => x.Name)
             .HasColumnName("Name")
             .HasMaxLength(250)

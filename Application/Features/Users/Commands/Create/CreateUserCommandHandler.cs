@@ -3,6 +3,7 @@ using Application.Shared.Abstractions;
 using Domain.Features.Users.Entities;
 using Domain.Features.Users.Events;
 using Domain.Features.Users.Repository;
+using Domain.Shared.Abstractions;
 using FluentResults;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Application.Features.Users.Commands.CreateUser;
 
 public class CreateUserCommandHandler(
-    IUserRepository repository,
+    IUnitOfWork unitOfWork,
     ILogger<CreateUserCommandHandler> logger,
     IValidator<CreateUserCommand> validator,
     ISecurityExtensions securityExtensions) : ICommandHandler<CreateUserCommand, UserResponse>
@@ -33,8 +34,11 @@ public class CreateUserCommandHandler(
         user.SetPassword(securityExtensions.ComputeHash(securitySalt, request.Password));
         user.SetVerificationCode(securityExtensions.ComputeValidationCode());
 
-        var savedUser = await repository.SaveAsync(user);
-        await repository.SaveChangesAsync(cancellationToken);
+        var userRepository = unitOfWork.GetRepository<User>();
+
+        var savedUser = await userRepository.SaveAsync(user);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation($"Usuário {request.Email} criado com sucesso");
         return Result.Ok((UserResponse)savedUser);

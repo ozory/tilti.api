@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+using System.Linq.Expressions;
 using Domain.Abstractions;
 using Domain.Shared.Abstractions;
 using Infrastructure.Data.Postgreesql.Shared.Abstractions;
@@ -13,14 +15,12 @@ public abstract class GenericRepository<TDestination>
     where TDestination : InfrastructureEntity
 {
     protected readonly TILTContext _context;
-    private readonly IMediator _mediator;
 
     internal DbSet<TDestination> dbSet;
 
-    protected GenericRepository(TILTContext context, IMediator mediatr)
+    protected GenericRepository(TILTContext context)
     {
         _context = context;
-        _mediator = mediatr;
         this.dbSet = _context.Set<TDestination>();
     }
 
@@ -43,41 +43,22 @@ public abstract class GenericRepository<TDestination>
         return entity;
     }
 
-    public virtual async Task SaveChangesAsync(CancellationToken cancellationToken)
-    {
-        // _context.SaveChanges();
-        ExecuteDomainEvents();
-
-        // Dispatch domain events after save changes
-        await Task.CompletedTask;
-    }
-
-    private void ExecuteDomainEvents()
-    {
-        var domainEntities = _context.ChangeTracker
-                    .Entries<InfrastructureEntity>()
-                    .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any());
-
-        var domainEvents = domainEntities
-            .SelectMany(x => x.Entity.DomainEvents)
-            .ToList();
-
-        domainEntities.ToList()
-            .ForEach(entity => entity.Entity.ClearEvents());
-
-
-        _ = Task.Run(() =>
-        {
-            Parallel.ForEach(domainEvents, domainEvent => { _mediator.Publish(domainEvent); });
-        });
-    }
-
     public virtual async Task<TDestination> UpdateAsync(TDestination entity)
     {
         dbSet.Attach(entity);
         _context.Entry(entity).State = EntityState.Modified;
         await Task.CompletedTask;
         return entity;
+    }
+
+    public async Task<TDestination?> FirstOrDefault(Expression<Func<TDestination, bool>> predicate)
+    {
+        return await this.dbSet.AsNoTracking().Where(predicate).FirstOrDefaultAsync();
+    }
+
+    public async Task<IReadOnlyList<TDestination>> Filter(Expression<Func<TDestination, bool>> predicate)
+    {
+        return await this.dbSet.AsNoTracking().Where(predicate).ToListAsync();
     }
 }
 

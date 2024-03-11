@@ -11,6 +11,8 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.ToTable("Orders");
 
         builder.HasKey(b => b.Id);
+        builder.Property(b => b.Id)
+            .UseHiLo($"Sequence-Orders");
         builder.Property(b => b.Status);
 
         builder.Property(x => x.Created).HasColumnName("Created").HasColumnType("timestamp");

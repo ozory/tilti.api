@@ -82,7 +82,7 @@ public class User : Entity
             new Document(document),
             new Password(password));
 
-        user.Status = UserStatus.PendingApproval;
+        user.Status = UserStatus.PendingPaymentInformation;
         user.CreatedAt = createdDate ?? DateTime.Now;
 
         user.AddDomainEvent(UserCreatedDomainEvent.Create(user));
