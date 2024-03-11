@@ -1,40 +1,40 @@
 using Domain.Features.Subscriptions.Entities;
 using Domain.Features.Subscriptions.Repository;
 using Microsoft.EntityFrameworkCore;
-using Infrastructure.Data.Postgreesql.Features.Subscriptions.Maps;
 using System.Collections.Immutable;
+using Domain.Abstractions;
+using InfrastructureSubscription = Infrastructure.Data.Postgreesql.Features.Subscriptions.Entities.Subscription;
+using Infrastructure.Data.Postgreesql.Shared;
 
 namespace Infrastructure.Data.Postgreesql.Features.Subscriptions.Repository;
 
-public class SubscriptionRepository : ISubscriptionRepository
+public class SubscriptionRepository :
+    GenericRepository<InfrastructureSubscription>,
+    ISubscriptionRepository
 {
-    private readonly TILTContext _context;
 
-    public SubscriptionRepository(TILTContext context)
-    {
-        _context = context;
-    }
+    public SubscriptionRepository(TILTContext context) : base(context) { }
 
-    public async Task<IReadOnlyList<Subscription>> GetAllAsync()
+    public new async Task<IReadOnlyList<Subscription>> GetAllAsync()
     {
         var subscriptions = await _context.Subscriptions
             .Include(u => u.User)
             .Include(u => u.Plan)
             .AsNoTracking()
             .ToListAsync();
-        var list = subscriptions.Select(u => u.ToDomainSub()).ToImmutableList();
+        var list = subscriptions.Select(u => (Subscription)u).ToImmutableList();
 
         return list!;
     }
 
-    public async Task<Subscription?> GetByIdAsync(long id)
+    public new async Task<Subscription?> GetByIdAsync(long id)
     {
         var subscriptions = await _context.Subscriptions
             .Include(u => u.User)
             .Include(p => p.Plan)
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == id);
-        return subscriptions?.ToDomainSub() ?? null;
+        return (Subscription?)subscriptions;
     }
 
     public async Task<Subscription?> GetSubscriptionByUser(long idUser)
@@ -44,29 +44,13 @@ public class SubscriptionRepository : ISubscriptionRepository
             .Include(p => p.Plan)
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.UserId == idUser);
-        return subscriptions?.ToDomainSub() ?? null;
+        return (Subscription?)subscriptions;
     }
 
     public async Task<Subscription> SaveAsync(Subscription entity)
-    {
-        var subscription = entity.ToPersistenceSub();
-        _context.Add(subscription);
-        await _context.SaveChangesAsync();
-
-        var sub = await this.GetByIdAsync(subscription.Id);
-        return sub!;
-    }
-
-    public Task SaveChangesAsync(CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+        => (Subscription)await base.SaveAsync((InfrastructureSubscription)entity);
 
     public async Task<Subscription> UpdateAsync(Subscription entity)
-    {
-        var plan = entity.ToPersistenceSub();
-        _context.Update(plan);
-        await _context.SaveChangesAsync();
-        return plan?.ToDomainSub()!;
-    }
+        => (Subscription)await base.UpdateAsync((InfrastructureSubscription)entity);
+
 }

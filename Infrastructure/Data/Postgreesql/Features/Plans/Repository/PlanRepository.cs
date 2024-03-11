@@ -1,33 +1,24 @@
 using System.Collections.Immutable;
 using Domain.Features.Plans.Entities;
 using Domain.Features.Plans.Repository;
-using Infrastructure.Data.Postgreesql.Features.Plans.Maps;
+using Infrastructure.Data.Postgreesql.Shared;
 using Microsoft.EntityFrameworkCore;
+
+using InfrastructurePlan = Infrastructure.Data.Postgreesql.Features.Plans.Entities.Plan;
 
 namespace Infrastructure.Data.Postgreesql.Features.Plans.Repository;
 
-public class PlanRepository : IPlanRepository
+public class PlanRepository :
+    GenericRepository<InfrastructurePlan>,
+    IPlanRepository
 {
-    private readonly TILTContext _context;
+    public PlanRepository(TILTContext context) : base(context) { }
 
-    public PlanRepository(TILTContext context)
-    {
-        _context = context;
-    }
+    public new async Task<Plan?> GetByIdAsync(long id)
+        => (Plan)await base.GetByIdAsync(id);
 
-    public async Task<IReadOnlyList<Plan>> GetAllAsync()
-    {
-        var plans = await _context.Plans.AsNoTracking().ToListAsync();
-        var userList = plans.Select(u => u.ToDomainPlan()).ToImmutableList();
-
-        return userList!;
-    }
-
-    public async Task<Plan?> GetByIdAsync(long id)
-    {
-        var plan = await _context.Plans.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
-        return plan?.ToDomainPlan() ?? null;
-    }
+    public new async Task<IReadOnlyList<Plan>> GetAllAsync()
+        => (IReadOnlyList<Plan>)await base.GetAllAsync();
 
     public async Task<Plan?> GetPlanByNameOrAmount(string name, decimal amount)
     {
@@ -35,27 +26,12 @@ public class PlanRepository : IPlanRepository
             .FirstOrDefaultAsync(u =>
             u.Name.ToLower() == name.ToLower() ||
             u.Amount == amount);
-        return plan?.ToDomainPlan() ?? null;
+        return (Plan?)plan;
     }
 
     public async Task<Plan> SaveAsync(Plan entity)
-    {
-        var plan = entity.ToPersistencePlan();
-        _context.Add(plan);
-        await _context.SaveChangesAsync();
-        return plan?.ToDomainPlan()!;
-    }
-
-    public Task SaveChangesAsync(CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+        => (Plan)await base.SaveAsync((InfrastructurePlan)entity);
 
     public async Task<Plan> UpdateAsync(Plan entity)
-    {
-        var plan = entity.ToPersistencePlan();
-        _context.Update(plan);
-        await _context.SaveChangesAsync();
-        return plan?.ToDomainPlan()!;
-    }
+        => (Plan)await base.UpdateAsync((InfrastructurePlan)entity);
 }
