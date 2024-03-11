@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Domain.Features.Plans.Entities;
 using Domain.Features.Plans.Repository;
 using Infrastructure.Data.Postgreesql.Shared;
+using MassTransit.Initializers;
 using Microsoft.EntityFrameworkCore;
 
 using InfrastructurePlan = Infrastructure.Data.Postgreesql.Features.Plans.Entities.Plan;
@@ -18,7 +19,7 @@ public class PlanRepository :
         => (Plan)await base.GetByIdAsync(id);
 
     public new async Task<IReadOnlyList<Plan>> GetAllAsync()
-        => (IReadOnlyList<Plan>)await base.GetAllAsync();
+    => (await base.GetAllAsync()).Select(p => (Plan)p).ToImmutableList();
 
     public async Task<Plan?> GetPlanByNameOrAmount(string name, decimal amount)
     {

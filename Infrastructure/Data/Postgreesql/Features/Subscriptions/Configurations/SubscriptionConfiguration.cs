@@ -33,6 +33,8 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Infrastructure
             .HasForeignKey(e => e.PlanId)
             .IsRequired(false);
 
+        builder.Ignore(x => x.DomainEvents);
+
         builder.Property(b => b.Status);
     }
 }

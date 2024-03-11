@@ -33,7 +33,7 @@ public class Plan : InfrastructureEntity
         return persistencePlan;
     }
 
-    public static implicit operator DomainPlan(Plan? plan)
+    public static explicit operator DomainPlan(Plan? plan)
     {
         if (plan is null) return null!;
         var domainPlan = DomainPlan.Create(

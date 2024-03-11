@@ -13,6 +13,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasKey(b => b.Id);
         builder.Property(b => b.Id)
             .UseHiLo($"Sequence-Orders");
+
         builder.Property(b => b.Status);
 
         builder.Property(x => x.Created).HasColumnName("Created").HasColumnType("timestamp");
@@ -50,5 +51,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .WithMany(s => s.DriverOrders)
             .HasForeignKey(e => e.DriverId)
             .IsRequired(false);
+
+        builder.Ignore(x => x.DomainEvents);
     }
 }

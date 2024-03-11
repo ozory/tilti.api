@@ -42,5 +42,7 @@ public class PlanConfiguration : IEntityTypeConfiguration<InfrastructurePlan>
             .HasForeignKey(p => p.PlanId)
             .IsRequired(false);
 
+        builder.Ignore(x => x.DomainEvents);
+
     }
 }

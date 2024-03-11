@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq.Expressions;
 using Domain.Abstractions;
 using Domain.Shared.Abstractions;
@@ -24,17 +25,20 @@ public abstract class GenericRepository<TDestination>
         this.dbSet = _context.Set<TDestination>();
     }
 
+    public virtual async Task<IReadOnlyList<TDestination>> GetAllAsyncSourced()
+    {
+        return await this.dbSet.AsNoTracking().ToListAsync();
+    }
+
     public virtual async Task<IReadOnlyList<TDestination>> GetAllAsync()
     {
-        var resources = await this.dbSet.AsNoTracking().ToListAsync();
-        var userList = resources.Select(u => u).ToList();
-        return userList!;
+        return await this.dbSet.AsNoTracking().ToListAsync();
     }
 
     public virtual async Task<TDestination?> GetByIdAsync(long id)
     {
-        var user = await this.dbSet.FindAsync(id);
-        return user;
+        var entity = await this.dbSet.FindAsync(id);
+        return entity;
     }
 
     public virtual async Task<TDestination> SaveAsync(TDestination entity)

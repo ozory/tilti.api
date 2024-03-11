@@ -4,6 +4,7 @@ using Infrastructure.Data.Postgreesql.Features.Users.Entities;
 using Infrastructure.Data.Postgreesql.Shared.Abstractions;
 
 using DomainSubscription = Domain.Features.Subscriptions.Entities.Subscription;
+using DomainPlan = Domain.Features.Plans.Entities.Plan;
 namespace Infrastructure.Data.Postgreesql.Features.Subscriptions.Entities;
 
 public class Subscription : InfrastructureEntity
@@ -41,7 +42,7 @@ public class Subscription : InfrastructureEntity
         var domainSub = DomainSubscription.Create(
             subscription.Id,
             subscription.User,
-            subscription.Plan,
+            (DomainPlan)subscription.Plan,
             subscription.Created
         );
 

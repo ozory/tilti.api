@@ -14,6 +14,8 @@ public class Plan : Entity
     public Amount Amount { get; private set; } = null!;
     public PlanStatus Status { get; private set; }
 
+    public Plan() { }
+
     /// <summary>
     /// 
     /// </summary>
