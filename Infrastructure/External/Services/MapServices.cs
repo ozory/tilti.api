@@ -9,7 +9,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using GoogleApi.Entities.Maps.DistanceMatrix.Response;
 using System.Text.Json;
 
-namespace Infrastructure.Features.Orders.Services;
+namespace Infrastructure.External.Orders.Services;
 
 public class MapServices : IMapServices
 {
@@ -103,9 +103,9 @@ public class MapServices : IMapServices
         order.SetDistanceInKM(distance);
         order.SetDurationInSeconds(duration);
 
-        var valuePerKM = (pricePerKM * order.DistanceInKM) / 1000;
+        var valuePerKM = pricePerKM * order.DistanceInKM / 1000;
         var valuePerDuration = (pricePerDuration * (order.DurationInSeconds / 60));
 
-        order.SetAmount((valuePerKM + valuePerDuration));
+        order.SetAmount(valuePerKM + valuePerDuration);
     }
 }

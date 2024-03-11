@@ -4,7 +4,7 @@ using Application.Shared.Abstractions;
 using Domain.Features.Payments.Entities;
 using Domain.Features.Users.Entities;
 
-namespace Infrastructure.Features.Orders.Services;
+namespace Infrastructure.External.Orders.Services;
 
 public class PaymentServices : IPaymentServices
 {
