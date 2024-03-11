@@ -34,11 +34,11 @@ public class CreateUserCommandHandler(
         user.SetPassword(securityExtensions.ComputeHash(securitySalt, request.Password));
         user.SetVerificationCode(securityExtensions.ComputeValidationCode());
 
-        var userRepository = unitOfWork.GetRepository<User>();
+        var userRepository = unitOfWork.GetUserRepository();
 
         var savedUser = await userRepository.SaveAsync(user);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.CommitAsync(cancellationToken);
 
         logger.LogInformation($"Usuário {request.Email} criado com sucesso");
         return Result.Ok((UserResponse)savedUser);

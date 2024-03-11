@@ -2,39 +2,32 @@ using Application.Features.Plans.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Plans.Repository;
 using Domain.Plans.Enums;
+using Domain.Shared.Abstractions;
 using FluentResults;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Plans.Commands.Update;
 
-public class UpdatePlanCommandHandler : ICommandHandler<UpdatePlanCommand, PlanResponse>
-{
-    private readonly IPlanRepository _repository;
-    private readonly ILogger<UpdatePlanCommandHandler> _logger;
-    private readonly IValidator<UpdatePlanCommand> _validator;
-
-    public UpdatePlanCommandHandler(
-        IPlanRepository repository,
+public class UpdatePlanCommandHandler(
+        IUnitOfWork unitOfWork,
         ILogger<UpdatePlanCommandHandler> logger,
-        IValidator<UpdatePlanCommand> validator)
-    {
-        _repository = repository;
-        _logger = logger;
-        _validator = validator;
-    }
+        IValidator<UpdatePlanCommand> validator) : ICommandHandler<UpdatePlanCommand, PlanResponse>
+{
 
     public async Task<Result<PlanResponse>> Handle(UpdatePlanCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Atualizando plano {request.Name}");
+        logger.LogInformation($"Atualizando plano {request.Name}");
 
-        var validationResult = await _validator.ValidateAsync(request);
+        var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        var plan = await _repository.GetByIdAsync(request.Id);
+        var planRepository = unitOfWork.GetPlanRepository();
+
+        var plan = await planRepository.GetByIdAsync(request.Id);
         if (plan == null) return Result.Fail("Plan not found");
 
-        var pl = await _repository.GetPlanByNameOrAmount(request.Name, request.Amount);
+        var pl = await planRepository.GetPlanByNameOrAmount(request.Name, request.Amount);
         if (pl != null && pl.Id != request.Id) return Result.Fail("A plan with this name or amount allready exists");
 
 
@@ -45,9 +38,11 @@ public class UpdatePlanCommandHandler : ICommandHandler<UpdatePlanCommand, PlanR
         plan.SetDescription(request.Description);
         plan.SetStatus(status);
 
-        var savedPlan = await _repository.UpdateAsync(plan);
+        var savedPlan = await planRepository.UpdateAsync(plan);
 
-        _logger.LogInformation($"Plano {request.Name} atualizado com sucesso");
+        await unitOfWork.CommitAsync(cancellationToken);
+
+        logger.LogInformation($"Plano {request.Name} atualizado com sucesso");
         return Result.Ok((PlanResponse)savedPlan);
     }
 }

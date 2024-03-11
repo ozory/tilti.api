@@ -3,36 +3,30 @@ using Application.Shared.Abstractions;
 using Domain.Features.Plans.Entities;
 using Domain.Features.Plans.Repository;
 using Domain.Plans.Enums;
+using Domain.Shared.Abstractions;
 using FluentResults;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Plans.Commands.Create;
 
-public class CreatePlanCommandHandler : ICommandHandler<CreatePlanCommand, PlanResponse>
+public class CreatePlanCommandHandler(
+    IUnitOfWork unitOfWork,
+    ILogger<CreatePlanCommandHandler> logger,
+    IValidator<CreatePlanCommand> validator) : ICommandHandler<CreatePlanCommand, PlanResponse>
 {
-    private readonly IPlanRepository _repository;
-    private readonly ILogger<CreatePlanCommandHandler> _logger;
-    private readonly IValidator<CreatePlanCommand> _validator;
-
-    public CreatePlanCommandHandler(
-        IPlanRepository repository,
-        ILogger<CreatePlanCommandHandler> logger,
-        IValidator<CreatePlanCommand> validator)
-    {
-        _repository = repository;
-        _logger = logger;
-        _validator = validator;
-    }
 
     public async Task<Result<PlanResponse>> Handle(CreatePlanCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Criando plano {request.Name}");
+        logger.LogInformation($"Criando plano {request.Name}");
 
-        var validationResult = await _validator.ValidateAsync(request);
+        var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        var pl = await _repository.GetPlanByNameOrAmount(request.Name, request.Amount);
+        var planRepository = unitOfWork.GetPlanRepository();
+
+        logger.LogInformation($"Verificando se plano {request.Name}");
+        var pl = await planRepository.GetPlanByNameOrAmount(request.Name, request.Amount);
         if (pl != null) return Result.Fail("A plan with this name or amount allready exists");
 
         var plan = Plan.Create(
@@ -44,7 +38,9 @@ public class CreatePlanCommandHandler : ICommandHandler<CreatePlanCommand, PlanR
             DateTime.Now
         );
 
-        var savedPlan = await _repository.SaveAsync(plan);
+        var savedPlan = await planRepository.SaveAsync(plan);
+        await unitOfWork.CommitAsync(cancellationToken);
+
         return Result.Ok((PlanResponse)savedPlan);
     }
 }

@@ -2,6 +2,7 @@ using Application.Features.Security.Contracts;
 using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Users.Repository;
+using Domain.Shared.Abstractions;
 using FluentResults;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
@@ -22,13 +23,15 @@ public class AuthenticateUserCommandHandler
         IUserRepository repository,
         IValidator<AuthenticateUserCommand> validator,
         ISecurityExtensions securityExtensions,
+        ISecurityRepository _securityRepository,
+        IUnitOfWork unitOfWork,
         ISecurityRepository securityRepository)
     {
         _repository = repository;
         _logger = logger;
         _validator = validator;
         _securityExtensions = securityExtensions;
-        _securityRepository = securityRepository;
+        this._securityRepository = securityRepository;
     }
 
     public async Task<Result<AuthenticationResponse>> Handle(
@@ -66,6 +69,7 @@ public class AuthenticateUserCommandHandler
             user.Email.Value,
             _securityExtensions.GenerateToken(user),
             refreshToken.RefreshToken);
+
 
         await _securityRepository.DeleteToken(user.Id);
         await _securityRepository.SaveToken(refreshToken);
