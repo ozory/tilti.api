@@ -44,7 +44,7 @@ public class AuthenticateUserCommandHandler
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
         _logger.LogInformation($"Criando usuário {request.Email}");
-        var user = await _repository.GetByEmail(request.Email);
+        var user = await _repository.FirstOrDefault(x => x.Email.Value!.Equals(request.Email, StringComparison.InvariantCultureIgnoreCase));
 
         var passwordHash = _securityExtensions.ComputeHash(user!.VerificationSalt!, request.Password);
 
