@@ -14,6 +14,9 @@ public class Order : Entity
     internal List<Item> _items = new();
     internal List<Address> _addresses = new();
 
+    public long UserId { get; protected set; }
+    public long? DriverId { get; protected set; }
+
     public User? User { get; protected set; } = null!;
     public User? Driver { get; protected set; }
     public Amount Amount { get; protected set; } = null!;
@@ -34,6 +37,8 @@ public class Order : Entity
     #endregion
 
     #region CONSTRUCTORS
+
+    private Order() { }
 
     public static Order Create(
         long? id,
@@ -66,6 +71,7 @@ public class Order : Entity
     /// <param name="user"></param>
     public void SetUser(User? user)
     {
+        this.UserId = user?.Id ?? 0;
         this.User = user;
     }
 
@@ -97,6 +103,8 @@ public class Order : Entity
     /// <param name="driver"></param>
     public void SetDriver(User? driver)
     {
+        if (driver is null) return;
+        this.DriverId = driver.Id;
         this.Driver = driver;
     }
 
@@ -104,8 +112,9 @@ public class Order : Entity
     /// 
     /// </summary>
     /// <param name="driver"></param>
-    public void RemoveDriver(User driver)
+    public void RemoveDriver()
     {
+        this.DriverId = null;
         this.Driver = null;
     }
 

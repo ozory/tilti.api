@@ -14,14 +14,18 @@ public class Subscription : Entity
 
     #region PROPERTIES
 
-    public User User { get; private set; } = null!;
-    public SubscriptionStatus Status { get; private set; } = SubscriptionStatus.Active;
-    public Plan Plan { get; private set; } = null!;
-    public DateTime DueDate { get; private set; }
+    public long UserId { get; protected set; }
+    public long PlanId { get; protected set; }
+    public User User { get; protected set; } = null!;
+    public SubscriptionStatus Status { get; protected set; } = SubscriptionStatus.Active;
+    public Plan Plan { get; protected set; } = null!;
+    public DateTime DueDate { get; protected set; }
 
     #endregion
 
     #region CONSTRUCTORS
+
+    private Subscription() { }
 
     private Subscription(long? id, User user, Plan plan, DateTime? createdAt)
     {

@@ -1,53 +1,44 @@
-using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq.Expressions;
 using Domain.Abstractions;
-using Domain.Shared.Abstractions;
-using Infrastructure.Data.Postgreesql.Shared.Abstractions;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-
-using DomainUser = Domain.Features.Users.Entities.User;
-using InfrastructureUser = Infrastructure.Data.Postgreesql.Features.Users.Entities.User;
 
 namespace Infrastructure.Data.Postgreesql.Shared;
 
-public abstract class GenericRepository<TDestination>
-    where TDestination : InfrastructureEntity
+public abstract class GenericRepository<TEntity>
+    where TEntity : Entity
 {
     protected readonly TILTContext _context;
 
-    internal DbSet<TDestination> dbSet;
+    internal DbSet<TEntity> dbSet;
 
     protected GenericRepository(TILTContext context)
     {
         _context = context;
-        this.dbSet = _context.Set<TDestination>();
+        this.dbSet = _context.Set<TEntity>();
     }
 
-    public virtual async Task<IReadOnlyList<TDestination>> GetAllAsyncSourced()
+    public virtual async Task<IReadOnlyList<TEntity>> GetAllAsyncSourced()
     {
         return await this.dbSet.AsNoTracking().ToListAsync();
     }
 
-    public virtual async Task<IReadOnlyList<TDestination>> GetAllAsync()
+    public virtual async Task<IReadOnlyList<TEntity>> GetAllAsync()
     {
         return await this.dbSet.AsNoTracking().ToListAsync();
     }
 
-    public virtual async Task<TDestination?> GetByIdAsync(long id)
+    public virtual async Task<TEntity?> GetByIdAsync(long id)
     {
-        var entity = await this.dbSet.FindAsync(id);
-        return entity;
+        return await this.dbSet.FindAsync(id);
     }
 
-    public virtual async Task<TDestination> SaveAsync(TDestination entity)
+    public virtual async Task<TEntity> SaveAsync(TEntity entity)
     {
         await this.dbSet.AddAsync(entity);
         return entity;
     }
 
-    public virtual async Task<TDestination> UpdateAsync(TDestination entity)
+    public virtual async Task<TEntity> UpdateAsync(TEntity entity)
     {
         dbSet.Attach(entity);
         _context.Entry(entity).State = EntityState.Modified;
@@ -55,12 +46,12 @@ public abstract class GenericRepository<TDestination>
         return entity;
     }
 
-    public async Task<TDestination?> FirstOrDefault(Expression<Func<TDestination, bool>> predicate)
+    public async Task<TEntity?> FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
     {
         return await this.dbSet.AsNoTracking().Where(predicate).FirstOrDefaultAsync();
     }
 
-    public async Task<IReadOnlyList<TDestination>> Filter(Expression<Func<TDestination, bool>> predicate)
+    public async Task<IReadOnlyList<TEntity>> Filter(Expression<Func<TEntity, bool>> predicate)
     {
         return await this.dbSet.AsNoTracking().Where(predicate).ToListAsync();
     }

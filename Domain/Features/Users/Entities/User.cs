@@ -24,18 +24,20 @@ public class User : Entity
     public UserStatus Status { get; protected set; }
     public string? PaymentToken { get; protected set; }
 
-
     public string? Photo { get; protected set; }
     public string? VerificationCode { get; protected set; }
     public string? VerificationSalt { get; protected set; }
 
-    public virtual ICollection<Order> Orders { get; protected set; } = null!;
+    public virtual ICollection<Order> UserOrders { get; protected set; } = null!;
+    public virtual ICollection<Order> DriverOrders { get; protected set; } = null!;
     public virtual Subscription? Subscription { get; protected set; } = null!;
 
 
     #endregion
 
     #region CONSTRUCTORS
+
+    private User() { }
 
     /// <summary>
     /// Cria um novo usuário

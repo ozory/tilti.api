@@ -1,4 +1,5 @@
 using Domain.Abstractions;
+using Domain.Features.Subscriptions.Entities;
 using Domain.Plans.Enums;
 using Domain.ValueObjects;
 
@@ -9,12 +10,19 @@ namespace Domain.Features.Plans.Entities;
 /// </summary>
 public class Plan : Entity
 {
+    #region PROPERTIES
     public Name Name { get; private set; } = null!;
     public Description Description { get; private set; } = null!;
     public Amount Amount { get; private set; } = null!;
     public PlanStatus Status { get; private set; }
 
-    public Plan() { }
+    public virtual ICollection<Subscription> Subscriptions { get; protected set; } = [];
+
+    #endregion
+
+    #region CONSTRUCTORS
+
+    private Plan() { }
 
     /// <summary>
     /// 
@@ -62,6 +70,10 @@ public class Plan : Entity
         return plan;
     }
 
+    #endregion
+
+    #region METHODS
+
     public void SetUpdatedAt(DateTime updatedAt) => this.UpdatedAt = updatedAt;
 
     public void SetName(string name) => this.Name.SetValue(name);
@@ -71,4 +83,6 @@ public class Plan : Entity
     public void SetAmount(decimal amount) => this.Amount.SetValue(amount);
 
     public void SetStatus(PlanStatus planStatus) => this.Status = planStatus;
+
+    #endregion
 }

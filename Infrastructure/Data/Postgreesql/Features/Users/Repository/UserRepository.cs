@@ -1,45 +1,17 @@
-using System.Collections.Immutable;
-using System.Linq;
-using System.Linq.Expressions;
-using Domain.Abstractions;
 using Domain.Features.Users.Entities;
 using Domain.Features.Users.Repository;
 using Infrastructure.Data.Postgreesql.Shared;
-using MassTransit.Internals;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 using DomainUser = Domain.Features.Users.Entities.User;
-using InfrastructureUser = Infrastructure.Data.Postgreesql.Features.Users.Entities.User;
 
 namespace Infrastructure.Data.Postgreesql.Features.Users.Repository;
 
 public class UserRepository :
-    GenericRepository<InfrastructureUser>,
+    GenericRepository<User>,
     IUserRepository
 {
     public UserRepository(TILTContext context) : base(context) { }
 
-    public async Task<DomainUser> SaveAsync(DomainUser entity)
-        => (DomainUser)await base.SaveAsync((InfrastructureUser)entity);
+    public async Task<DomainUser?> GetByEmail(string email) => await FirstOrDefault(u => u.Email.Value == email);
 
-    public async Task<DomainUser> UpdateAsync(DomainUser entity)
-        => (DomainUser)await base.UpdateAsync((InfrastructureUser)entity);
-
-    public new async Task<DomainUser?> GetByIdAsync(long id)
-        => (DomainUser)await base.GetByIdAsync(id);
-
-    public new async Task<IReadOnlyList<DomainUser>> GetAllAsync()
-        => (IReadOnlyList<DomainUser>)await base.GetAllAsync();
-
-    public async Task<DomainUser?> GetByEmail(string email)
-    {
-        var user = await this.dbSet.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
-        return (DomainUser?)user;
-    }
-
-    public async Task<DomainUser?> GetByDocument(string document)
-    {
-        var user = await this.dbSet.AsNoTracking().FirstOrDefaultAsync(u => u.Document == document);
-        return (DomainUser?)user;
-    }
+    public async Task<DomainUser?> GetByDocument(string document) => await FirstOrDefault(u => u.Document.Value == document);
 }

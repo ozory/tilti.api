@@ -1,4 +1,4 @@
-using Infrastructure.Data.Postgreesql.Features.Users.Entities;
+using Domain.Features.Users.Entities;
 
 namespace Infrastructure.Data.Postgreesql.Features.Security.Entities;
 

@@ -1,9 +1,9 @@
 using System.Reflection;
-using Infrastructure.Data.Postgreesql.Features.Orders.Entities;
-using Infrastructure.Data.Postgreesql.Features.Plans.Entities;
+using Domain.Features.Orders.Entities;
+using Domain.Features.Plans.Entities;
+using Domain.Features.Subscriptions.Entities;
+using Domain.Features.Users.Entities;
 using Infrastructure.Data.Postgreesql.Features.Security.Entities;
-using Infrastructure.Data.Postgreesql.Features.Subscriptions.Entities;
-using Infrastructure.Data.Postgreesql.Features.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data.Postgreesql;
