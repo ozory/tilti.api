@@ -23,7 +23,7 @@ public class CreatePlanCommandHandler(
         var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        var planRepository = unitOfWork.GetPlanRepository();
+        var planRepository = unitOfWork.PlanRepository();
 
         logger.LogInformation($"Verificando se plano {request.Name}");
         var pl = await planRepository.GetPlanByNameOrAmount(request.Name, request.Amount);

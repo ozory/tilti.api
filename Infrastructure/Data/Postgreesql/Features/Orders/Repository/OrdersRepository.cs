@@ -14,19 +14,14 @@ public class OrdersRepository :
 {
     public OrdersRepository(TILTContext context) : base(context) { }
 
-    public async Task<IReadOnlyList<Order?>> GetOrdersByDriver(long idDriver) => await Filter(o => o.DriverId == idDriver);
-
-    public async Task<IReadOnlyList<Order?>> GetOrdersByUser(long idUser) => await Filter(o => o.UserId == idUser);
-
     public async Task<IReadOnlyList<Order?>> GetOpenedOrdersByUser(long idUser)
     {
         var status = Enum.GetValues(typeof(OrderStatus)).Cast<ushort>().ToList();
 
-        var orders = await _context.Orders.AsNoTracking()
-            .Where(u => u.UserId == idUser && status.Contains((ushort)u.Status)).ToListAsync();
-        var orderLists = orders.Select(u => (DomainOrder)u).ToImmutableList();
+        var orders = await Filter(
+            u => u.UserId == idUser && status.Contains((ushort)u.Status));
 
-        return orderLists!;
+        return orders!;
     }
 
 }

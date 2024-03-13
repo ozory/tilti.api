@@ -9,52 +9,96 @@ public abstract class GenericRepository<TEntity>
 {
     protected readonly TILTContext _context;
 
-    internal DbSet<TEntity> dbSet;
+    internal DbSet<TEntity> Entities;
 
     protected GenericRepository(TILTContext context)
     {
         _context = context;
-        this.dbSet = _context.Set<TEntity>();
+        this.Entities = _context.Set<TEntity>();
     }
+
+    #region METHODS
 
     public virtual async Task<IReadOnlyList<TEntity>> GetAllAsyncSourced()
     {
-        return await this.dbSet.AsNoTracking().ToListAsync();
+        return await this.Entities.AsNoTracking().ToListAsync();
     }
 
     public virtual async Task<IReadOnlyList<TEntity>> GetAllAsync()
     {
-        return await this.dbSet.AsNoTracking().ToListAsync();
+        return await this.Entities.AsNoTracking().ToListAsync();
     }
 
     public virtual async Task<TEntity?> GetByIdAsync(long id)
     {
-        return await this.dbSet.FindAsync(id);
+        return await this.Entities.FindAsync(id);
     }
 
     public virtual async Task<TEntity> SaveAsync(TEntity entity)
     {
-        await this.dbSet.AddAsync(entity);
+        await this.Entities.AddAsync(entity);
         return entity;
     }
 
     public virtual async Task<TEntity> UpdateAsync(TEntity entity)
     {
-        dbSet.Attach(entity);
+        Entities.Attach(entity);
         _context.Entry(entity).State = EntityState.Modified;
         await Task.CompletedTask;
         return entity;
     }
 
-    public async Task<TEntity?> FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
+    public virtual async Task RemoveAsync(TEntity entity)
     {
-        return await this.dbSet.AsNoTracking().Where(predicate).FirstOrDefaultAsync();
+        Entities.Remove(entity);
+        await Task.CompletedTask;
     }
 
-    public async Task<IReadOnlyList<TEntity>> Filter(Expression<Func<TEntity, bool>> predicate)
+    public async Task<TEntity?> FirstOrDefault(
+        Expression<Func<TEntity, bool>>? filter = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        string includeProperties = ""
+    )
     {
-        return await this.dbSet.AsNoTracking().Where(predicate).ToListAsync();
+
+        IQueryable<TEntity> query = this.Entities;
+        if (filter != null) query = query.AsNoTracking().Where(filter);
+        query = IncludeProperties(includeProperties, query);
+
+        if (orderBy != null) return await orderBy(query.AsNoTracking()).FirstOrDefaultAsync();
+
+        return await query.AsNoTracking().FirstOrDefaultAsync();
+
     }
+
+    public async Task<IReadOnlyList<TEntity>> Filter(
+        Expression<Func<TEntity, bool>>? filter = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        string includeProperties = "")
+    {
+
+        IQueryable<TEntity> query = this.Entities;
+        if (filter != null) query = query.AsNoTracking().Where(filter);
+        query = IncludeProperties(includeProperties, query);
+
+        if (orderBy != null) return await orderBy(query.AsNoTracking()).ToListAsync();
+
+        return await query.AsNoTracking().ToListAsync();
+
+    }
+
+    private IQueryable<TEntity> IncludeProperties(string includeProperties, IQueryable<TEntity> query)
+    {
+        foreach (var includeProperty in includeProperties.Split
+                    (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+        {
+            query = query.Include(includeProperty);
+        }
+
+        return query;
+    }
+
+    #endregion
 }
 
 

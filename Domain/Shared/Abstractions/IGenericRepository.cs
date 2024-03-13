@@ -2,12 +2,17 @@ using System.Linq.Expressions;
 
 namespace Domain.Abstractions;
 
-public interface IGenericRepository<TSource> where TSource : class
+public interface IGenericRepository<TEntity> where TEntity : class
 {
-    Task<TSource> SaveAsync(TSource entity);
-    Task<TSource> UpdateAsync(TSource entity);
-    Task<TSource?> GetByIdAsync(long id);
-    Task<IReadOnlyList<TSource>> GetAllAsync();
-    Task<TSource?> FirstOrDefault(Expression<Func<TSource, bool>> predicate);
-    Task<IReadOnlyList<TSource>> Filter(Expression<Func<TSource, bool>> predicate);
+    Task<TEntity> SaveAsync(TEntity entity);
+    Task<TEntity> UpdateAsync(TEntity entity);
+    Task RemoveAsync(TEntity entity);
+    Task<TEntity?> GetByIdAsync(long id);
+    Task<IReadOnlyList<TEntity>> GetAllAsync();
+    Task<TEntity?> FirstOrDefault(Expression<Func<TEntity, bool>>? filter = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        string includeProperties = "");
+    Task<IReadOnlyList<TEntity>> Filter(Expression<Func<TEntity, bool>>? filter = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        string includeProperties = "");
 }

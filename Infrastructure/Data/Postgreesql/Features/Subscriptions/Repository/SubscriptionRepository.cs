@@ -2,6 +2,8 @@ using Domain.Features.Subscriptions.Entities;
 using Domain.Features.Subscriptions.Repository;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Data.Postgreesql.Shared;
+using Domain.Features.Users.Entities;
+using Domain.Features.Plans.Entities;
 
 namespace Infrastructure.Data.Postgreesql.Features.Subscriptions.Repository;
 
@@ -10,33 +12,16 @@ public class SubscriptionRepository :
     ISubscriptionRepository
 {
 
+    private readonly string IncludeProperties = $"{nameof(User)},{nameof(Plan)}";
+
     public SubscriptionRepository(TILTContext context) : base(context) { }
 
     public override async Task<IReadOnlyList<Subscription>> GetAllAsync()
-    {
-        return await _context.Subscriptions
-            .Include(u => u.User)
-            .Include(u => u.Plan)
-            .AsNoTracking()
-            .ToListAsync();
-    }
+        => await Filter(includeProperties: IncludeProperties);
 
     public override async Task<Subscription?> GetByIdAsync(long id)
-    {
-        return await _context.Subscriptions
-            .Include(u => u.User)
-            .Include(p => p.Plan)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Id == id);
-    }
+        => await FirstOrDefault(filter: s => s.Id == id, includeProperties: IncludeProperties);
 
     public async Task<Subscription?> GetSubscriptionByUser(long idUser)
-    {
-        return await _context.Subscriptions
-            .Include(u => u.User)
-            .Include(p => p.Plan)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.UserId == idUser);
-    }
-
+        => await FirstOrDefault(filter: s => s.UserId == idUser, includeProperties: IncludeProperties);
 }

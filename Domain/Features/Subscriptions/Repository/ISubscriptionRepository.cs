@@ -1,9 +1,10 @@
 using Domain.Abstractions;
-using DomainSubscription = Domain.Features.Subscriptions.Entities.Subscription;
+using Domain.Features.Subscriptions.Entities;
+
 
 namespace Domain.Features.Subscriptions.Repository;
 
-public interface ISubscriptionRepository : IGenericRepository<DomainSubscription>
+public interface ISubscriptionRepository : IGenericRepository<Subscription>
 {
-    Task<DomainSubscription?> GetSubscriptionByUser(long idUser);
+    Task<Subscription?> GetSubscriptionByUser(long idUser);
 }

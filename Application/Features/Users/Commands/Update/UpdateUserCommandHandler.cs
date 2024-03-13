@@ -24,8 +24,8 @@ public class UpdateUserCommandHandler(
         var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        var userRepository = unitOfWork.GetUserRepository();
-        var user = await userRepository.GetByIdAsync(request.id);
+        var userRepository = unitOfWork.UserRepository();
+        var user = await unitOfWork.UserRepository().GetByIdAsync(request.id);
         if (user == null) return Result.Fail("User not found");
 
         user.SetName(request.Name);

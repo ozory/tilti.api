@@ -12,6 +12,6 @@ public class PlanRepository :
 
     public async Task<Plan?> GetPlanByNameOrAmount(string name, decimal amount)
         => await FirstOrDefault(u =>
-            u.Name.Value!.ToLower() == name.ToLower() ||
+            u.Name.Value!.Equals(name, StringComparison.InvariantCultureIgnoreCase) ||
             u.Amount.Value == amount);
 }

@@ -19,12 +19,12 @@ public class CreateUserCommandHandler(
 
     public async Task<Result<UserResponse>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        logger.LogInformation($"Validando usuário {request.Email}");
+        logger.LogInformation("Validando usuário {email}", request.Email);
 
-        var validationResult = await validator.ValidateAsync(request);
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        logger.LogInformation($"Criando usuário {request.Email}");
+        logger.LogInformation("Criando usuário {email}", request.Email);
 
         var user = User.Create(null, request.Name, request.Email, request.Document, request.Password, DateTime.Now);
 
@@ -34,13 +34,10 @@ public class CreateUserCommandHandler(
         user.SetPassword(securityExtensions.ComputeHash(securitySalt, request.Password));
         user.SetVerificationCode(securityExtensions.ComputeValidationCode());
 
-        var userRepository = unitOfWork.GetUserRepository();
-
-        var savedUser = await userRepository.SaveAsync(user);
-
+        var savedUser = await unitOfWork.UserRepository.SaveAsync(user);
         await unitOfWork.CommitAsync(cancellationToken);
 
-        logger.LogInformation($"Usuário {request.Email} criado com sucesso");
+        logger.LogInformation("Usuário {email} criado com sucesso", request.Email);
         return Result.Ok((UserResponse)savedUser);
     }
 }

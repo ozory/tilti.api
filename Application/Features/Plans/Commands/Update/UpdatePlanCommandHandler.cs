@@ -22,7 +22,7 @@ public class UpdatePlanCommandHandler(
         var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        var planRepository = unitOfWork.GetPlanRepository();
+        var planRepository = unitOfWork.PlanRepository();
 
         var plan = await planRepository.GetByIdAsync(request.Id);
         if (plan == null) return Result.Fail("Plan not found");

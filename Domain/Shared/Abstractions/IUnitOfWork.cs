@@ -12,10 +12,10 @@ namespace Domain.Shared.Abstractions;
 
 public interface IUnitOfWork
 {
-    IUserRepository GetUserRepository();
-    IOrderRepository GetOrderRepository();
-    ISubscriptionRepository GetSubscriptionRepository();
-    IPlanRepository GetPlanRepository();
+    IUserRepository UserRepository { get; }
+    IOrderRepository OrderRepository { get; }
+    IPlanRepository PlanRepository { get; }
+    ISubscriptionRepository SubscriptionRepository { get; }
 
-    Task CommitAsync(CancellationToken cancellationToken);
+    Task<bool> CommitAsync(CancellationToken cancellationToken);
 }
