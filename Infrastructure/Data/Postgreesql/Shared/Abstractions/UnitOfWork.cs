@@ -50,6 +50,7 @@ public sealed class UnitOfWork : IUnitOfWork
                 // dbContextTransaction.Commit();
 
                 ExecuteDomainEvents();
+                await Task.CompletedTask;
             }
             catch (Exception)
             {

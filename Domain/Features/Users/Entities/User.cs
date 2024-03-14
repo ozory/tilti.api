@@ -88,7 +88,6 @@ public class User : Entity
         user.Status = UserStatus.PendingPaymentInformation;
         user.CreatedAt = createdDate ?? DateTime.Now;
 
-        user.AddDomainEvent(UserCreatedDomainEvent.Create(user));
         return user;
     }
 

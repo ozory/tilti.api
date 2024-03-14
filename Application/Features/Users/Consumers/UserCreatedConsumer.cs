@@ -10,6 +10,8 @@ public class UserCreatedConsumer(ILogger<UserCreatedConsumer> logger) : IConsume
     {
         logger.LogInformation($"Consumindo evento de criação de usuário {context.Message.Email}");
 
+        //await context.NotifyFaulted<UserCreatedDomainEvent>(context, TimeSpan.FromSeconds(-1), "", new Exception(""));
+        // throw new Exception("ERRO PRIMARIO");
         // Disparando email
         await Task.CompletedTask;
     }

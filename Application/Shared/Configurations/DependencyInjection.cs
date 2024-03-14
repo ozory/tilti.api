@@ -1,6 +1,8 @@
 using System.Reflection;
 using Application.Features.Security.Extensions;
+using Application.Features.Users.Consumers;
 using Application.Shared.Abstractions;
+using Domain.Features.Users.Events;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MassTransit;
@@ -38,6 +40,18 @@ public static class DependencyInjection
         //                     h.Username(configuration["Infrastructure:RabbitMQ:Username"]!);
         //                     h.Password(configuration["Infrastructure:RabbitMQ:Password"]!);
         //                 });
+
+        //         config.ReceiveEndpoint("user-created", e =>
+        //         {
+        //             e.ConfigureConsumeTopology = false;
+        //             e.Consumer<UserCreatedConsumer>();
+        //             e.Bind("user-created-exchange", s =>
+        //             {
+        //                 s.RoutingKey = "PRIORITY";
+        //                 s.ExchangeType = ExchangeType.Direct;
+        //             });
+        //         });
+
         //         config.ConfigureEndpoints(ctx);
         //     });
 

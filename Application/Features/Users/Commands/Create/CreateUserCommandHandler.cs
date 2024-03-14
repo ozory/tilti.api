@@ -35,6 +35,8 @@ public class CreateUserCommandHandler(
         user.SetVerificationCode(securityExtensions.ComputeValidationCode());
 
         var savedUser = await unitOfWork.UserRepository.SaveAsync(user);
+        savedUser.AddDomainEvent(UserCreatedDomainEvent.Create(user));
+
         await unitOfWork.CommitAsync(cancellationToken);
 
         logger.LogInformation("Usuário {email} criado com sucesso", request.Email);

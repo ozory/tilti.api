@@ -21,7 +21,10 @@ public class UserCreatedEventHandler : INotificationHandler<UserCreatedDomainEve
 
     public async Task Handle(UserCreatedDomainEvent notification, CancellationToken cancellationToken)
     {
-        var sender = await _bus.GetSendEndpoint(new Uri(_configuration["Infrastructure:Queues:UserCreatedQueue"]!));
+        var sender = await _bus.GetSendEndpoint(new Uri("exchange:user-created-exchange"));
+        // var sender = await _bus.GetSendEndpoint(new Uri(_configuration["Infrastructure:Queues:UserCreatedQueue"]!));
+        // var newSender = await _bus.GetPublishSendEndpoint<UserCreatedDomainEvent>();
+
         await sender.Send(notification, cancellationToken);
 
         _logger.LogInformation($"Publicando evento de criação de usuário {notification.Email}");
