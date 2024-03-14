@@ -13,6 +13,7 @@ using Infrastructure.Data.Postgreesql.Features.Subscriptions.Repository;
 using Infrastructure.Data.Postgreesql.Features.Users.Repository;
 using Infrastructure.Data.Postgreesql.Shared.Abstractions;
 using Infrastructure.External.Features.Maps.Services;
+using Infrastructure.Messages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
@@ -58,6 +59,13 @@ public static class DependencyInjection
 
             return new MapServices(valuePerKM, valuePerDuration, apiKey!, dc);
         });
+
+        var hostname = configuration["Infrastructure:RabbitMQ:Server"];
+        var username = configuration["Infrastructure:RabbitMQ:Username"];
+        var password = configuration["Infrastructure:RabbitMQ:Password"];
+        var rabbitConnection = $"amqp://{username}:{password}@{hostname}/";
+
+        services.AddScoped<IMessageRepository>(x => { return new MessageRepository(rabbitConnection); });
 
         return services;
     }
