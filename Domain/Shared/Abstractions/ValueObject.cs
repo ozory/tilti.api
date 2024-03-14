@@ -22,4 +22,6 @@ public abstract class ValueObject<T>
     {
         return true;
     }
+
+    public static explicit operator T?(ValueObject<T> valueObject) => valueObject.Value;
 }

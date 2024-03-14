@@ -22,12 +22,10 @@ public class UpdatePlanCommandHandler(
         var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        var planRepository = unitOfWork.PlanRepository();
-
-        var plan = await planRepository.GetByIdAsync(request.Id);
+        var plan = await unitOfWork.PlanRepository.GetByIdAsync(request.Id);
         if (plan == null) return Result.Fail("Plan not found");
 
-        var pl = await planRepository.GetPlanByNameOrAmount(request.Name, request.Amount);
+        var pl = await unitOfWork.PlanRepository.GetPlanByNameOrAmount(request.Name, request.Amount);
         if (pl != null && pl.Id != request.Id) return Result.Fail("A plan with this name or amount allready exists");
 
 
@@ -38,7 +36,7 @@ public class UpdatePlanCommandHandler(
         plan.SetDescription(request.Description);
         plan.SetStatus(status);
 
-        var savedPlan = await planRepository.UpdateAsync(plan);
+        var savedPlan = await unitOfWork.PlanRepository.UpdateAsync(plan);
 
         await unitOfWork.CommitAsync(cancellationToken);
 

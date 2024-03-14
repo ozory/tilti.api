@@ -129,6 +129,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("PaymentToken")
             .HasMaxLength(1000);
 
+        builder.Property(x => x.PaymentUserIdentifier)
+            .HasColumnOrder(17)
+            .HasColumnName("PaymentUserIdentifier")
+            .HasMaxLength(1000);
+
         builder.HasIndex(x => new { x.Email, x.Document });
 
         builder.Ignore(x => x.DomainEvents);

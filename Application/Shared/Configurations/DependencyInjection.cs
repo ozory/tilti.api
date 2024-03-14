@@ -24,24 +24,24 @@ public static class DependencyInjection
         services.AddFluentValidationClientsideAdapters();
         services.AddValidatorsFromAssembly(assembly);
 
-        services.AddMassTransit(busConfig =>
-        {
-            busConfig.SetKebabCaseEndpointNameFormatter();
+        // services.AddMassTransit(busConfig =>
+        // {
+        //     busConfig.SetKebabCaseEndpointNameFormatter();
 
-            busConfig.AddConsumers(assembly);
+        //     busConfig.AddConsumers(assembly);
 
-            busConfig.UsingRabbitMq((ctx, config) =>
-            {
-                config.Host(configuration["Infrastructure:RabbitMQ:Server"]!, "/",
-                    h =>
-                        {
-                            h.Username(configuration["Infrastructure:RabbitMQ:Username"]!);
-                            h.Password(configuration["Infrastructure:RabbitMQ:Password"]!);
-                        });
-                config.ConfigureEndpoints(ctx);
-            });
+        //     busConfig.UsingRabbitMq((ctx, config) =>
+        //     {
+        //         config.Host(configuration["Infrastructure:RabbitMQ:Server"]!, "/",
+        //             h =>
+        //                 {
+        //                     h.Username(configuration["Infrastructure:RabbitMQ:Username"]!);
+        //                     h.Password(configuration["Infrastructure:RabbitMQ:Password"]!);
+        //                 });
+        //         config.ConfigureEndpoints(ctx);
+        //     });
 
-        });
+        // });
 
         services.AddScoped<ISecurityExtensions, SecurityExtensions>();
         return services;

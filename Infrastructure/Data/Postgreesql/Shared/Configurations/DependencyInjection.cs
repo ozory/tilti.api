@@ -12,7 +12,7 @@ using Infrastructure.Data.Postgreesql.Features.Security.Repository;
 using Infrastructure.Data.Postgreesql.Features.Subscriptions.Repository;
 using Infrastructure.Data.Postgreesql.Features.Users.Repository;
 using Infrastructure.Data.Postgreesql.Shared.Abstractions;
-using Infrastructure.External.Orders.Services;
+using Infrastructure.External.Features.Maps.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;

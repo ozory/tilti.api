@@ -9,5 +9,6 @@ namespace Application.Shared.Abstractions;
 
 public interface IPaymentServices
 {
-    Task<Payment> CreatePaymentToken(User user);
+    Task<User> CreateUser(long idUser, CancellationToken? cancellationToken);
+    Task<Payment> CreateToken(long idUser, CancellationToken? cancellationToken);
 }

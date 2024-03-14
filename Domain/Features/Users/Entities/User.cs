@@ -23,6 +23,7 @@ public class User : Entity
     public Password? Password { get; protected set; } = null!;
     public UserStatus Status { get; protected set; }
     public string? PaymentToken { get; protected set; }
+    public string? PaymentUserIdentifier { get; protected set; }
 
     public string? Photo { get; protected set; }
     public string? VerificationCode { get; protected set; }
@@ -171,6 +172,9 @@ public class User : Entity
 
     public void SetPaymentToken(string? paymentToken)
     => this.PaymentToken = paymentToken;
+
+    public void SetPaymentUserIdentifier(string? paymentUserIdentifier)
+    => this.PaymentUserIdentifier = paymentUserIdentifier;
 
     #endregion METHODS
 }

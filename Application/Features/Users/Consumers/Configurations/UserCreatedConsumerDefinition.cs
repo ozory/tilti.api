@@ -6,7 +6,7 @@ public class UserCreatedConsumerDefinition : ConsumerDefinition<UserCreatedConsu
 {
     public UserCreatedConsumerDefinition()
     {
-        EndpointName = "user-created";
+        EndpointName = "user-created-queue";
 
         // limit the number of messages consumed concurrently
         // this applies to the consumer only, not the endpoint
@@ -20,7 +20,7 @@ public class UserCreatedConsumerDefinition : ConsumerDefinition<UserCreatedConsu
 
         configurator.ConfigureConsumeTopology = false;
         configurator.PrefetchCount = 10;
-        configurator.UseMessageRetry(r => r.Interval(5, 1000));
+        configurator.UseMessageRetry(r => r.Intervals(100, 200, 500, 800, 1000));
         configurator.UseInMemoryOutbox(context);
     }
 }

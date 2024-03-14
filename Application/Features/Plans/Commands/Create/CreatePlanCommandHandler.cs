@@ -23,10 +23,8 @@ public class CreatePlanCommandHandler(
         var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        var planRepository = unitOfWork.PlanRepository();
-
         logger.LogInformation($"Verificando se plano {request.Name}");
-        var pl = await planRepository.GetPlanByNameOrAmount(request.Name, request.Amount);
+        var pl = await unitOfWork.PlanRepository.GetPlanByNameOrAmount(request.Name, request.Amount);
         if (pl != null) return Result.Fail("A plan with this name or amount allready exists");
 
         var plan = Plan.Create(
@@ -38,7 +36,7 @@ public class CreatePlanCommandHandler(
             DateTime.Now
         );
 
-        var savedPlan = await planRepository.SaveAsync(plan);
+        var savedPlan = await unitOfWork.PlanRepository.SaveAsync(plan);
         await unitOfWork.CommitAsync(cancellationToken);
 
         return Result.Ok((PlanResponse)savedPlan);
