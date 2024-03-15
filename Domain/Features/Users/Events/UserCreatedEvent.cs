@@ -7,7 +7,7 @@ using Domain.Shared.Abstractions;
 
 namespace Domain.Features.Users.Events;
 
-public record UserCreatedDomainEvent : IDomainEvent
+public class UserCreatedDomainEvent : IDomainEvent
 {
     public long Id { get; set; }
     public string Name { get; set; } = null!;

@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Reflection;
+using Application.Features.Users.Consumers;
 using Application.Shared.Abstractions;
 using Domain.Features.Orders.Repository;
 using Domain.Features.Plans.Repository;
@@ -60,12 +61,8 @@ public static class DependencyInjection
             return new MapServices(valuePerKM, valuePerDuration, apiKey!, dc);
         });
 
-        var hostname = configuration["Infrastructure:RabbitMQ:Server"];
-        var username = configuration["Infrastructure:RabbitMQ:Username"];
-        var password = configuration["Infrastructure:RabbitMQ:Password"];
-        var rabbitConnection = $"amqp://{username}:{password}@{hostname}/";
-
-        services.AddScoped<IMessageRepository>(x => { return new MessageRepository(rabbitConnection); });
+        services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddHostedService<UserCreatedConsumer>();
 
         return services;
     }
