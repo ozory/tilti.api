@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Reflection;
+using Application.Features.Users.Consumers;
 using Application.Shared.Abstractions;
 using Domain.Features.Orders.Repository;
 using Domain.Features.Plans.Repository;
@@ -12,7 +13,8 @@ using Infrastructure.Data.Postgreesql.Features.Security.Repository;
 using Infrastructure.Data.Postgreesql.Features.Subscriptions.Repository;
 using Infrastructure.Data.Postgreesql.Features.Users.Repository;
 using Infrastructure.Data.Postgreesql.Shared.Abstractions;
-using Infrastructure.External.Orders.Services;
+using Infrastructure.External.Features.Maps.Services;
+using Infrastructure.Messages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
@@ -58,6 +60,9 @@ public static class DependencyInjection
 
             return new MapServices(valuePerKM, valuePerDuration, apiKey!, dc);
         });
+
+        services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddHostedService<UserCreatedConsumer>();
 
         return services;
     }
