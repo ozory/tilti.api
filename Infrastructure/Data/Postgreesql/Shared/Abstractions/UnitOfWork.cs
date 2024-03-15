@@ -46,8 +46,8 @@ public sealed class UnitOfWork : IUnitOfWork
         {
             try
             {
-                //  await _context.SaveChangesAsync(cancellationToken);
-                // dbContextTransaction.Commit();
+                await _context.SaveChangesAsync(cancellationToken);
+                dbContextTransaction.Commit();
 
                 ExecuteDomainEvents();
                 await Task.CompletedTask;
