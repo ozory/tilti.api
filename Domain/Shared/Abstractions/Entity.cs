@@ -12,6 +12,11 @@ public abstract class Entity
     public long? UpdatedBy { get; protected set; }
     public virtual List<IDomainEvent> DomainEvents { get; protected set; } = new();
 
+    public void SetUpdated()
+    {
+        this.UpdatedAt = DateTime.Now;
+    }
+
     public virtual Result<Entity> AddError(string message)
     {
         var i = this.ToResult().WithError(new Error(message));

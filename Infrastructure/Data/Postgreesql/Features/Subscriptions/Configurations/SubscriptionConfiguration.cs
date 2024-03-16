@@ -38,7 +38,6 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
 
         builder.Property(x => x.UpdatedAt)
            .HasColumnName("Updated")
-           .HasDefaultValue(DateTime.Now)
            .HasColumnType("timestamp");
 
         builder.Property(x => x.PaymentToken)

@@ -48,7 +48,6 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(x => x.UpdatedAt)
             .HasColumnOrder(6)
            .HasColumnName("Updated")
-           .HasDefaultValue(DateTime.Now)
            .HasColumnType("timestamp");
 
         builder.Property(x => x.RequestedTime)
