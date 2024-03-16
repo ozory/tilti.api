@@ -17,9 +17,10 @@ public class Subscription : Entity
     public long UserId { get; protected set; }
     public long PlanId { get; protected set; }
     public User User { get; protected set; } = null!;
-    public SubscriptionStatus Status { get; protected set; } = SubscriptionStatus.Active;
+    public SubscriptionStatus Status { get; protected set; } = SubscriptionStatus.PendingApproval;
     public Plan Plan { get; protected set; } = null!;
     public DateTime DueDate { get; protected set; }
+    public string? PaymentToken { get; protected set; }
 
     #endregion
 
@@ -85,6 +86,13 @@ public class Subscription : Entity
     /// </summary>
     /// <param name="date"></param>
     public void SetUpdatedAt(DateTime date) => this.UpdatedAt = date;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="paymentToken"></param>
+    public void SetPaymentToken(string? paymentToken)
+        => this.PaymentToken = paymentToken;
 
     #endregion
 }

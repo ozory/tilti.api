@@ -41,6 +41,10 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
            .HasDefaultValue(DateTime.Now)
            .HasColumnType("timestamp");
 
+        builder.Property(x => x.PaymentToken)
+            .HasColumnName("PaymentToken")
+            .HasMaxLength(1000);
+
         builder.HasOne(e => e.User)
             .WithOne(e => e.Subscription)
             .HasForeignKey<Subscription>(e => e.UserId);

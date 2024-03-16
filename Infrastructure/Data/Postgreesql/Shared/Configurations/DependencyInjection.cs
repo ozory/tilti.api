@@ -30,7 +30,9 @@ public static class DependencyInjection
 
         services.AddDbContext<TILTContext>(options =>
         {
-            options.UseNpgsql(configuration.GetSection("Infrastructure:DataBase").Value);
+            options.UseNpgsql(
+                configuration.GetSection("Infrastructure:DataBase").Value,
+                o => o.UseNetTopologySuite());
         });
 
         services.AddScoped<IUserRepository, UserRepository>();

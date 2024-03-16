@@ -27,5 +27,6 @@ public class TILTContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(modelBuilder);
         modelBuilder.HasDefaultSchema("tilt");
+        modelBuilder.HasPostgresExtension("postgis");
     }
 }
