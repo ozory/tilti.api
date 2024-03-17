@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data.Postgreesql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Data.Postgreesql.Migrations
 {
     [DbContext(typeof(TILTContext))]
-    partial class TILTContextModelSnapshot : ModelSnapshot
+    [Migration("20240316230329_geo_renamed")]
+    partial class geo_renamed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,7 +95,9 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .HasColumnOrder(3);
 
                     b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
+                        .HasDefaultValue(new DateTime(2024, 3, 16, 20, 3, 29, 582, DateTimeKind.Local).AddTicks(3860))
                         .HasColumnName("Updated")
                         .HasColumnOrder(6);
 
@@ -153,7 +158,9 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .HasColumnOrder(1);
 
                     b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
+                        .HasDefaultValue(new DateTime(2024, 3, 16, 20, 3, 29, 586, DateTimeKind.Local).AddTicks(4800))
                         .HasColumnName("Updated")
                         .HasColumnOrder(6);
 
@@ -199,7 +206,9 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .HasColumnOrder(1);
 
                     b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
+                        .HasDefaultValue(new DateTime(2024, 3, 16, 20, 3, 29, 585, DateTimeKind.Local).AddTicks(7560))
                         .HasColumnName("Updated");
 
                     b.Property<long?>("UpdatedBy")
@@ -290,7 +299,9 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .HasColumnOrder(2);
 
                     b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
+                        .HasDefaultValue(new DateTime(2024, 3, 16, 20, 3, 29, 590, DateTimeKind.Local).AddTicks(5720))
                         .HasColumnName("Updated")
                         .HasColumnOrder(14);
 

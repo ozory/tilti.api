@@ -58,7 +58,6 @@ public class PlanConfiguration : IEntityTypeConfiguration<Plan>
         builder.Property(x => x.UpdatedAt)
             .HasColumnOrder(6)
             .HasColumnName("Updated")
-            .HasDefaultValue(DateTime.Now)
             .HasColumnType("timestamp");
 
         builder.HasMany(s => s.Subscriptions)

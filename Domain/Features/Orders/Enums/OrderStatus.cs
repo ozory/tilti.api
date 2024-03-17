@@ -1,6 +1,6 @@
 namespace Domain.Enums
 {
-    public enum OrderStatus : int
+    public enum OrderStatus : ushort
     {
         PendingPayment = 1,
         ReadyToAccept = 2,

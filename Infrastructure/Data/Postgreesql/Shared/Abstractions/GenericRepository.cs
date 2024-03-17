@@ -42,6 +42,7 @@ public abstract class GenericRepository<TEntity>
 
     public virtual async Task<TEntity> UpdateAsync(TEntity entity)
     {
+        entity.SetUpdated(entity.CreatedAt);
         Entities.Attach(entity);
         _context.Entry(entity).State = EntityState.Modified;
         await Task.CompletedTask;

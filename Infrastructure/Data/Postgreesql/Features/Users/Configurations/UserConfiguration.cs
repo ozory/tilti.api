@@ -116,7 +116,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.UpdatedAt)
             .HasColumnOrder(14)
            .HasColumnName("Updated")
-           .HasDefaultValue(DateTime.Now)
            .HasColumnType("timestamp");
 
         builder.Property(x => x.VerificationSalt)

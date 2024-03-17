@@ -3,7 +3,9 @@ using System.Collections.ObjectModel;
 using Domain.Abstractions;
 using Domain.Enums;
 using Domain.Features.Users.Entities;
+using Domain.Shared.ValueObjects;
 using Domain.ValueObjects;
+using GeoPoint = NetTopologySuite.Geometries.Point;
 
 namespace Domain.Features.Orders.Entities;
 
@@ -32,6 +34,8 @@ public class Order : Entity
     public IReadOnlyCollection<Item> Items => new ReadOnlyCollection<Item>(_items);
     public IReadOnlyCollection<Address> Addresses => new ReadOnlyCollection<Address>(_addresses);
 
+    public GeoPoint? Point { get; protected set; }
+
     public OrderStatus Status { get; protected set; }
 
     #endregion
@@ -58,6 +62,12 @@ public class Order : Entity
         order.CreatedAt = createdAt ?? DateTime.Now;
         order.RequestedTime = DateTime.Now;
         order.Status = OrderStatus.PendingPayment;
+
+        var startPointLatitude = address.First(x => x.AddressType == AddressType.StartPoint).Latitude;
+        var startPointLongitude = address.First(x => x.AddressType == AddressType.StartPoint).Longitude;
+
+        order.Point = new GeoPoint(startPointLongitude, startPointLatitude);
+
         return order;
     }
 
