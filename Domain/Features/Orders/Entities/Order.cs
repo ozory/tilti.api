@@ -1,11 +1,11 @@
 
 using System.Collections.ObjectModel;
-using System.Drawing;
 using Domain.Abstractions;
 using Domain.Enums;
 using Domain.Features.Users.Entities;
 using Domain.Shared.ValueObjects;
 using Domain.ValueObjects;
+using GeoPoint = NetTopologySuite.Geometries.Point;
 
 namespace Domain.Features.Orders.Entities;
 
@@ -34,7 +34,7 @@ public class Order : Entity
     public IReadOnlyCollection<Item> Items => new ReadOnlyCollection<Item>(_items);
     public IReadOnlyCollection<Address> Addresses => new ReadOnlyCollection<Address>(_addresses);
 
-    public Position? Location { get; protected set; }
+    public GeoPoint? Point { get; protected set; }
 
     public OrderStatus Status { get; protected set; }
 
@@ -66,7 +66,7 @@ public class Order : Entity
         var startPointLatitude = address.First(x => x.AddressType == AddressType.StartPoint).Latitude;
         var startPointLongitude = address.First(x => x.AddressType == AddressType.StartPoint).Longitude;
 
-        order.Location = new Position() { Latitude = startPointLatitude, Longitude = startPointLongitude };
+        order.Point = new GeoPoint(startPointLongitude, startPointLatitude);
 
         return order;
     }

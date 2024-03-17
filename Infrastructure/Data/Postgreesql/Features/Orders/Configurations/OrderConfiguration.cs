@@ -70,15 +70,9 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasColumnName("CancelationTime")
             .HasColumnType("timestamp");
 
-        builder.Property(b => b.Location)
+        builder.Property(b => b.Point)
             .HasColumnType("geography(POINT, 4326)")
-             .HasConversion(
-                    c => new Point(c!.Latitude, c!.Longitude),
-                    c => new Domain.Shared.ValueObjects.Position()
-                    {
-                        Latitude = c.Coordinate.X,
-                        Longitude = c.Coordinate.Y
-                    })
+            .HasColumnName("Location")
             .IsRequired(false);
 
         builder.OwnsMany(e => e.Addresses,
