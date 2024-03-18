@@ -6,6 +6,7 @@ using Domain.Features.Users.Entities;
 using Domain.Shared.ValueObjects;
 using Infrastructure.Data.Postgreesql.Shared;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using NetTopologySuite.Geometries;
 using DomainOrder = Domain.Features.Orders.Entities.Order;
 
@@ -15,9 +16,23 @@ public class OrdersRepository :
     GenericRepository<Order>,
     IOrderRepository
 {
-    public OrdersRepository(TILTContext context) : base(context) { }
+    private readonly IDistributedCache _distributedCache;
+    public OrdersRepository(
+        TILTContext context,
+        IDistributedCache distributedCache) : base(context)
+    {
+        _distributedCache = distributedCache;
+    }
 
     private readonly string IncludeProperties = $"{nameof(User)}";
+
+    public override async Task<DomainOrder> SaveAsync(DomainOrder entity)
+    {
+        entity = await base.SaveAsync(entity);
+
+       // _distributedCache.Set
+        return entity;
+    }
 
     public async Task<IReadOnlyList<Order?>> GetOpenedOrdersByUser(long idUser)
     {

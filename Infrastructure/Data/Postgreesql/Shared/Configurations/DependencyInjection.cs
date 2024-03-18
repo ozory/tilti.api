@@ -41,6 +41,8 @@ public static class DependencyInjection
         services.AddScoped<IOrderRepository, OrdersRepository>();
         services.AddScoped<ISecurityRepository, SecurityRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        // services.AddSingleton<IRedisClientsManager>(new RedisManagerPool("localhost:6379"));
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = configuration.GetSection("Infrastructure:Redis:Server").Value;
