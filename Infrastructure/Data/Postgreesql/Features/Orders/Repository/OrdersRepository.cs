@@ -1,12 +1,10 @@
-using System.Collections.Immutable;
+using Application.Shared.Abstractions;
 using Domain.Enums;
 using Domain.Features.Orders.Entities;
+using Domain.Features.Orders.Events;
 using Domain.Features.Orders.Repository;
 using Domain.Features.Users.Entities;
-using Domain.Shared.ValueObjects;
 using Infrastructure.Data.Postgreesql.Shared;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 using NetTopologySuite.Geometries;
 using DomainOrder = Domain.Features.Orders.Entities.Order;
 
@@ -16,23 +14,15 @@ public class OrdersRepository :
     GenericRepository<Order>,
     IOrderRepository
 {
-    private readonly IDistributedCache _distributedCache;
+    private readonly ICacheRepository _cacheRepository;
     public OrdersRepository(
         TILTContext context,
-        IDistributedCache distributedCache) : base(context)
+        ICacheRepository cacheRepository) : base(context)
     {
-        _distributedCache = distributedCache;
+        _cacheRepository = cacheRepository;
     }
 
     private readonly string IncludeProperties = $"{nameof(User)}";
-
-    public override async Task<DomainOrder> SaveAsync(DomainOrder entity)
-    {
-        entity = await base.SaveAsync(entity);
-
-       // _distributedCache.Set
-        return entity;
-    }
 
     public async Task<IReadOnlyList<Order?>> GetOpenedOrdersByUser(long idUser)
     {
@@ -47,10 +37,15 @@ public class OrdersRepository :
 
     public async Task<IReadOnlyList<DomainOrder?>> GetOrdersByPoint(Point point)
     {
-        var orders = await Filter(
-            u => u.Point!.Distance(point) < 1000,
-            includeProperties: nameof(User));
+        // var orders = await Filter(
+        //     u => u.Point!.Distance(point) < 1000,
+        //     includeProperties: nameof(User));
 
-        return orders!;
+        // return orders!;
+
+        var orders = await _cacheRepository
+            .GetNearOrders<OrderCreatedDomainEvent>(point.X, point.Y);
+
+        return orders.Select(x => (Order)x!).ToList();
     }
 }

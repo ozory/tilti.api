@@ -34,7 +34,7 @@ public class Order : Entity
     public IReadOnlyCollection<Item> Items => new ReadOnlyCollection<Item>(_items);
     public IReadOnlyCollection<Address> Addresses => new ReadOnlyCollection<Address>(_addresses);
 
-    public GeoPoint? Point { get; protected set; }
+    public Location? Location { get; protected set; }
 
     public OrderStatus Status { get; protected set; }
 
@@ -63,10 +63,11 @@ public class Order : Entity
         order.RequestedTime = DateTime.Now;
         order.Status = OrderStatus.PendingPayment;
 
-        var startPointLatitude = address.First(x => x.AddressType == AddressType.StartPoint).Latitude;
-        var startPointLongitude = address.First(x => x.AddressType == AddressType.StartPoint).Longitude;
+        var startAddress = address.First(x => x.AddressType == AddressType.StartPoint);
+        var startPointLatitude = startAddress.Latitude;
+        var startPointLongitude = startAddress.Longitude;
 
-        order.Point = new GeoPoint(startPointLongitude, startPointLatitude);
+        order.Location = new Location(startPointLatitude, startPointLongitude);
 
         return order;
     }

@@ -7,9 +7,4 @@ using NetTopologySuite.Geometries;
 
 namespace Domain.Shared.ValueObjects;
 
-public class Position : ValueObject<Point>
-{
-    public Double Latitude { get; init; }
-    public Double Longitude { get; init; }
-
-}
+public record Location(Double Latitude, Double Longitude);

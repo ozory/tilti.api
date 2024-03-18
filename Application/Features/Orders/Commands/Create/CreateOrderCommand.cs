@@ -7,11 +7,11 @@ public sealed record CreateOrderCommand
 (
     long UserId,
     DateTime requestedTime,
-    List<Address> address,
+    List<Address> addresses,
 
     decimal amount,
-    int totalDiscance,
-    int totalDuration
+    int distanceInKM,
+    int durationInSeconds
 
 ) : ICommand<OrderResponse>;
 

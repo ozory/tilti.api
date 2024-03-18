@@ -15,7 +15,9 @@ public record OrderResponse
     DateTime? RequestedTime,
     DateTime? AcceptanceTime,
     DateTime? CompletionTime,
-    DateTime? CancelationTime
+    DateTime? CancelationTime,
+    int DistanceInKM,
+    int DurationInSeconds
 )
 {
     public static implicit operator OrderResponse(DomainOrder order) =>
@@ -30,6 +32,8 @@ public record OrderResponse
                  order.RequestedTime,
                  order.AcceptanceTime,
                  order.CompletionTime,
-                 order.CancelationTime);
+                 order.CancelationTime,
+                 order.DistanceInKM,
+                 order.DurationInSeconds);
 
 }

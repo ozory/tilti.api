@@ -7,6 +7,7 @@ using Domain.Features.Plans.Repository;
 using Domain.Features.Subscriptions.Repository;
 using Domain.Features.Users.Repository;
 using Domain.Shared.Abstractions;
+using Infrastructure.Cache;
 using Infrastructure.Data.Postgreesql.Features.Orders.Repository;
 using Infrastructure.Data.Postgreesql.Features.Plans.Repository;
 using Infrastructure.Data.Postgreesql.Features.Security.Repository;
@@ -41,8 +42,8 @@ public static class DependencyInjection
         services.AddScoped<IOrderRepository, OrdersRepository>();
         services.AddScoped<ISecurityRepository, SecurityRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddSingleton<ICacheRepository, CacheRepository>();
 
-        // services.AddSingleton<IRedisClientsManager>(new RedisManagerPool("localhost:6379"));
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = configuration.GetSection("Infrastructure:Redis:Server").Value;
@@ -60,7 +61,7 @@ public static class DependencyInjection
                 CultureInfo.InvariantCulture);
 
             var apiKey = configuration.GetSection("Configurations:ApiKey").Value;
-            var dc = sp.GetRequiredService<IDistributedCache>();
+            var dc = sp.GetRequiredService<ICacheRepository>();
 
             return new MapServices(valuePerKM, valuePerDuration, apiKey!, dc);
         });

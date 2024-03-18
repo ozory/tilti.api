@@ -2,6 +2,7 @@ using Application.Features.Orders.Contracts;
 using Application.Features.Users.Commands.CreateUser;
 using Application.Shared.Abstractions;
 using Domain.Features.Orders.Entities;
+using Domain.Features.Orders.Events;
 using Domain.Features.Orders.Repository;
 using Domain.Features.Users.Repository;
 using Domain.Shared.Abstractions;
@@ -41,14 +42,16 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Ord
         if (openedOrder.Any()) return Result.Fail(new List<string> { "Usuário já possui uma ordem aberta" });
 
         var user = userValidate.Value;
-        var order = Order.Create(null, user, request.requestedTime, request.address, DateTime.Now);
+        var order = Order.Create(null, user, request.requestedTime, request.addresses, DateTime.Now);
 
         order.SetAmount(request.amount);
-        order.SetDistanceInKM(request.totalDiscance);
-        order.SetDurationInSeconds(request.totalDuration);
+        order.SetDistanceInKM(request.distanceInKM);
+        order.SetDurationInSeconds(request.durationInSeconds);
 
         // Save user
         var savedOrder = await _unitOfWork.OrderRepository.SaveAsync(order);
+        savedOrder.AddDomainEvent((OrderCreatedDomainEvent)savedOrder);
+
         await _unitOfWork.CommitAsync(cancellationToken);
 
         _logger.LogInformation($"Order Created {savedOrder.Id}");

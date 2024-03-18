@@ -4,7 +4,7 @@ using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NetTopologySuite.Geometries;
-
+using DomainLocation = Domain.ValueObjects.Name;
 namespace Infrastructure.Data.Postgreesql.Features.Orders.Configurations;
 
 public class OrderConfiguration : IEntityTypeConfiguration<Order>
@@ -70,9 +70,12 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasColumnName("CancelationTime")
             .HasColumnType("timestamp");
 
-        builder.Property(b => b.Point)
+        builder.Property(b => b.Location)
             .HasColumnType("geography(POINT, 4326)")
             .HasColumnName("Location")
+             .HasConversion(
+                c => new Point(c!.Latitude, c!.Longitude),
+                c => new Domain.Shared.ValueObjects.Location(c.X, c.Y))
             .IsRequired(false);
 
         builder.OwnsMany(e => e.Addresses,
