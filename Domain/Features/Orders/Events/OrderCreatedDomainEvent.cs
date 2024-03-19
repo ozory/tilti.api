@@ -43,22 +43,4 @@ public record OrderCreatedDomainEvent
                  order.CancelationTime,
                  order.DistanceInKM,
                  order.DurationInSeconds);
-
-    public static explicit operator Order(OrderCreatedDomainEvent order)
-    {
-        // var domainOrder = Order.Create(
-        //         order.Id,
-
-        //         order.Status.ToString(),
-        //         [.. order.Addresses],
-        //         order.Amount.Value,
-        //         order.RequestedTime,
-        //         order.AcceptanceTime,
-        //         order.CompletionTime,
-        //         order.CancelationTime,
-        //         order.DistanceInKM,
-        //         order.DurationInSeconds);
-
-        return null!;
-    }
 }
