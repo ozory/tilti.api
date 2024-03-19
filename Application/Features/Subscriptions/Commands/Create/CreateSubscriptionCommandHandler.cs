@@ -34,7 +34,7 @@ public class CreateSubscriptionCommandHandler : ICommandHandler<CreateSubscripti
 
     public async Task<Result<SubscriptionResponse>> Handle(CreateSubscriptionCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Criando assinatura");
+        _logger.LogInformation("Criando assinatura");
 
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
@@ -59,7 +59,7 @@ public class CreateSubscriptionCommandHandler : ICommandHandler<CreateSubscripti
 
         Subscription savedSub = await _repository.SaveAsync(subscription);
 
-        _logger.LogInformation($"Assinatura criada com sucesso: {savedSub.Id}");
+        _logger.LogInformation("Assinatura criada com sucesso: {Id}", savedSub.Id);
 
         return Result.Ok((SubscriptionResponse)(savedSub));
     }

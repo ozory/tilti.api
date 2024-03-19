@@ -30,7 +30,7 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Ord
 
     public async Task<Result<OrderResponse>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Creating an Order {request.UserId}");
+        _logger.LogInformation("Creating an Order {UserId}", request.UserId);
 
         var validationResult = _validator.Validate(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
@@ -54,7 +54,7 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Ord
 
         await _unitOfWork.CommitAsync(cancellationToken);
 
-        _logger.LogInformation($"Order Created {savedOrder.Id}");
+        _logger.LogInformation("Order Created {savedOrderId}", savedOrder.Id);
         return Result.Ok((OrderResponse)savedOrder);
     }
 }

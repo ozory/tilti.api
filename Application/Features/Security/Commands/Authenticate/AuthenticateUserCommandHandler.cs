@@ -38,23 +38,23 @@ public class AuthenticateUserCommandHandler
         AuthenticateUserCommand request,
         CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Validando usuário {request.Email}");
+        _logger.LogInformation("Validando usuário {Email}", request.Email);
 
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        _logger.LogInformation($"Criando usuário {request.Email}");
+        _logger.LogInformation("Criando usuário {Email}", request.Email);
         var user = await _repository.FirstOrDefault(x => x.Email.Value!.Equals(request.Email, StringComparison.InvariantCultureIgnoreCase));
 
         var passwordHash = _securityExtensions.ComputeHash(user!.VerificationSalt!, request.Password);
 
         if (user.Password!.Value != passwordHash)
         {
-            _logger.LogWarning($"Falha de login {request.Email}");
+            _logger.LogWarning("Falha de login {Email}", request.Email);
             return Result.Fail("User not found");
         }
 
-        _logger.LogInformation($"Usuário {request.Email} logado com sucesso");
+        _logger.LogInformation("Usuário {Email}", request.Email);
 
         RefreshTokens refreshToken = new()
         {

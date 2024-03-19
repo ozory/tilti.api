@@ -37,7 +37,7 @@ public class UpdateOrderCommandHandler : ICommandHandler<UpdateOrderCommand, Ord
         UpdateOrderCommand request,
         CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Updating an Order {request.UserId}");
+        _logger.LogInformation("Updating an Order {id}", request.OrderId);
 
         var validationResult = _validator.Validate(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
@@ -63,7 +63,7 @@ public class UpdateOrderCommandHandler : ICommandHandler<UpdateOrderCommand, Ord
         // Save user
         var updatedOrder = await _repository.UpdateAsync(order);
 
-        _logger.LogInformation($"Order Updated {updatedOrder.Id}");
+        _logger.LogInformation("Order Updated {Id}", updatedOrder.Id);
         return Result.Ok((OrderResponse)updatedOrder);
     }
 }

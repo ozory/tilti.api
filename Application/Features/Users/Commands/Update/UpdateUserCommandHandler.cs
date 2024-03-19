@@ -19,7 +19,7 @@ public class UpdateUserCommandHandler(
 
     public async Task<Result<UserResponse>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        logger.LogInformation($"Validando usuário {request.Email}");
+        logger.LogInformation("Validando usuário {Email}", request.Email);
 
         var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
@@ -41,11 +41,11 @@ public class UpdateUserCommandHandler(
             user.SetPassword(securityExtensions.ComputeHash(user.VerificationSalt!, request.Password));
         }
 
-        logger.LogInformation($"Atualizando usuário {request.Email}");
+        logger.LogInformation("Atualizando usuário {Email}", request.Email);
         var savedUser = await unitOfWork.UserRepository.UpdateAsync(user);
         await unitOfWork.CommitAsync(cancellationToken);
 
-        logger.LogInformation($"Usuário {request.Email} atualizado com sucesso");
+        logger.LogInformation("Usuário {Email} atualizado com sucesso", request.Email);
         return Result.Ok((UserResponse)savedUser);
     }
 }
