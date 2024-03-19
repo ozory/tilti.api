@@ -9,6 +9,9 @@ using GeoPoint = NetTopologySuite.Geometries.Point;
 
 namespace Domain.Features.Orders.Entities;
 
+/// <summary>
+/// Orders
+/// </summary>
 public class Order : Entity
 {
     #region PROPERTIES

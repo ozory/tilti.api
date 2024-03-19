@@ -43,9 +43,7 @@ public class OrdersRepository :
 
         // return orders!;
 
-        var orders = await _cacheRepository
-            .GetNearOrders<OrderCreatedDomainEvent>(point.X, point.Y);
-
+        var orders = await _cacheRepository.GetNearOrders<OrderCreatedDomainEvent>(point.X, point.Y);
         return orders.Select(x => (Order)x!).ToList();
     }
 }
