@@ -21,6 +21,6 @@ public interface ICacheRepository
     Task GeoAdd<T>(T value, double longitude, double latitude, string key)
         where T : class;
 
-    Task<List<T?>> GetNearOrders<T>(double longitude, double latitude)
+    Task<List<T?>> GetNearObjects<T>(double longitude, double latitude)
         where T : class?;
 }

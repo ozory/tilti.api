@@ -75,7 +75,8 @@ public sealed class UnitOfWork : IUnitOfWork
             .SelectMany(x => x.Entity.DomainEvents)
             .ToList();
 
-        domainEntities.ToList()
+        domainEntities
+            .ToList()
             .ForEach(entity => entity.Entity.ClearEvents());
 
         _ = Task.Run(() =>

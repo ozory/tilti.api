@@ -1,7 +1,10 @@
 ﻿using Domain.Features.Orders.Entities;
 using Domain.Shared.Abstractions;
 using Domain.ValueObjects;
-using GeoPoint = NetTopologySuite.Geometries.Point;
+
+
+using Domain.Features.Users.Entities;
+using Domain.Enums;
 
 namespace Domain.Features.Orders.Events;
 
@@ -9,6 +12,12 @@ public record OrderCreatedDomainEvent
 (
     long Id,
     long UserId,
+
+    string UserName,
+    string UserEmail,
+    string UserDocument,
+    string? UserPhoto,
+
     long? DriverId,
     string Status,
     List<Address> Addresses,
@@ -24,12 +33,17 @@ public record OrderCreatedDomainEvent
     DateTime? CancelationTime,
     int DistanceInKM,
     int DurationInSeconds
+
 ) : IDomainEvent
 {
     public static explicit operator OrderCreatedDomainEvent(Order order) =>
         new OrderCreatedDomainEvent(
                  order.Id,
                  order.User!.Id,
+                 order.User!.Name!.Value!,
+                 order.User!.Email!.Value!,
+                 order.User!.Document!.Value!,
+                 order.User!.Photo,
                  order.Driver?.Id,
                  order.Status.ToString(),
                  [.. order.Addresses],
@@ -43,4 +57,33 @@ public record OrderCreatedDomainEvent
                  order.CancelationTime,
                  order.DistanceInKM,
                  order.DurationInSeconds);
+
+    public static explicit operator Order(OrderCreatedDomainEvent orderCreated)
+    {
+        var user = User.Create(
+            orderCreated.UserId,
+            orderCreated.UserName,
+            orderCreated.UserEmail,
+            orderCreated.UserDocument,
+            null,
+            null);
+
+        if (orderCreated.UserPhoto is not null) user.SetPhoto(orderCreated.UserPhoto);
+
+        var order = Order.Create(
+            orderCreated.Id,
+            user,
+            orderCreated.RequestedTime!.Value,
+            [.. orderCreated.Addresses],
+            orderCreated.Created);
+
+
+        order.SetAmount(orderCreated.Amount);
+        order.SetStatus((OrderStatus)Enum.Parse(typeof(OrderStatus), orderCreated.Status));
+        order.SetDistanceInKM(orderCreated.DistanceInKM);
+        order.SetDurationInSeconds(orderCreated.DurationInSeconds);
+
+        return order;
+    }
+
 }

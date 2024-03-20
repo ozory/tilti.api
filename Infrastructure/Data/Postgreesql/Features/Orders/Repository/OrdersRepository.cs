@@ -6,7 +6,6 @@ using Domain.Features.Orders.Repository;
 using Domain.Features.Users.Entities;
 using Infrastructure.Data.Postgreesql.Shared;
 using NetTopologySuite.Geometries;
-using DomainOrder = Domain.Features.Orders.Entities.Order;
 
 namespace Infrastructure.Data.Postgreesql.Features.Orders.Repository;
 
@@ -35,17 +34,14 @@ public class OrdersRepository :
         return orders!;
     }
 
-    public async Task<IReadOnlyList<DomainOrder?>> GetOrdersByPoint(Point point)
+    public async Task<IReadOnlyList<Order?>> GetOrdersByPoint(Point point)
     {
-        // var orders = await Filter(
-        //     u => u.Point!.Distance(point) < 1000,
-        //     includeProperties: nameof(User));
-
+        // Returning directily from database
+        // var orders = await Filter(u => u.Point!.Distance(point) < 1000, includeProperties: nameof(User));
         // return orders!;
 
-        var orders = await _cacheRepository.GetNearOrders<OrderCreatedDomainEvent>(point.X, point.Y);
-        //  return orders.Select(x => (Order)x!).ToList();
-
-        return [];
+        // Returning directily from cache
+        var orders = await _cacheRepository.GetNearObjects<OrderCreatedDomainEvent>(point.X, point.Y);
+        return orders.Select(x => (Order)x!).ToList();
     }
 }

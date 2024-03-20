@@ -45,7 +45,7 @@ public class Order : Entity
 
     #region CONSTRUCTORS
 
-    private Order() { }
+    public Order() { }
 
     public static Order Create(
         long? id,

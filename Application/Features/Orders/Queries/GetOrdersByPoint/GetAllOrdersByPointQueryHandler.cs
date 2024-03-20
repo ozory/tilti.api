@@ -8,14 +8,14 @@ using NetTopologySuite.Geometries;
 
 namespace Application.Features.Orders.Queries.GetOrdersByPoint;
 
-public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersByPointQuery, Result<ImmutableList<OrderResponse>>>
+public class GetAllOrdersByPointQueryHandler : IRequestHandler<GetAllOrdersByPointQuery, Result<ImmutableList<OrderResponse>>>
 {
     private readonly IOrderRepository _repository;
-    private readonly ILogger<GetAllOrdersQueryHandler> _logger;
+    private readonly ILogger<GetAllOrdersByPointQueryHandler> _logger;
 
-    public GetAllOrdersQueryHandler(
+    public GetAllOrdersByPointQueryHandler(
         IOrderRepository repository,
-        ILogger<GetAllOrdersQueryHandler> logger)
+        ILogger<GetAllOrdersByPointQueryHandler> logger)
     {
         _repository = repository;
         _logger = logger;

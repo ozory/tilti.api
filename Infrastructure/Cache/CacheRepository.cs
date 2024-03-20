@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Application.Shared.Abstractions;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +19,12 @@ public class CacheRepository : ICacheRepository
     private readonly Lazy<ConnectionMultiplexer> LazyConnection;
     private readonly IDatabaseAsync _redisDB;
     private readonly int _rangeInKM;
+    private readonly JsonSerializerOptions _serializationOptions = new()
+    {
+        ReferenceHandler = ReferenceHandler.IgnoreCycles
+    };
+
+    private readonly string _geoContainer = "orders";
 
     public CacheRepository(IConfiguration configuration)
     {
@@ -52,7 +59,7 @@ public class CacheRepository : ICacheRepository
     public async Task<string> SetAsync<T>(string key, T value, TimeSpan? expiry)
         where T : class
     {
-        var serialized = JsonSerializer.Serialize<T>(value);
+        var serialized = JsonSerializer.Serialize<T>(value, _serializationOptions);
         await _redisDB.StringSetAsync(key, serialized, expiry);
         return serialized;
     }
@@ -62,17 +69,17 @@ public class CacheRepository : ICacheRepository
     {
         await RemoveAsync(key);
         await SetAsync<T>(key, value, TimeSpan.FromMinutes(5));
-        await _redisDB.GeoAddAsync("orders", new GeoEntry(longitude, latitude, key));
+        await _redisDB.GeoAddAsync(_geoContainer, new GeoEntry(longitude, latitude, key));
     }
 
-    public async Task<List<T?>> GetNearOrders<T>(double longitude, double latitude)
+    public async Task<List<T?>> GetNearObjects<T>(double longitude, double latitude)
         where T : class?
     {
         var results = await _redisDB.GeoRadiusAsync(
-            "orders",
+            _geoContainer,
             longitude,
             latitude,
-             _rangeInKM,
+            _rangeInKM,
             GeoUnit.Kilometers, -1,
             Order.Ascending,
             GeoRadiusOptions.WithCoordinates);
@@ -81,17 +88,28 @@ public class CacheRepository : ICacheRepository
 
         List<T?> items = [];
 
+        var tasks = results.ToList().Select(async i =>
+        {
+            var cachedObject = await GetAsync<T>(i.Member.ToString());
 
-        var tasks = results.ToList().Select(i => GetAsync<T>(i.Member.ToString()));
-        var getAssyncResults = await Task.WhenAll(tasks);
-        getAssyncResults.ToList().ForEach(x => items.Add(x));
+            if (cachedObject is not null)
+            {
+                items.Add(cachedObject);
+                return items;
+            }
+
+            await RemoveAsync(i.Member.ToString());
+            return items;
+        });
+
+        await Task.WhenAll(tasks);
 
         return items;
     }
 
     public async Task RemoveAsync(string key)
     {
-        await _redisDB.GeoRemoveAsync("orders", key);
+        await _redisDB.GeoRemoveAsync(_geoContainer, key);
         await _redisDB.KeyDeleteAsync(key);
     }
 }

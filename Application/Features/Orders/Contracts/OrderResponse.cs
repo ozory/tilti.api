@@ -7,6 +7,9 @@ public record OrderResponse
     long Id,
     long UserId,
     long? DriverId,
+
+    OrderUserResponse User,
+
     string Status,
     List<AddressResponse> Addresses,
     decimal Amount,
@@ -25,6 +28,12 @@ public record OrderResponse
                  order.Id,
                  order.User!.Id,
                  order.Driver?.Id,
+
+                 new OrderUserResponse(
+                    order.User.Id,
+                    order.User.Name.Value!,
+                    order.User.Email.Value!, ""),
+
                  order.Status.ToString(),
                  order.Addresses.Select(x => (AddressResponse)x).ToList(),
                  order.Amount.Value,
