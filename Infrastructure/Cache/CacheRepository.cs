@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Application.Shared.Abstractions;
+using Domain.Shared.Abstractions;
 using Microsoft.Extensions.Configuration;
 using StackExchange.Redis;
 
@@ -62,6 +63,19 @@ public class CacheRepository : ICacheRepository
         var serialized = JsonSerializer.Serialize<T>(value, _serializationOptions);
         await _redisDB.StringSetAsync(key, serialized, expiry);
         return serialized;
+    }
+
+    public async Task GeoAdd<T>(List<T> values)
+    where T : class, IGeoData
+    {
+        foreach (var value in values)
+        {
+            await GeoAdd(
+               value,
+               value.Location.Longitude,
+               value.Location.Latitude,
+               Guid.NewGuid().ToString());
+        }
     }
 
     public async Task GeoAdd<T>(T value, double longitude, double latitude, string key)

@@ -13,7 +13,7 @@ public class Rejection : Entity
 
     public long OrderId { get; protected set; }
     public long DriverId { get; protected set; }
-    public User Driver { get; protected set; } = null!;
+    public User User { get; protected set; } = null!;
     public Order Order { get; protected set; } = null!;
 
     #endregion
@@ -35,7 +35,7 @@ public class Rejection : Entity
     /// <param name="driver"></param>
     public void SetDriver(User driver)
     {
-        this.Driver = driver;
+        this.User = driver;
         this.DriverId = driver.Id;
     }
 

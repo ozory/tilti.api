@@ -37,7 +37,7 @@ public class RejectionConfiguration : IEntityTypeConfiguration<Rejection>
             .HasColumnName("Updated")
             .HasColumnType("timestamp");
 
-        builder.HasOne(e => e.Driver)
+        builder.HasOne(e => e.User)
             .WithMany(s => s.Rejections)
             .HasForeignKey(e => e.DriverId)
             .IsRequired(true);

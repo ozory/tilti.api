@@ -16,6 +16,7 @@ public class CloseExpiredOrdersConsumer : BackgroundService
     private readonly ILogger<CloseExpiredOrdersConsumer> _logger;
     private readonly IConfiguration _configuration;
     private readonly int _delayInterval = 50000;  // 5 minutos
+    private readonly int _expiredMinutes = 5;  // 5 minutos 
     private readonly IServiceProvider _serviceProvider;
 
     public CloseExpiredOrdersConsumer(
@@ -28,6 +29,7 @@ public class CloseExpiredOrdersConsumer : BackgroundService
         _configuration = configuration;
         _serviceProvider = serviceProvider;
         _delayInterval = int.Parse(_configuration["Infrastructure:CloseExpiredOrders:delayInterval"]!);
+        _expiredMinutes = int.Parse(_configuration["Infrastructure:CloseExpiredOrders:expiredMinutes"]!);
 
         using (var scope = _serviceProvider.CreateScope())
         { }
@@ -42,7 +44,7 @@ public class CloseExpiredOrdersConsumer : BackgroundService
             using (var scope = _serviceProvider.CreateScope())
             {
                 var _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                var command = new CloseExpireOrdersCommand(DateTime.Now.AddMinutes(-_delayInterval));
+                var command = new CloseExpireOrdersCommand(DateTime.Now.AddMinutes(-_expiredMinutes));
                 await _mediator.Send(command);
             }
 

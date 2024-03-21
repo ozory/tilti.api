@@ -58,6 +58,8 @@ public class CloseExpiredOrdersCommandHandler : ICommandHandler<CloseExpireOrder
         });
 
         var result = await Task.WhenAll(tasks);
+        await _unitOfWork.CommitAsync(cancellationToken);
+
         return Result.Ok(result.ToImmutableList());
     }
 }

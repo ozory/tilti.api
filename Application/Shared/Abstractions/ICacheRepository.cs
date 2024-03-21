@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Shared.Abstractions;
 using Microsoft.Extensions.Configuration;
 
 namespace Application.Shared.Abstractions;
@@ -20,6 +21,9 @@ public interface ICacheRepository
 
     Task GeoAdd<T>(T value, double longitude, double latitude, string key)
         where T : class;
+
+    Task GeoAdd<T>(List<T> values)
+     where T : class, IGeoData;
 
     Task<List<T?>> GetNearObjects<T>(double longitude, double latitude)
         where T : class?;

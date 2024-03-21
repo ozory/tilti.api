@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using Domain.Abstractions;
 using Domain.Enums;
 using Domain.Features.Users.Entities;
+using Domain.Shared.Abstractions;
 using Domain.Shared.ValueObjects;
 using Domain.ValueObjects;
 using GeoPoint = NetTopologySuite.Geometries.Point;
@@ -12,7 +13,7 @@ namespace Domain.Features.Orders.Entities;
 /// <summary>
 /// Orders
 /// </summary>
-public class Order : Entity
+public class Order : Entity, IGeoData
 {
     #region PROPERTIES
 
@@ -39,7 +40,9 @@ public class Order : Entity
     public IReadOnlyCollection<Item> Items => new ReadOnlyCollection<Item>(_items);
     public IReadOnlyCollection<Address> Addresses => new ReadOnlyCollection<Address>(_addresses);
 
-    public Location? Location { get; protected set; }
+    public GeoPoint Point { get; protected set; } = null!;
+
+    public Location Location { get; set; } = null!;
 
     public OrderStatus Status { get; protected set; }
 

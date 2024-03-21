@@ -5,6 +5,7 @@ using Domain.ValueObjects;
 
 using Domain.Features.Users.Entities;
 using Domain.Enums;
+using Domain.Shared.ValueObjects;
 
 namespace Domain.Features.Orders.Events;
 
@@ -34,10 +35,15 @@ public record OrderCreatedDomainEvent
     int DistanceInKM,
     int DurationInSeconds
 
-) : IDomainEvent
+) : IDomainEvent, IGeoData
 {
-    public static explicit operator OrderCreatedDomainEvent(Order order) =>
-        new OrderCreatedDomainEvent(
+    Location IGeoData.Location { get => new(this.Latitude, this.Longitude); set { } }
+
+    public static explicit operator OrderCreatedDomainEvent(Order order)
+    {
+        order.Location ??= new Location(order.Point.Y, order.Point.X);
+
+        return new OrderCreatedDomainEvent(
                  order.Id,
                  order.User!.Id,
                  order.User!.Name!.Value!,
@@ -57,6 +63,7 @@ public record OrderCreatedDomainEvent
                  order.CancelationTime,
                  order.DistanceInKM,
                  order.DurationInSeconds);
+    }
 
     public static explicit operator Order(OrderCreatedDomainEvent orderCreated)
     {

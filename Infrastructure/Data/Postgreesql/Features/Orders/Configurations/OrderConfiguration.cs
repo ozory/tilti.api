@@ -70,13 +70,13 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasColumnName("CancelationTime")
             .HasColumnType("timestamp");
 
-        builder.Property(b => b.Location)
+        builder.Property(b => b.Point)
             .HasColumnType("geography(POINT, 4326)")
             .HasColumnName("Location")
-             .HasConversion(
-                c => new Point(c!.Latitude, c!.Longitude),
-                c => new Domain.Shared.ValueObjects.Location(c.X, c.Y))
-            .IsRequired(false);
+            //  .HasConversion(
+            //     c => new Domain.Shared.ValueObjects.Location(c.X, c.Y),
+            //     c => new Point(c!.Longitude, c!.Latitude))
+            .IsRequired();
 
         builder.OwnsMany(e => e.Addresses,
             builder => { builder.ToJson(); });
@@ -98,5 +98,6 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         builder.Ignore(x => x.Items);
         builder.Ignore(x => x.DomainEvents);
+        builder.Ignore(x => x.Location);
     }
 }

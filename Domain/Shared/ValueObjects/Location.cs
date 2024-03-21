@@ -7,4 +7,14 @@ using NetTopologySuite.Geometries;
 
 namespace Domain.Shared.ValueObjects;
 
-public record Location(Double Latitude, Double Longitude);
+public class Location
+{
+    public Double Latitude { get; set; }
+    public Double Longitude { get; set; }
+
+    public Location(double latitude, double longitude)
+    {
+        Latitude = latitude;
+        Longitude = longitude;
+    }
+}

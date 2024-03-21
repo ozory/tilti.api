@@ -134,7 +134,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(1000);
 
         builder.HasMany(e => e.Rejections)
-            .WithOne(e => e.Driver)
+            .WithOne(e => e.User)
             .HasForeignKey(e => e.DriverId);
 
         builder.HasIndex(x => new { x.Email, x.Document });
