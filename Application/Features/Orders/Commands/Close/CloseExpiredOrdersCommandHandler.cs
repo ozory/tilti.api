@@ -33,7 +33,9 @@ public class CloseExpiredOrdersCommandHandler : ICommandHandler<CloseExpireOrder
         _cacheRepository = cacheRepository;
     }
 
-    public async Task<Result<Result<ImmutableList<OrderResponse>>>> Handle(CloseExpireOrdersCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Result<ImmutableList<OrderResponse>>>> Handle(
+        CloseExpireOrdersCommand request,
+        CancellationToken cancellationToken)
     {
         _logger.LogInformation("Invalidating old olders {requestedTime}", request.requestedTime);
 

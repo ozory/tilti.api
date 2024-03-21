@@ -27,7 +27,7 @@ public class CloseExpiredOrdersConsumer : BackgroundService
         _logger = logger;
         _configuration = configuration;
         _serviceProvider = serviceProvider;
-        // _delayInterval = int.Parse(_configuration["Infrastructure:UserCreatedMessages:delayInterval"]!);
+        _delayInterval = int.Parse(_configuration["Infrastructure:CloseExpiredOrders:delayInterval"]!);
 
         using (var scope = _serviceProvider.CreateScope())
         { }
@@ -42,7 +42,7 @@ public class CloseExpiredOrdersConsumer : BackgroundService
             using (var scope = _serviceProvider.CreateScope())
             {
                 var _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                var command = new CloseExpireOrdersCommand(DateTime.Now.AddMinutes(-10));
+                var command = new CloseExpireOrdersCommand(DateTime.Now.AddMinutes(-_delayInterval));
                 await _mediator.Send(command);
             }
 
