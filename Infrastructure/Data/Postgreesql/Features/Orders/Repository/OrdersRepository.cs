@@ -14,6 +14,7 @@ public class OrdersRepository :
     IOrderRepository
 {
     private readonly ICacheRepository _cacheRepository;
+
     public OrdersRepository(
         TILTContext context,
         ICacheRepository cacheRepository) : base(context)
@@ -40,7 +41,6 @@ public class OrdersRepository :
         // var orders = await Filter(u => u.Point!.Distance(point) < 1000, includeProperties: nameof(User));
         // return orders!;
 
-        // Returning directily from cache
         var orders = await _cacheRepository.GetNearObjects<OrderCreatedDomainEvent>(point.X, point.Y);
         return orders.Select(x => (Order)x!).ToList();
     }

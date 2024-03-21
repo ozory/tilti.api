@@ -133,6 +133,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("PaymentUserIdentifier")
             .HasMaxLength(1000);
 
+        builder.HasMany(e => e.Rejections)
+            .WithOne(e => e.Driver)
+            .HasForeignKey(e => e.DriverId);
+
         builder.HasIndex(x => new { x.Email, x.Document });
 
         builder.Ignore(x => x.DomainEvents);

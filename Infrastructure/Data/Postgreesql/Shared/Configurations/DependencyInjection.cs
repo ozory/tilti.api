@@ -41,6 +41,8 @@ public static class DependencyInjection
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
         services.AddScoped<IOrderRepository, OrdersRepository>();
         services.AddScoped<ISecurityRepository, SecurityRepository>();
+        services.AddScoped<IRejectRepository, RejectionRepository>();
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<ICacheRepository, CacheRepository>();
 

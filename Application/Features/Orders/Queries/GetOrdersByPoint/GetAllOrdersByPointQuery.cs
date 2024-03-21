@@ -7,6 +7,7 @@ namespace Application.Features.Orders.Queries.GetOrdersByPoint;
 
 public class GetAllOrdersByPointQuery : IRequest<Result<ImmutableList<OrderResponse>>>
 {
+    public long? DriverId { get; set; }
     public double Latitude { get; set; }
     public double Longitude { get; set; }
 }

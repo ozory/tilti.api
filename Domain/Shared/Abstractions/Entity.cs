@@ -12,6 +12,11 @@ public abstract class Entity
     public long? UpdatedBy { get; protected set; }
     public virtual List<IDomainEvent> DomainEvents { get; protected set; } = new();
 
+    public virtual void SetCreated(DateTime? dateTime)
+    {
+        this.CreatedAt = dateTime ?? DateTime.Now;
+    }
+
     public virtual void SetUpdated(DateTime? dateTime)
     {
         this.UpdatedAt = dateTime ?? DateTime.Now;

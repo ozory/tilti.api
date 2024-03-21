@@ -34,6 +34,8 @@ public class Order : Entity
     public DateTime? CompletionTime { get; protected set; }
     public DateTime? CancelationTime { get; protected set; }
 
+    public virtual ICollection<Rejection> Rejections { get; protected set; } = [];
+
     public IReadOnlyCollection<Item> Items => new ReadOnlyCollection<Item>(_items);
     public IReadOnlyCollection<Address> Addresses => new ReadOnlyCollection<Address>(_addresses);
 
