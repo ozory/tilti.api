@@ -44,4 +44,10 @@ public class OrdersRepository :
         var orders = await _cacheRepository.GetNearObjects<OrderCreatedDomainEvent>(point.X, point.Y);
         return orders.Select(x => (Order)x!).ToList();
     }
+
+    public async Task<IReadOnlyList<Order?>> GetOpenedOrdersThatExpired(DateTime expireTime)
+    {
+        var orders = await Filter(u => u.CreatedAt < expireTime && u.Status == OrderStatus.ReadyToAccept);
+        return orders!;
+    }
 }

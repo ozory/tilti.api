@@ -135,12 +135,6 @@ public class Order : Entity
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="date"></param>
-    public void SetUpdatedAt(DateTime date) => this.UpdatedAt = date;
-
-    /// <summary>
-    /// 
-    /// </summary>
     /// <param name="amount"></param>
     public void SetAmount(Decimal value) => this.Amount = new Amount(value);
 

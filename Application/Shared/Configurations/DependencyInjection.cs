@@ -31,7 +31,7 @@ public static class DependencyInjection
         services.AddScoped<ISecurityExtensions, SecurityExtensions>();
 
         services.AddHostedService<UserCreatedConsumer>();
-        services.AddHostedService<OpenOrdersConsumer>();
+        services.AddHostedService<CloseExpiredOrdersConsumer>();
 
         return services;
     }
