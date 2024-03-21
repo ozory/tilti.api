@@ -8,6 +8,7 @@ using GoogleApi.Entities.Maps.DistanceMatrix.Request;
 using Microsoft.Extensions.Caching.Distributed;
 using GoogleApi.Entities.Maps.DistanceMatrix.Response;
 using System.Text.Json;
+using GoogleApi.Entities.Common;
 
 namespace Infrastructure.External.Features.Maps.Services;
 
@@ -77,7 +78,7 @@ public class MapServices : IMapServices
         await _distributedCache.SetAsync<DistanceMatrixResponse>(
             cacheKey,
             distanceMatrixResponse,
-            TimeSpan.FromMinutes(2));
+            TimeSpan.FromMinutes(5));
 
         return distanceMatrixResponse;
     }

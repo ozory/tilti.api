@@ -40,7 +40,7 @@ public class OrderCreatedEventHandler : INotificationHandler<OrderCreatedDomainE
     {
         _logger.LogInformation("Publicando evento de criação de pedido {id}", notification.Id);
 
-        await _cacheRepository.GeoAdd<OrderCreatedDomainEvent>(
+        await _cacheRepository.GeoAdd(
             notification,
             notification.Longitude,
             notification.Latitude,

@@ -39,7 +39,7 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Ord
         if (userValidate.IsFailed) return Result.Fail(userValidate.Errors);
 
         var openedOrder = await _unitOfWork.OrderRepository.GetOpenedOrdersByUser(request.UserId);
-        if (openedOrder.Any()) return Result.Fail(new List<string> { "Usuário já possui uma ordem aberta" });
+        if (openedOrder.Any()) return Result.Fail("Usuário já possui uma ordem aberta");
 
         var user = userValidate.Value;
         var order = Order.Create(null, user, request.requestedTime, request.addresses, DateTime.Now);

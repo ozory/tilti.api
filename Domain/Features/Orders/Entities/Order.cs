@@ -156,5 +156,15 @@ public class Order : Entity
     /// <param name="value"></param>
     public void SetDurationInSeconds(int value) => this.DurationInSeconds = value;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="latitude"></param>
+    /// <param name="longitude"></param>
+    public void SetLocation(double latitude, double longitude)
+    {
+        this.Location = new Location(latitude, longitude);
+    }
+
     #endregion
 }

@@ -77,11 +77,11 @@ public record OrderCreatedDomainEvent
             [.. orderCreated.Addresses],
             orderCreated.Created);
 
-
         order.SetAmount(orderCreated.Amount);
         order.SetStatus((OrderStatus)Enum.Parse(typeof(OrderStatus), orderCreated.Status));
         order.SetDistanceInKM(orderCreated.DistanceInKM);
         order.SetDurationInSeconds(orderCreated.DurationInSeconds);
+        order.SetLocation(orderCreated.Latitude, orderCreated.Longitude);
 
         return order;
     }

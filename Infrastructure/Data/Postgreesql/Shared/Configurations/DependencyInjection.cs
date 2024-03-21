@@ -67,7 +67,6 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IMessageRepository, MessageRepository>();
-        services.AddHostedService<UserCreatedConsumer>();
 
         return services;
     }
