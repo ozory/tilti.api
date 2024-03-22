@@ -20,7 +20,6 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Ord
 
         public CreateOrderCommandHandler(
             ILogger<CreateOrderCommandHandler> logger,
-            IOrderRepository repository,
             IValidator<CreateOrderCommand> validator,
             IUnitOfWork unitOfWork)
         {
