@@ -30,9 +30,6 @@ public class CloseExpiredOrdersConsumer : BackgroundService
         _serviceProvider = serviceProvider;
         _delayInterval = int.Parse(_configuration["Infrastructure:CloseExpiredOrders:delayInterval"]!);
         _expiredMinutes = int.Parse(_configuration["Infrastructure:CloseExpiredOrders:expiredMinutes"]!);
-
-        using (var scope = _serviceProvider.CreateScope())
-        { }
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
