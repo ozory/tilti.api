@@ -5,6 +5,7 @@ using Domain.Features.Orders.Entities;
 using Domain.Features.Orders.Events;
 using Domain.Features.Orders.Repository;
 using Domain.Features.Users.Entities;
+using Domain.Shared.ValueObjects;
 using Infrastructure.Data.Postgreesql.Shared;
 using Microsoft.Extensions.Configuration;
 using NetTopologySuite.Geometries;
@@ -35,7 +36,7 @@ public class OrdersRepository :
 
         var orders = await Filter(
             u => u.UserId == idUser && status.Contains((ushort)u.Status),
-            includeProperties: nameof(User));
+            includeProperties: IncludeProperties);
 
         return orders!;
     }
@@ -61,7 +62,7 @@ public class OrdersRepository :
     {
         var orders = await Filter(
             u => u.CreatedAt < expireTime && u.Status == OrderStatus.ReadyToAccept,
-            includeProperties: nameof(User));
+            includeProperties: IncludeProperties);
         return orders!;
     }
 }
