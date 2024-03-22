@@ -1,17 +1,17 @@
-
-using System.Dynamic;
 using Domain.Abstractions;
 using Domain.Enums;
+using Domain.Features.Orders.Entities;
+using Domain.Features.Subscriptions.Entities;
+using Domain.Features.Users.Events;
+using Domain.Shared.Abstractions;
 using Domain.ValueObjects;
-using FluentResults;
-using FluentValidation.Results;
 
 namespace Domain.Features.Users.Entities;
 
 /// <summary>
 /// Represents an user
 /// </summary>
-public class User : Entity<User>
+public class User : Entity
 {
     #region PROPERTIES
 
@@ -22,18 +22,23 @@ public class User : Entity<User>
     public Document Document { get; protected set; } = null!;
     public Password? Password { get; protected set; } = null!;
     public UserStatus Status { get; protected set; }
-
+    public string? PaymentToken { get; protected set; }
+    public string? PaymentUserIdentifier { get; protected set; }
 
     public string? Photo { get; protected set; }
     public string? VerificationCode { get; protected set; }
     public string? VerificationSalt { get; protected set; }
 
-    // public virtual ICollection<Order> Orders { get; protected set; } = null!;
-    // public virtual ICollection<Subscription> Subscriptions { get; protected set; } = null!;
+    public virtual ICollection<Order> UserOrders { get; protected set; } = null!;
+    public virtual ICollection<Order> DriverOrders { get; protected set; } = null!;
+    public virtual Subscription? Subscription { get; protected set; } = null!;
+    public virtual ICollection<Rejection> Rejections { get; protected set; } = [];
 
     #endregion
 
     #region CONSTRUCTORS
+
+    private User() { }
 
     /// <summary>
     /// Cria um novo usuário
@@ -80,8 +85,8 @@ public class User : Entity<User>
             new Document(document),
             new Password(password));
 
-        user.Status = UserStatus.PendingApproval;
         user.CreatedAt = createdDate ?? DateTime.Now;
+
         return user;
     }
 
@@ -129,7 +134,7 @@ public class User : Entity<User>
     /// 
     /// </summary>
     /// <param name="photo"></param>
-    public void SetPhoto(string photo) => this.Photo = photo;
+    public void SetPhoto(string? photo) => this.Photo = photo;
 
     public void SetPassword(string password) => this.Password!.SetValue(password);
 
@@ -162,6 +167,12 @@ public class User : Entity<User>
 
     public void SetVerificationSalt(string verificationSalt)
     => this.VerificationSalt = verificationSalt;
+
+    public void SetPaymentToken(string? paymentToken)
+    => this.PaymentToken = paymentToken;
+
+    public void SetPaymentUserIdentifier(string? paymentUserIdentifier)
+    => this.PaymentUserIdentifier = paymentUserIdentifier;
 
     #endregion METHODS
 }

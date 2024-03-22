@@ -16,7 +16,7 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
         RuleFor(s => s.Email)
             .MustAsync(async (email, _) =>
             {
-                var user = await userRepository.GetByEmail(email);
+                var user = await userRepository.FirstOrDefault(u => (string)u.Email! == email);
                 return user == null;
             })
         .WithMessage("Email allready in use");
@@ -24,7 +24,7 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
         RuleFor(s => s.Document)
             .MustAsync(async (document, _) =>
             {
-                var user = await userRepository.GetByDocument(document);
+                var user = await userRepository.FirstOrDefault(u => (string)u.Document! == document);
                 return user == null;
             })
         .WithMessage("Document allready in use");

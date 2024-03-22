@@ -1,67 +1,45 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Users.Entities;
+using Domain.Features.Users.Events;
 using Domain.Features.Users.Repository;
+using Domain.Shared.Abstractions;
 using FluentResults;
 using FluentValidation;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Users.Commands.CreateUser;
 
-public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, UserResponse>
+public class CreateUserCommandHandler(
+    IUnitOfWork unitOfWork,
+    ILogger<CreateUserCommandHandler> logger,
+    IValidator<CreateUserCommand> validator,
+    ISecurityExtensions securityExtensions) : ICommandHandler<CreateUserCommand, UserResponse>
 {
-    private readonly IUserRepository _repository;
-    private readonly ILogger<CreateUserCommandHandler> _logger;
-    private readonly IValidator<CreateUserCommand> _validator;
-    private readonly ISecurityExtensions _securityExtensions;
-
-    public CreateUserCommandHandler(
-        ILogger<CreateUserCommandHandler> logger,
-        IUserRepository repository,
-        IValidator<CreateUserCommand> validator,
-        ISecurityExtensions securityExtensions)
-    {
-        _repository = repository;
-        _logger = logger;
-        _validator = validator;
-        _securityExtensions = securityExtensions;
-    }
 
     public async Task<Result<UserResponse>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Validando usuário {request.Email}");
+        logger.LogInformation("Validando usuário {email}", request.Email);
 
-        var validationResult = await _validator.ValidateAsync(request);
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        _logger.LogInformation($"Criando usuário {request.Email}");
+        logger.LogInformation("Criando usuário {email}", request.Email);
 
-        // Hash password to save
-        var user = User.Create
-            (
-                null,
-                request.Name,
-                request.Email,
-                request.Document,
-                request.Password,
-                DateTime.Now
-            );
+        var user = User.Create(null, request.Name, request.Email, request.Document, request.Password, DateTime.Now);
 
         // Security Info
-        var securitySalt = _securityExtensions.GenerateSalt();
+        var securitySalt = securityExtensions.GenerateSalt();
         user.SetVerificationSalt(securitySalt);
-        user.SetPassword(_securityExtensions.ComputeHash(securitySalt, request.Password));
-        user.SetVerificationCode(_securityExtensions.ComputeValidationCode());
+        user.SetPassword(securityExtensions.ComputeHash(securitySalt, request.Password));
+        user.SetVerificationCode(securityExtensions.ComputeValidationCode());
 
-        // Save user
-        var savedUser = await _repository.SaveAsync(user);
+        var savedUser = await unitOfWork.UserRepository.SaveAsync(user);
+        savedUser.AddDomainEvent(UserCreatedDomainEvent.Create(user));
 
-        _logger.LogInformation($"Usuário {request.Email} criado com sucesso");
+        await unitOfWork.CommitAsync(cancellationToken);
+
+        logger.LogInformation("Usuário {email} criado com sucesso", request.Email);
         return Result.Ok((UserResponse)savedUser);
     }
 }

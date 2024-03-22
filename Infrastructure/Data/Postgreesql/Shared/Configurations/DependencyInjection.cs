@@ -1,15 +1,23 @@
+using System.Globalization;
 using System.Reflection;
+using Application.Features.Users.Consumers;
 using Application.Shared.Abstractions;
 using Domain.Features.Orders.Repository;
 using Domain.Features.Plans.Repository;
-using Domain.Features.Subscription.Repository;
+using Domain.Features.Subscriptions.Repository;
 using Domain.Features.Users.Repository;
+using Domain.Shared.Abstractions;
+using Infrastructure.Cache;
 using Infrastructure.Data.Postgreesql.Features.Orders.Repository;
 using Infrastructure.Data.Postgreesql.Features.Plans.Repository;
 using Infrastructure.Data.Postgreesql.Features.Security.Repository;
 using Infrastructure.Data.Postgreesql.Features.Subscriptions.Repository;
 using Infrastructure.Data.Postgreesql.Features.Users.Repository;
+using Infrastructure.Data.Postgreesql.Shared.Abstractions;
+using Infrastructure.External.Features.Maps.Services;
+using Infrastructure.Messages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,7 +31,9 @@ public static class DependencyInjection
 
         services.AddDbContext<TILTContext>(options =>
         {
-            options.UseNpgsql(configuration.GetSection("Infrastructure:DataBase").Value);
+            options.UseNpgsql(
+                configuration.GetSection("Infrastructure:DataBase").Value,
+                o => o.UseNetTopologySuite());
         });
 
         services.AddScoped<IUserRepository, UserRepository>();
@@ -31,6 +41,34 @@ public static class DependencyInjection
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
         services.AddScoped<IOrderRepository, OrdersRepository>();
         services.AddScoped<ISecurityRepository, SecurityRepository>();
+        services.AddScoped<IRejectRepository, RejectionRepository>();
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddSingleton<ICacheRepository, CacheRepository>();
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = configuration.GetSection("Infrastructure:Redis:Server").Value;
+            options.InstanceName = configuration.GetSection("Infrastructure:Redis:InstanceName").Value;
+        });
+
+        services.AddSingleton<IMapServices>(sp =>
+        {
+            var valuePerKM = Decimal.Parse(
+            configuration.GetSection("Configurations:PricePerKM").Value!,
+            CultureInfo.InvariantCulture);
+
+            var valuePerDuration = Decimal.Parse(
+                configuration.GetSection("Configurations:PricePerDuration").Value!,
+                CultureInfo.InvariantCulture);
+
+            var apiKey = configuration.GetSection("Configurations:ApiKey").Value;
+            var dc = sp.GetRequiredService<ICacheRepository>();
+
+            return new MapServices(valuePerKM, valuePerDuration, apiKey!, dc);
+        });
+
+        services.AddScoped<IMessageRepository, MessageRepository>();
 
         return services;
     }

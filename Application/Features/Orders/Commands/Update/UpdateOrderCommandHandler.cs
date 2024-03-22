@@ -1,6 +1,9 @@
 using Application.Features.Orders.Contracts;
+using Application.Features.Users.Commands.CreateUser;
 using Application.Shared.Abstractions;
 using Domain.Enums;
+using Domain.Features.Orders.Entities;
+using Domain.Features.Orders.Repository;
 using Domain.Features.Users.Repository;
 using FluentResults;
 using FluentValidation;
@@ -10,52 +13,57 @@ namespace Application.Features.Orders.Commands.UpdateOrder;
 
 public class UpdateOrderCommandHandler : ICommandHandler<UpdateOrderCommand, OrderResponse>
 {
-    private readonly IUserRepository _repository;
+    private readonly IOrderRepository _repository;
     private readonly ILogger<UpdateOrderCommandHandler> _logger;
+    private readonly IUserRepository _userRepository;
     private readonly IValidator<UpdateOrderCommand> _validator;
     private readonly ISecurityExtensions _securityExtensions;
 
     public UpdateOrderCommandHandler(
         ILogger<UpdateOrderCommandHandler> logger,
-        IUserRepository repository,
+        IOrderRepository repository,
         IValidator<UpdateOrderCommand> validator,
-        ISecurityExtensions securityExtensions)
+        ISecurityExtensions securityExtensions,
+        IUserRepository userRepository)
     {
         _repository = repository;
         _logger = logger;
         _validator = validator;
         _securityExtensions = securityExtensions;
+        _userRepository = userRepository;
     }
 
-    public async Task<Result<OrderResponse>> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
+    public async Task<Result<OrderResponse>> Handle(
+        UpdateOrderCommand request,
+        CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Validando usuário {request.Email}");
+        _logger.LogInformation("Updating an Order {id}", request.OrderId);
 
-        var validationResult = await _validator.ValidateAsync(request);
+        var validationResult = _validator.Validate(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        var user = await _repository.GetByIdAsync(request.id);
-        if (user == null) return Result.Fail("User not found");
+        var userValidate = await CreateUserCommandValidator.ValidateUser(_userRepository, request.UserId);
+        if (userValidate.IsFailed) return Result.Fail(userValidate.Errors);
 
-        user.SetName(request.Name);
-        user.SetEmail(request.Email);
-        user.SetDocument(request.Document);
+        var openedOrder = await _repository.GetByIdAsync(request.OrderId);
+        if (openedOrder is null) return Result.Fail(new List<string> { "Nenhum pedido encontrado" });
 
-        if (request.Status is not null && (ushort)user.Status != request.Status)
-            user.SetStatus((UserStatus)request.Status);
+        var user = userValidate.Value;
+        var order = Order.Create(
+            request.OrderId,
+            user,
+            request.requestedTime,
+            request.address,
+            openedOrder.CreatedAt);
 
-        // Generate Hashed Password
-        if (!string.IsNullOrEmpty(request.Password))
-        {
-            user.SetVerificationSalt(_securityExtensions.GenerateSalt());
-            user.SetPassword(_securityExtensions.ComputeHash(user.VerificationSalt!, request.Password));
-        }
+        order.SetAmount(request.amount);
+        order.SetDistanceInKM(request.totalDiscance);
+        order.SetDurationInSeconds(request.totalDuration);
 
-        _logger.LogInformation($"Atualizando usuário {request.Email}");
-        var savedUser = await _repository.UpdateAsync(user);
+        // Save user
+        var updatedOrder = await _repository.UpdateAsync(order);
 
-        _logger.LogInformation($"Usuário {request.Email} atualizado com sucesso");
-        return Result.Ok();
-        //return Result.Ok((UserResponse)savedUser);
+        _logger.LogInformation("Order Updated {Id}", updatedOrder.Id);
+        return Result.Ok((OrderResponse)updatedOrder);
     }
 }

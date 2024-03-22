@@ -1,46 +1,30 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Enums;
 using Domain.Features.Users.Entities;
 using Domain.Features.Users.Repository;
+using Domain.Shared.Abstractions;
 using FluentResults;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
-using DomainUser = Domain.Features.Users.Entities.User;
 
 namespace Application.Features.Users.Commands.UpdateUser;
 
-public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand, UserResponse>
+public class UpdateUserCommandHandler(
+    IUnitOfWork unitOfWork,
+    ILogger<UpdateUserCommandHandler> logger,
+    IValidator<UpdateUserCommand> validator,
+    ISecurityExtensions securityExtensions) : ICommandHandler<UpdateUserCommand, UserResponse>
 {
-    private readonly IUserRepository _repository;
-    private readonly ILogger<UpdateUserCommandHandler> _logger;
-    private readonly IValidator<UpdateUserCommand> _validator;
-    private readonly ISecurityExtensions _securityExtensions;
-
-    public UpdateUserCommandHandler(
-        ILogger<UpdateUserCommandHandler> logger,
-        IUserRepository repository,
-        IValidator<UpdateUserCommand> validator,
-        ISecurityExtensions securityExtensions)
-    {
-        _repository = repository;
-        _logger = logger;
-        _validator = validator;
-        _securityExtensions = securityExtensions;
-    }
 
     public async Task<Result<UserResponse>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Validando usuário {request.Email}");
+        logger.LogInformation("Validando usuário {Email}", request.Email);
 
-        var validationResult = await _validator.ValidateAsync(request);
+        var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        var user = await _repository.GetByIdAsync(request.id);
+        var user = await unitOfWork.UserRepository.GetByIdAsync(request.id);
         if (user == null) return Result.Fail("User not found");
 
         user.SetName(request.Name);
@@ -53,14 +37,15 @@ public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand, UserR
         // Generate Hashed Password
         if (!string.IsNullOrEmpty(request.Password))
         {
-            user.SetVerificationSalt(_securityExtensions.GenerateSalt());
-            user.SetPassword(_securityExtensions.ComputeHash(user.VerificationSalt!, request.Password));
+            user.SetVerificationSalt(securityExtensions.GenerateSalt());
+            user.SetPassword(securityExtensions.ComputeHash(user.VerificationSalt!, request.Password));
         }
 
-        _logger.LogInformation($"Atualizando usuário {request.Email}");
-        var savedUser = await _repository.UpdateAsync(user);
+        logger.LogInformation("Atualizando usuário {Email}", request.Email);
+        var savedUser = await unitOfWork.UserRepository.UpdateAsync(user);
+        await unitOfWork.CommitAsync(cancellationToken);
 
-        _logger.LogInformation($"Usuário {request.Email} atualizado com sucesso");
+        logger.LogInformation("Usuário {Email} atualizado com sucesso", request.Email);
         return Result.Ok((UserResponse)savedUser);
     }
 }

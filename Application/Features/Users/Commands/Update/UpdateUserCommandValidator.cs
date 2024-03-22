@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Domain.Features.Users.Repository;
 using FluentValidation;
-using DomainUser = Domain.Features.Users.Entities.User;
 
 namespace Application.Features.Users.Commands.UpdateUser;
 
@@ -34,7 +29,7 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
         RuleFor(s => new { s.id, s.Email })
         .MustAsync(async (source, _) =>
             {
-                var user = await userRepository.GetByEmail(source.Email);
+                var user = await userRepository.FirstOrDefault(u => u.Email.Value == source.Email);
                 if (user != null)
                 {
                     return user.Id == source.id;
@@ -51,7 +46,7 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
         RuleFor(s => new { s.id, s.Document })
         .MustAsync(async (source, _) =>
             {
-                var user = await userRepository.GetByDocument(source.Document);
+                var user = await userRepository.FirstOrDefault(u => u.Document.Value == source.Document);
                 if (user != null)
                 {
                     return user.Id == source.id;

@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Domain.Abstractions;
-using DomainSubscription = Domain.Features.Subscriptions.Entities.Subscription;
+using Domain.Features.Subscriptions.Entities;
 
-namespace Domain.Features.Subscription.Repository;
 
-public interface ISubscriptionRepository : IGenericRepository<DomainSubscription>
+namespace Domain.Features.Subscriptions.Repository;
+
+public interface ISubscriptionRepository : IGenericRepository<Subscription>
 {
-    Task<DomainSubscription?> GetSubscriptionByUser(long idUser);
+    Task<Subscription?> GetSubscriptionByUser(long idUser);
 }

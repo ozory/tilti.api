@@ -1,78 +1,68 @@
-using System.Collections.Immutable;
+using Application.Features.Orders.Contracts;
+using Application.Shared.Abstractions;
+using Domain.Enums;
 using Domain.Features.Orders.Entities;
+using Domain.Features.Orders.Events;
 using Domain.Features.Orders.Repository;
-using Infrastructure.Data.Postgreesql.Features.Subscriptions.Maps;
-using Microsoft.EntityFrameworkCore;
+using Domain.Features.Users.Entities;
+using Domain.Shared.ValueObjects;
+using Infrastructure.Data.Postgreesql.Shared;
+using Microsoft.Extensions.Configuration;
+using NetTopologySuite.Geometries;
 
 namespace Infrastructure.Data.Postgreesql.Features.Orders.Repository;
 
-public class OrdersRepository : IOrderRepository
+public class OrdersRepository :
+    GenericRepository<Order>,
+    IOrderRepository
 {
-    private readonly TILTContext _context;
+    private readonly ICacheRepository _cacheRepository;
+    private readonly IConfiguration _configuration;
 
-    public OrdersRepository(TILTContext context)
+    public OrdersRepository(
+        TILTContext context,
+        ICacheRepository cacheRepository,
+        IConfiguration configuration) : base(context)
     {
-        _context = context;
+        _cacheRepository = cacheRepository;
+        _configuration = configuration;
     }
 
-    public async Task<IReadOnlyList<Order>> GetAllAsync()
-    {
-        var orders = await _context.Orders.AsNoTracking().ToListAsync();
-        var orderLists = orders.Select(u => u.ToDomainOrder()).ToImmutableList();
-
-        return orderLists!;
-    }
-
-    public async Task<Order?> GetByIdAsync(long id)
-    {
-        var order = await _context.Orders.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
-        return order?.ToDomainOrder() ?? null;
-    }
-
-    public async Task<IReadOnlyList<Order?>> GetOrdersByDriver(long idDriver)
-    {
-        var orders = await _context.Orders.AsNoTracking().Where(u => u.DriverId == idDriver).ToListAsync();
-        var orderLists = orders.Select(u => u.ToDomainOrder()).ToImmutableList();
-
-        return orderLists!;
-    }
-
-    public async Task<IReadOnlyList<Order?>> GetOrdersByUser(long idUser)
-    {
-        var orders = await _context.Orders.AsNoTracking().Where(u => u.UserId == idUser).ToListAsync();
-        var orderLists = orders.Select(u => u.ToDomainOrder()).ToImmutableList();
-
-        return orderLists!;
-    }
+    private readonly string IncludeProperties = $"{nameof(User)}";
 
     public async Task<IReadOnlyList<Order?>> GetOpenedOrdersByUser(long idUser)
     {
-        int[] status = [1, 2, 3];
+        var status = Enum.GetValues(typeof(OrderStatus)).Cast<ushort>().ToList();
 
-        // Pending
-        // Accepted
-        // InTransit
+        var orders = await Filter(
+            u => u.UserId == idUser && status.Contains((ushort)u.Status),
+            includeProperties: IncludeProperties);
 
-        var orders = await _context.Orders.AsNoTracking()
-            .Where(u => u.UserId == idUser && status.Contains(u.Status)).ToListAsync();
-        var orderLists = orders.Select(u => u.ToDomainOrder()).ToImmutableList();
-
-        return orderLists!;
+        return orders!;
     }
 
-    public async Task<Order> SaveAsync(Order entity)
+    public async Task<IReadOnlyList<Order?>> GetOrdersByPoint(Point point)
     {
-        var order = entity.ToPersistenceOrder();
-        _context.Add(order);
-        await _context.SaveChangesAsync();
-        return order?.ToDomainOrder()!;
+        var orders = await _cacheRepository.GetNearObjects<OrderResponse>(point.X, point.Y);
+        if (orders == null || orders.Count == 0)
+        {
+            var rangeInKM = int.Parse(_configuration.GetSection("Configurations:RangeInKM").Value!);
+
+            var ordersFromBase = await Filter(u => u.Point!.Distance(point) < rangeInKM, includeProperties: nameof(User));
+
+            if (ordersFromBase != null && ordersFromBase.Count > 0)
+                await _cacheRepository.GeoAdd(ordersFromBase.Select(x => (OrderResponse)x).ToList());
+
+            return ordersFromBase!;
+        }
+        return orders.Select(x => (Order)x!).ToList();
     }
 
-    public async Task<Order> UpdateAsync(Order entity)
+    public async Task<IReadOnlyList<Order?>> GetOpenedOrdersThatExpired(DateTime expireTime)
     {
-        var order = entity.ToPersistenceOrder();
-        _context.Update(order);
-        await _context.SaveChangesAsync();
-        return order?.ToDomainOrder()!;
+        var orders = await Filter(
+            u => u.CreatedAt < expireTime && u.Status == OrderStatus.ReadyToAccept,
+            includeProperties: IncludeProperties);
+        return orders!;
     }
 }

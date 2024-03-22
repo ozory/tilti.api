@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Domain.Features.Users.Repository;
 using FluentValidation;
 
@@ -19,7 +15,7 @@ public class AuthenticateUserCommandValidator : AbstractValidator<AuthenticateUs
         RuleFor(s => s.Email)
         .MustAsync(async (email, _) =>
             {
-                var user = await userRepository.GetByEmail(email);
+                var user = await userRepository.FirstOrDefault(x => x.Email.Value!.Equals(email, StringComparison.InvariantCultureIgnoreCase));
                 if (user == null || user.Status != Domain.Enums.UserStatus.Active) return false;
                 return true;
             })

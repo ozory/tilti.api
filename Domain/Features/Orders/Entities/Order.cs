@@ -3,18 +3,25 @@ using System.Collections.ObjectModel;
 using Domain.Abstractions;
 using Domain.Enums;
 using Domain.Features.Users.Entities;
+using Domain.Shared.Abstractions;
+using Domain.Shared.ValueObjects;
 using Domain.ValueObjects;
-using FluentResults;
-using Microsoft.VisualBasic;
+using GeoPoint = NetTopologySuite.Geometries.Point;
 
 namespace Domain.Features.Orders.Entities;
 
-public class Order : Entity<Order>
+/// <summary>
+/// Orders
+/// </summary>
+public class Order : Entity
 {
     #region PROPERTIES
 
     internal List<Item> _items = new();
     internal List<Address> _addresses = new();
+
+    public long UserId { get; protected set; }
+    public long? DriverId { get; protected set; }
 
     public User? User { get; protected set; } = null!;
     public User? Driver { get; protected set; }
@@ -28,14 +35,22 @@ public class Order : Entity<Order>
     public DateTime? CompletionTime { get; protected set; }
     public DateTime? CancelationTime { get; protected set; }
 
+    public virtual ICollection<Rejection> Rejections { get; protected set; } = [];
+
     public IReadOnlyCollection<Item> Items => new ReadOnlyCollection<Item>(_items);
     public IReadOnlyCollection<Address> Addresses => new ReadOnlyCollection<Address>(_addresses);
+
+    public GeoPoint Point { get; protected set; } = null!;
+
+    public Location Location { get; set; } = null!;
 
     public OrderStatus Status { get; protected set; }
 
     #endregion
 
     #region CONSTRUCTORS
+
+    public Order() { }
 
     public static Order Create(
         long? id,
@@ -55,6 +70,13 @@ public class Order : Entity<Order>
         order.CreatedAt = createdAt ?? DateTime.Now;
         order.RequestedTime = DateTime.Now;
         order.Status = OrderStatus.PendingPayment;
+
+        var startAddress = address.First(x => x.AddressType == AddressType.StartPoint);
+        var startPointLatitude = startAddress.Latitude;
+        var startPointLongitude = startAddress.Longitude;
+
+        order.Location = new Location(startPointLatitude, startPointLongitude);
+
         return order;
     }
 
@@ -68,6 +90,7 @@ public class Order : Entity<Order>
     /// <param name="user"></param>
     public void SetUser(User? user)
     {
+        this.UserId = user?.Id ?? 0;
         this.User = user;
     }
 
@@ -99,6 +122,8 @@ public class Order : Entity<Order>
     /// <param name="driver"></param>
     public void SetDriver(User? driver)
     {
+        if (driver is null) return;
+        this.DriverId = driver.Id;
         this.Driver = driver;
     }
 
@@ -106,16 +131,11 @@ public class Order : Entity<Order>
     /// 
     /// </summary>
     /// <param name="driver"></param>
-    public void RemoveDriver(User driver)
+    public void RemoveDriver()
     {
+        this.DriverId = null;
         this.Driver = null;
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="date"></param>
-    public void SetUpdatedAt(DateTime date) => this.UpdatedAt = date;
 
     /// <summary>
     /// 
@@ -134,6 +154,17 @@ public class Order : Entity<Order>
     /// </summary>
     /// <param name="value"></param>
     public void SetDurationInSeconds(int value) => this.DurationInSeconds = value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="latitude"></param>
+    /// <param name="longitude"></param>
+    public void SetLocation(double latitude, double longitude)
+    {
+        this.Location = new Location(latitude, longitude);
+        this.Point = new GeoPoint(latitude, longitude);
+    }
 
     #endregion
 }

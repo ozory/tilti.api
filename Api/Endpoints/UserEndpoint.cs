@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Application.Features.Users.Commands.CreateUser;
 using Application.Features.Users.Commands.UpdateUser;
 using Application.Features.Users.Queries.GetAllUsers;
 using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace Api.Endpoints;
 
@@ -17,7 +12,7 @@ public static class UserEndpoint
     public static void MapUsersEndpoint(this WebApplication app)
     {
         RouteGroupBuilder users = app.MapGroup("/users")
-            .RequireAuthorization("multi")
+            //.RequireAuthorization("multi")
             .WithTags("Users");
         users.MapGet("/", GetAllUsers).WithOpenApi();
         users.MapPost("/", CreateUser).WithOpenApi();

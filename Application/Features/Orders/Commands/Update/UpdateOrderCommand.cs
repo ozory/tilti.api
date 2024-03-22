@@ -1,22 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Features.Orders.Contracts;
-using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
-using DomainUser = Domain.Features.Users.Entities.User;
+using Domain.ValueObjects;
 namespace Application.Features.Orders.Commands.UpdateOrder;
 
 public sealed record UpdateOrderCommand
 (
-    long id,
-    string Name,
-    string Email,
-    string Document,
-    string? Password,
-    ushort? Status
+    long UserId,
+    long OrderId,
+    DateTime requestedTime,
+    List<Address> address,
 
+    decimal amount,
+    int totalDiscance,
+    int totalDuration
 ) : ICommand<OrderResponse>;
 
 

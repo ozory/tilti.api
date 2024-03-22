@@ -1,42 +1,53 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Domain.Features.Subscriptions.Entities;
+using Domain.Subscriptions.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using InfrastructureSub = Infrastructure.Data.Postgreesql.Features.Subscriptions.Entities.Subscription;
 
 namespace Infrastructure.Data.Postgreesql.Features.Subscriptions.Configurations;
 
-public class SubscriptionConfiguration : IEntityTypeConfiguration<InfrastructureSub>
+public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
 {
-    public void Configure(EntityTypeBuilder<InfrastructureSub> builder)
+    public void Configure(EntityTypeBuilder<Subscription> builder)
     {
         builder.ToTable("Subscriptions");
 
         builder.HasKey(b => b.Id);
 
-        builder.Property(x => x.DueDate)
-            .HasColumnName("DueDate")
-            .HasColumnType("timestamp");
-
-        builder.Property(x => x.Created)
-            .HasColumnName("Created")
-            .HasColumnType("timestamp");
-
-        builder.Property(x => x.Updated)
-           .HasColumnName("Updated")
-           .HasDefaultValue(DateTime.Now)
-           .HasColumnType("timestamp");
-
-        builder.HasOne(e => e.User)
-            .WithOne();
+        builder.Property(b => b.Id)
+           .HasColumnOrder(0);
 
         builder.HasOne(e => e.Plan)
             .WithMany(s => s.Subscriptions)
             .HasForeignKey(e => e.PlanId)
-            .IsRequired(false);
+            .IsRequired(true);
 
-        builder.Property(b => b.Status);
+        builder.Property(b => b.Status)
+            .HasColumnOrder(1)
+            .HasColumnName("Status")
+            .HasConversion(
+            c => (ushort)c,
+            c => (SubscriptionStatus)c);
+
+        builder.Property(x => x.DueDate)
+            .HasColumnName("DueDate")
+            .HasColumnType("timestamp");
+
+        builder.Property(x => x.CreatedAt)
+            .HasColumnName("Created")
+            .HasColumnType("timestamp");
+
+        builder.Property(x => x.UpdatedAt)
+           .HasColumnName("Updated")
+           .HasColumnType("timestamp");
+
+        builder.Property(x => x.PaymentToken)
+            .HasColumnName("PaymentToken")
+            .HasMaxLength(1000);
+
+        builder.HasOne(e => e.User)
+            .WithOne(e => e.Subscription)
+            .HasForeignKey<Subscription>(e => e.UserId);
+
+        builder.Ignore(x => x.DomainEvents);
     }
 }
