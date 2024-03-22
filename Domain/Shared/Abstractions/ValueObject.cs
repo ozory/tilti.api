@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace Domain.Abstractions;
 
 public abstract class ValueObject<T>
@@ -27,4 +22,6 @@ public abstract class ValueObject<T>
     {
         return true;
     }
+
+    public static explicit operator T?(ValueObject<T> valueObject) => valueObject.Value;
 }

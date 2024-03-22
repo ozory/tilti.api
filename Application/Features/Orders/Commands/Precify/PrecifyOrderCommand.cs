@@ -1,5 +1,4 @@
 using Application.Features.Orders.Contracts;
-using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
 using Domain.ValueObjects;
 namespace Application.Features.Orders.Commands.PrecifyOrder;

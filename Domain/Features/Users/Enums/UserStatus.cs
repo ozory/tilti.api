@@ -3,7 +3,7 @@ namespace Domain.Enums
     public enum UserStatus : ushort
     {
         Active = 1,
-        PendingApproval = 2,
+        PendingPaymentInformation = 2,
         Inactive = 3,
     }
 }

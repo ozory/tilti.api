@@ -1,12 +1,8 @@
-using FluentValidation;
-using FluentValidation.AspNetCore;
-
 using Application.Configurations;
 using Serilog;
 using Infrastructure.Data.Postgreesql.Shared.Configurations;
 using Api.Endpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -19,7 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddApplication(builder.Configuration);
+builder.Services.AddApplication(builder);
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Host.UseSerilog((context, configuration) =>

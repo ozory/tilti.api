@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Domain.Abstractions;
+using Domain.Features.Orders.Entities;
+using NetTopologySuite.Geometries;
 
 namespace Domain.Features.Orders.Repository;
 
-public interface IOrderRepository : IGenericRepository<Entities.Order>
+public interface IOrderRepository : IGenericRepository<Order>
 {
-    Task<IReadOnlyList<Entities.Order?>> GetOrdersByUser(long idUser);
-    Task<IReadOnlyList<Entities.Order?>> GetOpenedOrdersByUser(long idUser);
-    Task<IReadOnlyList<Entities.Order?>> GetOrdersByDriver(long idDriver);
-
+    Task<IReadOnlyList<Order?>> GetOpenedOrdersByUser(long idUser);
+    Task<IReadOnlyList<Order?>> GetOpenedOrdersThatExpired(DateTime expireTime);
+    Task<IReadOnlyList<Order?>> GetOrdersByPoint(Point point);
 }

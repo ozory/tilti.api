@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Features.Security.Contracts;
 using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
-using Domain.Features.Users.Entities;
 using Domain.Features.Users.Repository;
+using Domain.Shared.Abstractions;
 using FluentResults;
 using FluentValidation;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Security.Commands.Authenticate;
@@ -28,36 +23,38 @@ public class AuthenticateUserCommandHandler
         IUserRepository repository,
         IValidator<AuthenticateUserCommand> validator,
         ISecurityExtensions securityExtensions,
+        ISecurityRepository _securityRepository,
+        IUnitOfWork unitOfWork,
         ISecurityRepository securityRepository)
     {
         _repository = repository;
         _logger = logger;
         _validator = validator;
         _securityExtensions = securityExtensions;
-        _securityRepository = securityRepository;
+        this._securityRepository = securityRepository;
     }
 
     public async Task<Result<AuthenticationResponse>> Handle(
         AuthenticateUserCommand request,
         CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Validando usuário {request.Email}");
+        _logger.LogInformation("Validando usuário {Email}", request.Email);
 
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        _logger.LogInformation($"Criando usuário {request.Email}");
-        var user = await _repository.GetByEmail(request.Email);
+        _logger.LogInformation("Criando usuário {Email}", request.Email);
+        var user = await _repository.FirstOrDefault(x => x.Email.Value!.Equals(request.Email, StringComparison.InvariantCultureIgnoreCase));
 
         var passwordHash = _securityExtensions.ComputeHash(user!.VerificationSalt!, request.Password);
 
         if (user.Password!.Value != passwordHash)
         {
-            _logger.LogWarning($"Falha de login {request.Email}");
+            _logger.LogWarning("Falha de login {Email}", request.Email);
             return Result.Fail("User not found");
         }
 
-        _logger.LogInformation($"Usuário {request.Email} logado com sucesso");
+        _logger.LogInformation("Usuário {Email}", request.Email);
 
         RefreshTokens refreshToken = new()
         {
@@ -72,6 +69,7 @@ public class AuthenticateUserCommandHandler
             user.Email.Value,
             _securityExtensions.GenerateToken(user),
             refreshToken.RefreshToken);
+
 
         await _securityRepository.DeleteToken(user.Id);
         await _securityRepository.SaveToken(refreshToken);

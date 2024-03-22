@@ -3,28 +3,30 @@ using Domain.Abstractions;
 using Domain.Features.Users.Entities;
 using Domain.Features.Plans.Entities;
 using Domain.Subscriptions.Enums;
-using Domain.ValueObjects;
-using FluentResults;
-using FluentValidation.Results;
 
 namespace Domain.Features.Subscriptions.Entities;
 
 /// <summary>
 /// Represents a subscription
 /// </summary>
-public class Subscription : Entity<Subscription>
+public class Subscription : Entity
 {
 
     #region PROPERTIES
 
-    public User User { get; private set; } = null!;
-    public SubscriptionStatus Status { get; private set; } = SubscriptionStatus.Active;
-    public Plan Plan { get; private set; } = null!;
-    public DateTime DueDate { get; private set; }
+    public long UserId { get; protected set; }
+    public long PlanId { get; protected set; }
+    public User User { get; protected set; } = null!;
+    public SubscriptionStatus Status { get; protected set; } = SubscriptionStatus.PendingApproval;
+    public Plan Plan { get; protected set; } = null!;
+    public DateTime DueDate { get; protected set; }
+    public string? PaymentToken { get; protected set; }
 
     #endregion
 
     #region CONSTRUCTORS
+
+    private Subscription() { }
 
     private Subscription(long? id, User user, Plan plan, DateTime? createdAt)
     {
@@ -76,7 +78,6 @@ public class Subscription : Entity<Subscription>
     /// <returns></returns>
     public void SetDueDate(DateTime newDueDate)
     {
-        if (newDueDate < DateTime.Now) AddError("A data não pode ser menor");
         DueDate = newDueDate;
     }
 
@@ -85,6 +86,13 @@ public class Subscription : Entity<Subscription>
     /// </summary>
     /// <param name="date"></param>
     public void SetUpdatedAt(DateTime date) => this.UpdatedAt = date;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="paymentToken"></param>
+    public void SetPaymentToken(string? paymentToken)
+        => this.PaymentToken = paymentToken;
 
     #endregion
 }

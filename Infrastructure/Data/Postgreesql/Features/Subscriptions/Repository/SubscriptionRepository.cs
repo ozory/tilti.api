@@ -1,73 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Domain.Features.Subscriptions.Entities;
-using Domain.Features.Subscription.Repository;
-using Infrastructure.Data.Postgreesql;
-using Infrastructure.Data.Postgreesql.Shared;
+using Domain.Features.Subscriptions.Repository;
 using Microsoft.EntityFrameworkCore;
-using Infrastructure.Data.Postgreesql.Features.Subscriptions.Maps;
-using System.Collections.Immutable;
+using Infrastructure.Data.Postgreesql.Shared;
+using Domain.Features.Users.Entities;
+using Domain.Features.Plans.Entities;
 
 namespace Infrastructure.Data.Postgreesql.Features.Subscriptions.Repository;
 
-public class SubscriptionRepository : ISubscriptionRepository
+public class SubscriptionRepository :
+    GenericRepository<Subscription>,
+    ISubscriptionRepository
 {
-    private readonly TILTContext _context;
 
-    public SubscriptionRepository(TILTContext context)
-    {
-        _context = context;
-    }
+    private readonly string IncludeProperties = $"{nameof(User)},{nameof(Plan)}";
 
-    public async Task<IReadOnlyList<Subscription>> GetAllAsync()
-    {
-        var subscriptions = await _context.Subscriptions
-            .Include(u => u.User)
-            .Include(u => u.Plan)
-            .AsNoTracking()
-            .ToListAsync();
-        var list = subscriptions.Select(u => u.ToDomainSub()).ToImmutableList();
+    public SubscriptionRepository(TILTContext context) : base(context) { }
 
-        return list!;
-    }
+    public override async Task<IReadOnlyList<Subscription>> GetAllAsync()
+        => await Filter(includeProperties: IncludeProperties);
 
-    public async Task<Subscription?> GetByIdAsync(long id)
-    {
-        var subscriptions = await _context.Subscriptions
-            .Include(u => u.User)
-            .Include(p => p.Plan)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Id == id);
-        return subscriptions?.ToDomainSub() ?? null;
-    }
+    public override async Task<Subscription?> GetByIdAsync(long id)
+        => await FirstOrDefault(filter: s => s.Id == id, includeProperties: IncludeProperties);
 
     public async Task<Subscription?> GetSubscriptionByUser(long idUser)
-    {
-        var subscriptions = await _context.Subscriptions
-            .Include(u => u.User)
-            .Include(p => p.Plan)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.UserId == idUser);
-        return subscriptions?.ToDomainSub() ?? null;
-    }
-
-    public async Task<Subscription> SaveAsync(Subscription entity)
-    {
-        var subscription = entity.ToPersistenceSub();
-        _context.Add(subscription);
-        await _context.SaveChangesAsync();
-
-        var sub = await this.GetByIdAsync(subscription.Id);
-        return sub!;
-    }
-
-    public async Task<Subscription> UpdateAsync(Subscription entity)
-    {
-        var plan = entity.ToPersistenceSub();
-        _context.Update(plan);
-        await _context.SaveChangesAsync();
-        return plan?.ToDomainSub()!;
-    }
+        => await FirstOrDefault(filter: s => s.UserId == idUser, includeProperties: IncludeProperties);
 }

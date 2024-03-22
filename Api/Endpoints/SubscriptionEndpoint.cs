@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Features.Subscriptions.Commands.Create;
 using Application.Features.Subscriptions.Commands.Update;
 using MediatR;
