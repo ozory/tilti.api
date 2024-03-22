@@ -32,7 +32,7 @@ public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Ord
 
     public async Task<Result<OrderResponse>> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Cancelling an Order {request.UserId}");
+        _logger.LogInformation("Cancelling an Order {Id}", request.OrderId);
 
         var validationResult = _validator.Validate(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
@@ -49,7 +49,7 @@ public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Ord
         // Save user
         var canceledOrder = await _repository.UpdateAsync(openedOrder);
 
-        _logger.LogInformation($"Order Canceled {canceledOrder.Id}");
+        _logger.LogInformation("Order Canceled {Id}", request.OrderId);
         return Result.Ok((OrderResponse)canceledOrder);
     }
 }

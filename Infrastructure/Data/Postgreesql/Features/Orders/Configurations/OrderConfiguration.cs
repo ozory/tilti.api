@@ -4,7 +4,7 @@ using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NetTopologySuite.Geometries;
-
+using DomainLocation = Domain.ValueObjects.Name;
 namespace Infrastructure.Data.Postgreesql.Features.Orders.Configurations;
 
 public class OrderConfiguration : IEntityTypeConfiguration<Order>
@@ -73,7 +73,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(b => b.Point)
             .HasColumnType("geography(POINT, 4326)")
             .HasColumnName("Location")
-            .IsRequired(false);
+            .IsRequired();
 
         builder.OwnsMany(e => e.Addresses,
             builder => { builder.ToJson(); });
@@ -88,8 +88,13 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasForeignKey(e => e.DriverId)
             .IsRequired(false);
 
+        builder.HasMany(e => e.Rejections)
+            .WithOne(e => e.Order)
+            .HasForeignKey(e => e.OrderId)
+            .IsRequired(false);
+
         builder.Ignore(x => x.Items);
         builder.Ignore(x => x.DomainEvents);
-        //builder.Ignore(x => x.Location);
+        builder.Ignore(x => x.Location);
     }
 }

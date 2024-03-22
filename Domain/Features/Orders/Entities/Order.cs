@@ -3,12 +3,16 @@ using System.Collections.ObjectModel;
 using Domain.Abstractions;
 using Domain.Enums;
 using Domain.Features.Users.Entities;
+using Domain.Shared.Abstractions;
 using Domain.Shared.ValueObjects;
 using Domain.ValueObjects;
 using GeoPoint = NetTopologySuite.Geometries.Point;
 
 namespace Domain.Features.Orders.Entities;
 
+/// <summary>
+/// Orders
+/// </summary>
 public class Order : Entity
 {
     #region PROPERTIES
@@ -31,10 +35,14 @@ public class Order : Entity
     public DateTime? CompletionTime { get; protected set; }
     public DateTime? CancelationTime { get; protected set; }
 
+    public virtual ICollection<Rejection> Rejections { get; protected set; } = [];
+
     public IReadOnlyCollection<Item> Items => new ReadOnlyCollection<Item>(_items);
     public IReadOnlyCollection<Address> Addresses => new ReadOnlyCollection<Address>(_addresses);
 
-    public GeoPoint? Point { get; protected set; }
+    public GeoPoint Point { get; protected set; } = null!;
+
+    public Location Location { get; set; } = null!;
 
     public OrderStatus Status { get; protected set; }
 
@@ -42,7 +50,7 @@ public class Order : Entity
 
     #region CONSTRUCTORS
 
-    private Order() { }
+    public Order() { }
 
     public static Order Create(
         long? id,
@@ -63,10 +71,11 @@ public class Order : Entity
         order.RequestedTime = DateTime.Now;
         order.Status = OrderStatus.PendingPayment;
 
-        var startPointLatitude = address.First(x => x.AddressType == AddressType.StartPoint).Latitude;
-        var startPointLongitude = address.First(x => x.AddressType == AddressType.StartPoint).Longitude;
+        var startAddress = address.First(x => x.AddressType == AddressType.StartPoint);
+        var startPointLatitude = startAddress.Latitude;
+        var startPointLongitude = startAddress.Longitude;
 
-        order.Point = new GeoPoint(startPointLongitude, startPointLatitude);
+        order.Location = new Location(startPointLatitude, startPointLongitude);
 
         return order;
     }
@@ -131,12 +140,6 @@ public class Order : Entity
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="date"></param>
-    public void SetUpdatedAt(DateTime date) => this.UpdatedAt = date;
-
-    /// <summary>
-    /// 
-    /// </summary>
     /// <param name="amount"></param>
     public void SetAmount(Decimal value) => this.Amount = new Amount(value);
 
@@ -151,6 +154,17 @@ public class Order : Entity
     /// </summary>
     /// <param name="value"></param>
     public void SetDurationInSeconds(int value) => this.DurationInSeconds = value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="latitude"></param>
+    /// <param name="longitude"></param>
+    public void SetLocation(double latitude, double longitude)
+    {
+        this.Location = new Location(latitude, longitude);
+        this.Point = new GeoPoint(latitude, longitude);
+    }
 
     #endregion
 }

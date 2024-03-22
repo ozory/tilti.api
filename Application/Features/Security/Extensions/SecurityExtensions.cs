@@ -101,7 +101,7 @@ public class SecurityExtensions : ISecurityExtensions
             ValidateIssuer = false,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("Security:Secret")!)),
-            ValidateLifetime = false
+            ValidateLifetime = true
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();

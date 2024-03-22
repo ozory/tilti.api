@@ -1,4 +1,5 @@
 using System.Reflection;
+using Domain.Abstractions;
 using Domain.Features.Orders.Entities;
 using Domain.Features.Plans.Entities;
 using Domain.Features.Subscriptions.Entities;
@@ -15,6 +16,7 @@ public class TILTContext : DbContext
     public DbSet<Plan> Plans { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<Subscription> Subscriptions { get; set; }
+    public DbSet<Rejection> Rejections { get; set; }
     public DbSet<RefreshTokens> RefreshTokens { get; set; }
 
     public TILTContext(DbContextOptions<TILTContext> options) : base(options)
@@ -25,6 +27,7 @@ public class TILTContext : DbContext
     override protected void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
         base.OnModelCreating(modelBuilder);
         modelBuilder.HasDefaultSchema("tilt");
         modelBuilder.HasPostgresExtension("postgis");

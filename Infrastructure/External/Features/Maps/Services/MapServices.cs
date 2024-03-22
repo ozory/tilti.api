@@ -8,6 +8,7 @@ using GoogleApi.Entities.Maps.DistanceMatrix.Request;
 using Microsoft.Extensions.Caching.Distributed;
 using GoogleApi.Entities.Maps.DistanceMatrix.Response;
 using System.Text.Json;
+using GoogleApi.Entities.Common;
 
 namespace Infrastructure.External.Features.Maps.Services;
 
@@ -16,13 +17,13 @@ public class MapServices : IMapServices
     private readonly decimal pricePerKM;
     private readonly decimal pricePerDuration;
     private readonly string apiKey;
-    private readonly IDistributedCache _distributedCache;
+    private readonly ICacheRepository _distributedCache;
 
     public MapServices(
         decimal pricePerKM,
         decimal pricePerDuration,
         string apiKey,
-        IDistributedCache distributedCache)
+        ICacheRepository distributedCache)
     {
         this.apiKey = apiKey;
         this.pricePerKM = pricePerKM;
@@ -64,12 +65,9 @@ public class MapServices : IMapServices
         sb.Append(destnations.Aggregate(func: (result, item) => result + item));
 
         var cacheKey = sb.ToString().Replace(" ", string.Empty);
-        var cacheResponse = await _distributedCache.GetStringAsync(cacheKey);
+        var cacheResponse = await _distributedCache.GetAsync<DistanceMatrixResponse>(cacheKey);
 
-        if (cacheResponse is not null)
-            return JsonSerializer.Deserialize<DistanceMatrixResponse>(cacheResponse)!;
-
-
+        if (cacheResponse is not null) return cacheResponse;
         return await CallGoogleApiAndSetCache(dm, cacheKey);
     }
 
@@ -77,14 +75,11 @@ public class MapServices : IMapServices
     {
         DistanceMatrixResponse distanceMatrixResponse = await GoogleApi.GoogleMaps.DistanceMatrix.QueryAsync(dm);
 
-        string distanceMatrix = JsonSerializer.Serialize(distanceMatrixResponse);
-        var options = new DistributedCacheEntryOptions
-        {
-            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5),
-            SlidingExpiration = TimeSpan.FromMinutes(3)
-        };
+        await _distributedCache.SetAsync<DistanceMatrixResponse>(
+            cacheKey,
+            distanceMatrixResponse,
+            TimeSpan.FromMinutes(5));
 
-        await _distributedCache.SetStringAsync(cacheKey, distanceMatrix, options);
         return distanceMatrixResponse;
     }
 

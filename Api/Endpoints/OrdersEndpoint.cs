@@ -19,11 +19,17 @@ public static class OrdersEndpoint
     private static async Task<IResult> GetByPoint(
            [FromQuery(Name = "lat")] double lat,
            [FromQuery(Name = "lnt")] double lnt,
+           [FromQuery(Name = "driverId")] long? driverId,
            [FromServices] IMediator mediator)
     {
         try
         {
-            var result = await mediator.Send(new GetAllOrdersByPointQuery { Latitude = lat, Longitude = lnt });
+            var result = await mediator.Send(new GetAllOrdersByPointQuery
+            {
+                Latitude = lat,
+                Longitude = lnt,
+                DriverId = driverId
+            });
             if (result.IsFailed) return TypedResults.BadRequest(result.Errors);
             return TypedResults.Ok(result.Value);
         }

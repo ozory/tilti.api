@@ -7,6 +7,7 @@ using Domain.Features.Plans.Repository;
 using Domain.Features.Subscriptions.Repository;
 using Domain.Features.Users.Repository;
 using Domain.Shared.Abstractions;
+using Infrastructure.Cache;
 using Infrastructure.Data.Postgreesql.Features.Orders.Repository;
 using Infrastructure.Data.Postgreesql.Features.Plans.Repository;
 using Infrastructure.Data.Postgreesql.Features.Security.Repository;
@@ -40,7 +41,11 @@ public static class DependencyInjection
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
         services.AddScoped<IOrderRepository, OrdersRepository>();
         services.AddScoped<ISecurityRepository, SecurityRepository>();
+        services.AddScoped<IRejectRepository, RejectionRepository>();
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddSingleton<ICacheRepository, CacheRepository>();
+
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = configuration.GetSection("Infrastructure:Redis:Server").Value;
@@ -58,13 +63,12 @@ public static class DependencyInjection
                 CultureInfo.InvariantCulture);
 
             var apiKey = configuration.GetSection("Configurations:ApiKey").Value;
-            var dc = sp.GetRequiredService<IDistributedCache>();
+            var dc = sp.GetRequiredService<ICacheRepository>();
 
             return new MapServices(valuePerKM, valuePerDuration, apiKey!, dc);
         });
 
         services.AddScoped<IMessageRepository, MessageRepository>();
-        services.AddHostedService<UserCreatedConsumer>();
 
         return services;
     }

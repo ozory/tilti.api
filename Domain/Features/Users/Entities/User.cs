@@ -32,7 +32,7 @@ public class User : Entity
     public virtual ICollection<Order> UserOrders { get; protected set; } = null!;
     public virtual ICollection<Order> DriverOrders { get; protected set; } = null!;
     public virtual Subscription? Subscription { get; protected set; } = null!;
-
+    public virtual ICollection<Rejection> Rejections { get; protected set; } = [];
 
     #endregion
 
@@ -85,7 +85,6 @@ public class User : Entity
             new Document(document),
             new Password(password));
 
-        user.Status = UserStatus.PendingPaymentInformation;
         user.CreatedAt = createdDate ?? DateTime.Now;
 
         return user;
@@ -135,7 +134,7 @@ public class User : Entity
     /// 
     /// </summary>
     /// <param name="photo"></param>
-    public void SetPhoto(string photo) => this.Photo = photo;
+    public void SetPhoto(string? photo) => this.Photo = photo;
 
     public void SetPassword(string password) => this.Password!.SetValue(password);
 

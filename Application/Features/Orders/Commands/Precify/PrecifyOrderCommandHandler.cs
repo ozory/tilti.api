@@ -39,7 +39,7 @@ public class PrecifyOrderCommandHandler : ICommandHandler<PrecifyOrderCommand, O
         PrecifyOrderCommand request,
         CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Precifying an Order {request.UserId}");
+        _logger.LogInformation("Precifying an Order {UserId}", request.UserId);
 
         var validationResult = _validator.Validate(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));

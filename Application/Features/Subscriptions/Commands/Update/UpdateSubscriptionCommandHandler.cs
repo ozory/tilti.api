@@ -39,7 +39,7 @@ public class UpdateSubscriptionCommandHandler : ICommandHandler<UpdateSubscripti
         CancellationToken cancellationToken)
     {
 
-        _logger.LogInformation($"Atualizando assinatura");
+        _logger.LogInformation("Atualizando assinatura");
 
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
@@ -65,7 +65,7 @@ public class UpdateSubscriptionCommandHandler : ICommandHandler<UpdateSubscripti
 
         Subscription savedSub = await _repository.UpdateAsync(subscription);
 
-        _logger.LogInformation($"Assinatura criada com sucesso: {savedSub.Id}");
+        _logger.LogInformation("Assinatura criada com sucesso: {Id}", savedSub.Id);
 
         return Result.Ok((SubscriptionResponse)(savedSub));
     }

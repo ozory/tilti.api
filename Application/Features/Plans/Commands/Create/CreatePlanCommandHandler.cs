@@ -18,12 +18,12 @@ public class CreatePlanCommandHandler(
 
     public async Task<Result<PlanResponse>> Handle(CreatePlanCommand request, CancellationToken cancellationToken)
     {
-        logger.LogInformation($"Criando plano {request.Name}");
+        logger.LogInformation("Criando plano {plan}", request.Name);
 
         var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        logger.LogInformation($"Verificando se plano {request.Name}");
+        logger.LogInformation("Verificando se {plan}", request.Name);
         var pl = await unitOfWork.PlanRepository.GetPlanByNameOrAmount(request.Name, request.Amount);
         if (pl != null) return Result.Fail("A plan with this name or amount allready exists");
 

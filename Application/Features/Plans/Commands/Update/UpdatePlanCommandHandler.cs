@@ -17,7 +17,7 @@ public class UpdatePlanCommandHandler(
 
     public async Task<Result<PlanResponse>> Handle(UpdatePlanCommand request, CancellationToken cancellationToken)
     {
-        logger.LogInformation($"Atualizando plano {request.Name}");
+        logger.LogInformation("Atualizando plano {Name}", request.Name);
 
         var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
@@ -40,7 +40,7 @@ public class UpdatePlanCommandHandler(
 
         await unitOfWork.CommitAsync(cancellationToken);
 
-        logger.LogInformation($"Plano {request.Name} atualizado com sucesso");
+        logger.LogInformation("Plano {Name} atualizado com sucesso", request.Name);
         return Result.Ok((PlanResponse)savedPlan);
     }
 }

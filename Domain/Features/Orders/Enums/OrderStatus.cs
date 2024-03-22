@@ -7,6 +7,7 @@ namespace Domain.Enums
         Accepted = 3,
         InTransit = 4,
         Finished = 5,
-        Canceled = 6
+        Canceled = 6,
+        Expired = 7,
     }
 }

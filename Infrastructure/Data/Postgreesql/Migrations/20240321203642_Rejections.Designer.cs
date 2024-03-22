@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data.Postgreesql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Data.Postgreesql.Migrations
 {
     [DbContext(typeof(TILTContext))]
-    partial class TILTContextModelSnapshot : ModelSnapshot
+    [Migration("20240321203642_Rejections")]
+    partial class Rejections
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,8 +81,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.Property<int>("DurationInSeconds")
                         .HasColumnType("integer");
 
-                    b.Property<Point>("Point")
-                        .IsRequired()
+                    b.Property<Point>("Location")
                         .HasColumnType("geography(POINT, 4326)")
                         .HasColumnName("Location");
 
@@ -462,7 +464,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
 
             modelBuilder.Entity("Domain.Features.Orders.Entities.Rejection", b =>
                 {
-                    b.HasOne("Domain.Features.Users.Entities.User", "User")
+                    b.HasOne("Domain.Features.Users.Entities.User", "Driver")
                         .WithMany("Rejections")
                         .HasForeignKey("DriverId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -474,9 +476,9 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Order");
+                    b.Navigation("Driver");
 
-                    b.Navigation("User");
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Domain.Features.Subscriptions.Entities.Subscription", b =>
