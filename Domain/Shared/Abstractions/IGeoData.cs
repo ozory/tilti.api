@@ -8,5 +8,6 @@ namespace Domain.Shared.Abstractions;
 
 public interface IGeoData
 {
+    public long UserId { get; protected set; }
     public Location Location { get; protected set; }
 }

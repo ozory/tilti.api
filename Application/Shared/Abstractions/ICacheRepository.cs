@@ -19,11 +19,11 @@ public interface ICacheRepository
 
     Task<bool> ExistsAsync(string key);
 
-    Task GeoAdd<T>(T value, double longitude, double latitude, string key)
-        where T : class;
+    Task GeoAdd<T>(T value, string? key = null)
+        where T : class, IGeoData;
 
     Task GeoAdd<T>(List<T> values)
-     where T : class, IGeoData;
+        where T : class, IGeoData;
 
     Task<List<T?>> GetNearObjects<T>(double longitude, double latitude)
         where T : class?;

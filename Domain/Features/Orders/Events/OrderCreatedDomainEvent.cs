@@ -12,7 +12,6 @@ namespace Domain.Features.Orders.Events;
 public record OrderCreatedDomainEvent
 (
     long Id,
-    long UserId,
 
     string UserName,
     string UserEmail,
@@ -37,15 +36,17 @@ public record OrderCreatedDomainEvent
 
 ) : IDomainEvent, IGeoData
 {
-    Location IGeoData.Location { get => new(this.Latitude, this.Longitude); set { } }
+    public Location Location { get => new(this.Latitude, this.Longitude); set { } }
+
+    public long UserId { get; set; }
 
     public static explicit operator OrderCreatedDomainEvent(Order order)
     {
         order.Location ??= new Location(order.Point.Y, order.Point.X);
 
-        return new OrderCreatedDomainEvent(
+        var odrderCreated = new OrderCreatedDomainEvent(
                  order.Id,
-                 order.User!.Id,
+
                  order.User!.Name!.Value!,
                  order.User!.Email!.Value!,
                  order.User!.Document!.Value!,
@@ -63,6 +64,9 @@ public record OrderCreatedDomainEvent
                  order.CancelationTime,
                  order.DistanceInKM,
                  order.DurationInSeconds);
+
+        odrderCreated.UserId = order.User!.Id;
+        return odrderCreated;
     }
 
     public static explicit operator Order(OrderCreatedDomainEvent orderCreated)

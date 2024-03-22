@@ -73,9 +73,6 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(b => b.Point)
             .HasColumnType("geography(POINT, 4326)")
             .HasColumnName("Location")
-            //  .HasConversion(
-            //     c => new Domain.Shared.ValueObjects.Location(c.X, c.Y),
-            //     c => new Point(c!.Longitude, c!.Latitude))
             .IsRequired();
 
         builder.OwnsMany(e => e.Addresses,

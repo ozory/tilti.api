@@ -8,6 +8,7 @@ using Domain.Features.Orders.Entities;
 using Domain.Features.Orders.Repository;
 using Domain.Features.Users.Entities;
 using Infrastructure.Data.Postgreesql.Shared;
+using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Data.Postgreesql.Features.Orders.Repository;
 
@@ -17,21 +18,27 @@ public class RejectionRepository :
 {
     private readonly ICacheRepository _cacheRepository;
 
+    private readonly IConfiguration _configuration;
+
     public RejectionRepository(
         TILTContext context,
-        ICacheRepository cacheRepository) : base(context)
+        ICacheRepository cacheRepository,
+        IConfiguration configuration) : base(context)
     {
         _cacheRepository = cacheRepository;
+        _configuration = configuration;
     }
 
-    private readonly string IncludeProperties = $"{nameof(User)},{nameof(Order)}";
+    private readonly string IncludeProperties = $"{nameof(Order)}";
 
     public async Task<IReadOnlyList<Rejection?>> GetRejectionsByUser(long driverId)
     {
+        var _minutes = int.Parse(_configuration["Configurations:RejectionMinutes"]!);
+        var date = DateTime.Now.AddMinutes(_minutes);
+
         var rejections = await Filter(
             filter: s => s.DriverId == driverId
-            && s.CreatedAt >= DateTime.Now.AddMinutes(-7)
-            && s.Order.Status == OrderStatus.ReadyToAccept
+            && s.CreatedAt >= date && s.Order.Status.Equals(OrderStatus.ReadyToAccept)
             , includeProperties: IncludeProperties);
 
         return rejections;

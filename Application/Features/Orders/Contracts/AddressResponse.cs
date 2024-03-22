@@ -13,7 +13,7 @@ public record AddressResponse(
     Double Longitude
 )
 {
-    public static implicit operator AddressResponse(Address address)
+    public static explicit operator AddressResponse(Address address)
        => new AddressResponse(
                 (ushort)address.AddressType,
                 address.Street,
@@ -25,4 +25,18 @@ public record AddressResponse(
                 address.Latitude,
                 address.Longitude
                 );
+
+    public static explicit operator Address(AddressResponse address)
+       => new Address()
+       {
+           AddressType = (Domain.Enums.AddressType)address.AddressType,
+           Street = address.Street,
+           Number = address.Number,
+           Complment = address.Complment,
+           Neighborhood = address.Neighborhood,
+           City = address.City,
+           ZipCode = address.ZipCode,
+           Latitude = address.Latitude,
+           Longitude = address.Longitude
+       };
 }

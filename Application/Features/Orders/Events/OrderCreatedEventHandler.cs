@@ -1,4 +1,6 @@
+using Application.Features.Orders.Contracts;
 using Application.Shared.Abstractions;
+using Application.Shared.Extensions;
 using Domain.Features.Orders.Events;
 using Domain.Features.Users.Events;
 using MediatR;
@@ -39,13 +41,6 @@ public class OrderCreatedEventHandler : INotificationHandler<OrderCreatedDomainE
     public async Task Handle(OrderCreatedDomainEvent notification, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Publicando evento de criação de pedido {id}", notification.Id);
-
-        await _cacheRepository.GeoAdd(
-            notification,
-            notification.Longitude,
-            notification.Latitude,
-            $"order-user-{notification.UserId}");
-
-        await Task.CompletedTask;
+        await _cacheRepository.GeoAdd((OrderResponse)notification);
     }
 }

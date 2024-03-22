@@ -1,3 +1,4 @@
+using Application.Features.Orders.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Enums;
 using Domain.Features.Orders.Entities;
@@ -41,7 +42,7 @@ public class OrdersRepository :
 
     public async Task<IReadOnlyList<Order?>> GetOrdersByPoint(Point point)
     {
-        var orders = await _cacheRepository.GetNearObjects<OrderCreatedDomainEvent>(point.X, point.Y);
+        var orders = await _cacheRepository.GetNearObjects<OrderResponse>(point.X, point.Y);
         if (orders == null || orders.Count == 0)
         {
             var rangeInKM = int.Parse(_configuration.GetSection("Configurations:RangeInKM").Value!);
@@ -49,7 +50,7 @@ public class OrdersRepository :
             var ordersFromBase = await Filter(u => u.Point!.Distance(point) < rangeInKM, includeProperties: nameof(User));
 
             if (ordersFromBase != null && ordersFromBase.Count > 0)
-                await _cacheRepository.GeoAdd(ordersFromBase.Select(x => (OrderCreatedDomainEvent)x).ToList());
+                await _cacheRepository.GeoAdd(ordersFromBase.Select(x => (OrderResponse)x).ToList());
 
             return ordersFromBase!;
         }

@@ -44,7 +44,7 @@ public class CloseExpiredOrdersConsumer : BackgroundService
             using (var scope = _serviceProvider.CreateScope())
             {
                 var _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                var command = new CloseExpireOrdersCommand(DateTime.Now.AddMinutes(-_expiredMinutes));
+                var command = new CloseExpiredOrdersCommand(DateTime.Now.AddMinutes(-_expiredMinutes));
                 await _mediator.Send(command);
             }
 

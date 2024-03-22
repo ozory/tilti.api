@@ -13,7 +13,7 @@ namespace Domain.Features.Orders.Entities;
 /// <summary>
 /// Orders
 /// </summary>
-public class Order : Entity, IGeoData
+public class Order : Entity
 {
     #region PROPERTIES
 
@@ -163,6 +163,7 @@ public class Order : Entity, IGeoData
     public void SetLocation(double latitude, double longitude)
     {
         this.Location = new Location(latitude, longitude);
+        this.Point = new GeoPoint(latitude, longitude);
     }
 
     #endregion

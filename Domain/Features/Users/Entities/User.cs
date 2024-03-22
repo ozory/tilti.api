@@ -134,7 +134,7 @@ public class User : Entity
     /// 
     /// </summary>
     /// <param name="photo"></param>
-    public void SetPhoto(string photo) => this.Photo = photo;
+    public void SetPhoto(string? photo) => this.Photo = photo;
 
     public void SetPassword(string password) => this.Password!.SetValue(password);
 

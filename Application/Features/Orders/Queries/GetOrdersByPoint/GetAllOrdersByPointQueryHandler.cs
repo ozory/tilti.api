@@ -35,7 +35,7 @@ public class GetAllOrdersByPointQueryHandler : IRequestHandler<GetAllOrdersByPoi
         if (request.DriverId.HasValue) rejections = await _rejectionRepository.GetRejectionsByUser(request.DriverId!.Value);
         var result = await _repository.GetOrdersByPoint(new Point(request.Longitude, request.Latitude));
 
-        // retorna todas as ordens que não estão em rejeição
+        // retornar todas as ordens que não estão em rejeição
         var availables = result.Where(x => !rejections.Any(r => r!.OrderId == x!.Id));
 
         return Result.Ok(availables.Select(x => (OrderResponse)x!).ToImmutableList());

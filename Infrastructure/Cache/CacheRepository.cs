@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Application.Shared.Abstractions;
+using Application.Shared.Extensions;
 using Domain.Shared.Abstractions;
 using Microsoft.Extensions.Configuration;
 using StackExchange.Redis;
@@ -68,22 +69,19 @@ public class CacheRepository : ICacheRepository
     public async Task GeoAdd<T>(List<T> values)
     where T : class, IGeoData
     {
-        foreach (var value in values)
-        {
-            await GeoAdd(
-               value,
-               value.Location.Longitude,
-               value.Location.Latitude,
-               Guid.NewGuid().ToString());
-        }
+        foreach (var value in values) await GeoAdd(value, KeyExtensions.OrderUserKey(value.UserId));
     }
 
-    public async Task GeoAdd<T>(T value, double longitude, double latitude, string key)
-        where T : class
+    public async Task GeoAdd<T>(T value, string? key = null)
+        where T : class, IGeoData
     {
+        key ??= KeyExtensions.OrderUserKey(value.UserId);
+
         await RemoveAsync(key);
         await SetAsync<T>(key, value, TimeSpan.FromMinutes(5));
-        await _redisDB.GeoAddAsync(_geoContainer, new GeoEntry(longitude, latitude, key));
+
+        var geoEntry = new GeoEntry(value.Location.Longitude, value.Location.Latitude, key);
+        await _redisDB.GeoAddAsync(_geoContainer, geoEntry);
     }
 
     public async Task<List<T?>> GetNearObjects<T>(double longitude, double latitude)
