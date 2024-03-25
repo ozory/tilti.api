@@ -54,7 +54,6 @@ public sealed class UnitOfWork : IUnitOfWork
             }
             catch (Exception)
             {
-                //Log Exception Handling message                      
                 returnValue = false;
                 dbContextTransaction.Rollback();
                 throw;

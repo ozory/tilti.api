@@ -20,6 +20,7 @@ public class OrderCreatedEventHandler : INotificationHandler<OrderCreatedDomainE
     private readonly string _routingKey = null!;
     private readonly string _queueName = null!;
     private readonly string _exchangeType = null!;
+    private readonly string className = nameof(OrderCreatedEventHandler)!;
 
     public OrderCreatedEventHandler(
         IConfiguration configuration,
@@ -40,7 +41,16 @@ public class OrderCreatedEventHandler : INotificationHandler<OrderCreatedDomainE
 
     public async Task Handle(OrderCreatedDomainEvent notification, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Publicando evento de criação de pedido {id}", notification.Id);
-        await _cacheRepository.GeoAdd((OrderResponse)notification);
+        _logger.LogInformation("[{class}] Publicando evento de criação de pedido {id}", className, notification.Id);
+
+        try
+        {
+            await _cacheRepository.GeoAdd((OrderResponse)notification);
+        }
+        catch (System.Exception)
+        {
+            _logger.LogError("[{class}] Erro ao Publicar evento de criação de pedido {id}", className, notification.Id);
+            throw;
+        }
     }
 }
