@@ -21,6 +21,8 @@ public class CloseExpiredOrdersCommandHandler : ICommandHandler<CloseExpiredOrde
     private readonly ILogger<CloseExpiredOrdersCommandHandler> _logger;
     private readonly IValidator<CloseExpiredOrdersCommand> _validator;
     private readonly ICacheRepository _cacheRepository;
+    private readonly string className = nameof(CloseExpiredOrdersCommandHandler);
+
 
     public CloseExpiredOrdersCommandHandler(
         ILogger<CloseExpiredOrdersCommandHandler> logger,
@@ -38,30 +40,44 @@ public class CloseExpiredOrdersCommandHandler : ICommandHandler<CloseExpiredOrde
         CloseExpiredOrdersCommand request,
         CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Invalidating old olders {requestedTime}", request.requestedTime);
+        _logger.LogInformation("[{className}] Invalidating old olders {requestedTime}", className, request.requestedTime);
 
-        var validationResult = _validator.Validate(request);
-        if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
-
-        var openedOrder = await _unitOfWork.OrderRepository.GetOpenedOrdersThatExpired(request.requestedTime);
-
-        var currentTime = DateTime.Now;
-        var tasks = openedOrder.ToList().Select(async order =>
+        try
         {
-            order!.SetStatus(OrderStatus.Expired);
-            order.SetUpdated(currentTime);
+            var validationResult = _validator.Validate(request);
+            if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-            // Remove from all cacheds
-            await _cacheRepository.RemoveAsync(order.Id.ToString());
-            await _cacheRepository.RemoveAsync(KeyExtensions.OrderUserKey(order.UserId));
+            var openedOrder = await _unitOfWork.OrderRepository.GetOpenedOrdersThatExpired(request.requestedTime);
 
-            await _unitOfWork.OrderRepository.UpdateAsync(order);
-            return (OrderResponse)order;
-        });
+            var currentTime = DateTime.Now;
+            var tasks = openedOrder.ToList().Select(async order =>
+            {
+                order!.SetStatus(OrderStatus.Expired);
+                order.SetUpdated(currentTime);
 
-        var result = await Task.WhenAll(tasks);
-        await _unitOfWork.CommitAsync(cancellationToken);
+                // Remove from all cacheds
+                await _cacheRepository.RemoveAsync(order.Id.ToString());
+                await _cacheRepository.RemoveAsync(KeyExtensions.OrderUserKey(order.UserId));
 
-        return Result.Ok(result.ToImmutableList());
+                await _unitOfWork.OrderRepository.UpdateAsync(order);
+                return (OrderResponse)order;
+            });
+
+            var result = await Task.WhenAll(tasks);
+            await _unitOfWork.CommitAsync(cancellationToken);
+
+            _logger.LogInformation("[{className}] Orders {total} invalidated {requestedTime}",
+                className,
+                result.Length,
+                request.requestedTime);
+
+            return Result.Ok(result.ToImmutableList());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("[{className}] Error Closing Expired Orders :{request} Error: {ex}", className, request, ex);
+            throw;
+        }
+
     }
 }

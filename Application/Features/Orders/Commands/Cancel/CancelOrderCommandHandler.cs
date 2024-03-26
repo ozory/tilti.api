@@ -17,6 +17,8 @@ public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Ord
     private readonly IUserRepository _userRepository;
     private readonly ILogger<CancelOrderCommandHandler> _logger;
     private readonly IValidator<CancelOrderCommand> _validator;
+    private readonly string className = nameof(CancelOrderCommandHandler);
+
 
     public CancelOrderCommandHandler(
         ILogger<CancelOrderCommandHandler> logger,
@@ -32,24 +34,33 @@ public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Ord
 
     public async Task<Result<OrderResponse>> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Cancelling an Order {Id}", request.OrderId);
+        _logger.LogInformation("[{className}] Cancelling an Order {Id}", className, request.OrderId);
 
-        var validationResult = _validator.Validate(request);
-        if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
+        try
+        {
+            var validationResult = _validator.Validate(request);
+            if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        var userValidate = await CreateUserCommandValidator.ValidateUser(_userRepository, request.UserId);
-        if (userValidate.IsFailed) return Result.Fail(userValidate.Errors);
+            var userValidate = await CreateUserCommandValidator.ValidateUser(_userRepository, request.UserId);
+            if (userValidate.IsFailed) return Result.Fail(userValidate.Errors);
 
-        var openedOrder = await _repository.GetByIdAsync(request.OrderId);
-        if (openedOrder is null) return Result.Fail(new List<string> { "Nenhum pedido encontrado" });
+            var openedOrder = await _repository.GetByIdAsync(request.OrderId);
+            if (openedOrder is null) return Result.Fail(new List<string> { "Nenhum pedido encontrado" });
 
-        if (openedOrder.Status == OrderStatus.Canceled) return Result.Fail("Pedido já foi cancelado");
-        if (openedOrder.Status == OrderStatus.Finished) return Result.Fail("Pedido já foi Finalizado");
+            if (openedOrder.Status == OrderStatus.Canceled) return Result.Fail("Pedido já foi cancelado");
+            if (openedOrder.Status == OrderStatus.Finished) return Result.Fail("Pedido já foi Finalizado");
 
-        // Save user
-        var canceledOrder = await _repository.UpdateAsync(openedOrder);
+            // Save user
+            var canceledOrder = await _repository.UpdateAsync(openedOrder);
 
-        _logger.LogInformation("Order Canceled {Id}", request.OrderId);
-        return Result.Ok((OrderResponse)canceledOrder);
+            _logger.LogInformation("[{className}] Order Canceled {Id}", className, request.OrderId);
+            return Result.Ok((OrderResponse)canceledOrder);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("[{className}] Error Canceling Order : {request} Error: {ex}", className, request, ex);
+            throw;
+        }
+
     }
 }

@@ -18,6 +18,8 @@ public class UpdateOrderCommandHandler : ICommandHandler<UpdateOrderCommand, Ord
     private readonly IUserRepository _userRepository;
     private readonly IValidator<UpdateOrderCommand> _validator;
     private readonly ISecurityExtensions _securityExtensions;
+    private readonly string className = nameof(UpdateOrderCommandHandler);
+
 
     public UpdateOrderCommandHandler(
         ILogger<UpdateOrderCommandHandler> logger,
@@ -37,33 +39,44 @@ public class UpdateOrderCommandHandler : ICommandHandler<UpdateOrderCommand, Ord
         UpdateOrderCommand request,
         CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Updating an Order {id}", request.OrderId);
+        _logger.LogInformation("[{className}] Updating an Order {id}", className, request.OrderId);
 
-        var validationResult = _validator.Validate(request);
-        if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
+        try
+        {
 
-        var userValidate = await CreateUserCommandValidator.ValidateUser(_userRepository, request.UserId);
-        if (userValidate.IsFailed) return Result.Fail(userValidate.Errors);
+            var validationResult = _validator.Validate(request);
+            if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        var openedOrder = await _repository.GetByIdAsync(request.OrderId);
-        if (openedOrder is null) return Result.Fail(new List<string> { "Nenhum pedido encontrado" });
+            var userValidate = await CreateUserCommandValidator.ValidateUser(_userRepository, request.UserId);
+            if (userValidate.IsFailed) return Result.Fail(userValidate.Errors);
 
-        var user = userValidate.Value;
-        var order = Order.Create(
-            request.OrderId,
-            user,
-            request.requestedTime,
-            request.address,
-            openedOrder.CreatedAt);
+            var openedOrder = await _repository.GetByIdAsync(request.OrderId);
+            if (openedOrder is null) return Result.Fail(new List<string> { "Nenhum pedido encontrado" });
 
-        order.SetAmount(request.amount);
-        order.SetDistanceInKM(request.totalDiscance);
-        order.SetDurationInSeconds(request.totalDuration);
+            var user = userValidate.Value;
+            var order = Order.Create(
+                request.OrderId,
+                user,
+                request.requestedTime,
+                request.address,
+                openedOrder.CreatedAt);
 
-        // Save user
-        var updatedOrder = await _repository.UpdateAsync(order);
+            order.SetAmount(request.amount);
+            order.SetDistanceInKM(request.totalDiscance);
+            order.SetDurationInSeconds(request.totalDuration);
 
-        _logger.LogInformation("Order Updated {Id}", updatedOrder.Id);
-        return Result.Ok((OrderResponse)updatedOrder);
+
+            // Save user
+            var updatedOrder = await _repository.UpdateAsync(order);
+
+            _logger.LogInformation("[{className}] Order Updated {Id}", className, updatedOrder.Id);
+            return Result.Ok((OrderResponse)updatedOrder);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("[{className}] Error Updating Order : {request} Error: {ex}", className, request, ex);
+            throw;
+        }
+
     }
 }

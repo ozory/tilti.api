@@ -18,7 +18,7 @@ public class UpdateSubscriptionCommandHandler : ICommandHandler<UpdateSubscripti
     private readonly IPlanRepository _planRepository;
     private readonly ILogger<UpdateSubscriptionCommandHandler> _logger;
     private readonly IValidator<UpdateSubscriptionCommand> _validator;
-
+    private readonly string className = nameof(UpdateSubscriptionCommandHandler);
 
     public UpdateSubscriptionCommandHandler(
         ILogger<UpdateSubscriptionCommandHandler> logger,
@@ -38,35 +38,43 @@ public class UpdateSubscriptionCommandHandler : ICommandHandler<UpdateSubscripti
         UpdateSubscriptionCommand request,
         CancellationToken cancellationToken)
     {
-
-        _logger.LogInformation("Atualizando assinatura");
-
-        var validationResult = await _validator.ValidateAsync(request);
-        if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
-
-        var subscription = await _repository.GetByIdAsync(request.SubscriptionId);
-        if (subscription == null) return Result.Fail("Subscription not found");
-
-        if (subscription.Status == SubscriptionStatus.Inactive
-            && request.Status == (ushort)SubscriptionStatus.Inactive)
+        try
         {
-            return Result.Fail("Subscription allready cancelled");
+            _logger.LogInformation("[{className}] Atualizando assinatura", className);
+
+            var validationResult = await _validator.ValidateAsync(request);
+            if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
+
+            var subscription = await _repository.GetByIdAsync(request.SubscriptionId);
+            if (subscription == null) return Result.Fail("Subscription not found");
+
+            if (subscription.Status == SubscriptionStatus.Inactive
+                && request.Status == (ushort)SubscriptionStatus.Inactive)
+            {
+                return Result.Fail("Subscription allready cancelled");
+            }
+
+            if (subscription.Status == SubscriptionStatus.Inactive
+                && request.Status == (ushort)SubscriptionStatus.Active)
+            {
+                return Result.Fail("Inactive Subscription must enter in PendingApproval status");
+            }
+
+            subscription.SetStatus((SubscriptionStatus)request.Status);
+            subscription.SetUpdatedAt(DateTime.Now);
+            subscription.SetDueDate(request.DueDate);
+
+            Subscription savedSub = await _repository.UpdateAsync(subscription);
+
+            _logger.LogInformation("[{className}] Assinatura criada com sucesso: {Id}", className, savedSub.Id);
+
+            return Result.Ok((SubscriptionResponse)(savedSub));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("[{className}] Error on updating Subscription : {request} Error: {ex}", className, request, ex);
+            throw;
         }
 
-        if (subscription.Status == SubscriptionStatus.Inactive
-            && request.Status == (ushort)SubscriptionStatus.Active)
-        {
-            return Result.Fail("Inactive Subscription must enter in PendingApproval status");
-        }
-
-        subscription.SetStatus((SubscriptionStatus)request.Status);
-        subscription.SetUpdatedAt(DateTime.Now);
-        subscription.SetDueDate(request.DueDate);
-
-        Subscription savedSub = await _repository.UpdateAsync(subscription);
-
-        _logger.LogInformation("Assinatura criada com sucesso: {Id}", savedSub.Id);
-
-        return Result.Ok((SubscriptionResponse)(savedSub));
     }
 }

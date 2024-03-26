@@ -46,12 +46,6 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<ICacheRepository, CacheRepository>();
 
-        services.AddStackExchangeRedisCache(options =>
-        {
-            options.Configuration = configuration.GetSection("Infrastructure:Redis:Server").Value;
-            options.InstanceName = configuration.GetSection("Infrastructure:Redis:InstanceName").Value;
-        });
-
         services.AddSingleton<IMapServices>(sp =>
         {
             var valuePerKM = Decimal.Parse(

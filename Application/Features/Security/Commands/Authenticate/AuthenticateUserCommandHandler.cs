@@ -17,6 +17,7 @@ public class AuthenticateUserCommandHandler
     private readonly IValidator<AuthenticateUserCommand> _validator;
     private readonly ISecurityExtensions _securityExtensions;
     private readonly ISecurityRepository _securityRepository;
+    private readonly string className = nameof(AuthenticateUserCommandHandler);
 
     public AuthenticateUserCommandHandler(
         ILogger<AuthenticateUserCommandHandler> logger,
@@ -38,42 +39,50 @@ public class AuthenticateUserCommandHandler
         AuthenticateUserCommand request,
         CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Validando usuário {Email}", request.Email);
+        _logger.LogInformation("[{className}] Validando usuário {Email}", className, request.Email);
 
-        var validationResult = await _validator.ValidateAsync(request);
-        if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
-
-        _logger.LogInformation("Criando usuário {Email}", request.Email);
-        var user = await _repository.FirstOrDefault(x => x.Email.Value!.Equals(request.Email, StringComparison.InvariantCultureIgnoreCase));
-
-        var passwordHash = _securityExtensions.ComputeHash(user!.VerificationSalt!, request.Password);
-
-        if (user.Password!.Value != passwordHash)
+        try
         {
-            _logger.LogWarning("Falha de login {Email}", request.Email);
-            return Result.Fail("User not found");
+            var validationResult = await _validator.ValidateAsync(request);
+            if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
+
+            _logger.LogInformation("[{className}] Criando usuário {Email}", className, request.Email);
+            var user = await _repository.FirstOrDefault(x => x.Email.Value!.Equals(request.Email, StringComparison.InvariantCultureIgnoreCase));
+
+            var passwordHash = _securityExtensions.ComputeHash(user!.VerificationSalt!, request.Password);
+
+            if (user.Password!.Value != passwordHash)
+            {
+                _logger.LogWarning("[{className}] Falha de login {Email}", className, request.Email);
+                return Result.Fail("User not found");
+            }
+
+            _logger.LogInformation("Usuário {Email}", request.Email);
+
+            RefreshTokens refreshToken = new()
+            {
+                UserId = user!.Id,
+                RefreshToken = _securityExtensions.GenerateRefreshToken(),
+                LastLogin = DateTime.Now
+            };
+
+            var authenticateResponse = new AuthenticationResponse(
+                user.Id,
+                user.Name.Value,
+                user.Email.Value,
+                _securityExtensions.GenerateToken(user),
+                refreshToken.RefreshToken);
+
+
+            await _securityRepository.DeleteToken(user.Id);
+            await _securityRepository.SaveToken(refreshToken);
+
+            return Result.Ok(authenticateResponse);
         }
-
-        _logger.LogInformation("Usuário {Email}", request.Email);
-
-        RefreshTokens refreshToken = new()
+        catch (Exception ex)
         {
-            UserId = user!.Id,
-            RefreshToken = _securityExtensions.GenerateRefreshToken(),
-            LastLogin = DateTime.Now
-        };
-
-        var authenticateResponse = new AuthenticationResponse(
-            user.Id,
-            user.Name.Value,
-            user.Email.Value,
-            _securityExtensions.GenerateToken(user),
-            refreshToken.RefreshToken);
-
-
-        await _securityRepository.DeleteToken(user.Id);
-        await _securityRepository.SaveToken(refreshToken);
-
-        return Result.Ok(authenticateResponse);
+            _logger.LogError("[{className}] Authentication Error : {request} Error: {ex}", className, request, ex);
+            throw;
+        }
     }
 }
