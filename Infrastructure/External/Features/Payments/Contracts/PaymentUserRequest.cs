@@ -9,9 +9,5 @@ public record PaymentUserRequest(
 )
 {
     public static implicit operator PaymentUserRequest(User user)
-        => new PaymentUserRequest(
-                user.Name.Value!,
-                user.Email.Value!,
-                user.Document.Value!
-                );
+        => new(user.Name.Value!, user.Email.Value!, user.Document.Value!);
 }
