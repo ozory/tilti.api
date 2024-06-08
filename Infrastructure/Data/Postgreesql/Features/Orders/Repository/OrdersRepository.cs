@@ -19,6 +19,12 @@ public class OrdersRepository :
     private readonly ICacheRepository _cacheRepository;
     private readonly IConfiguration _configuration;
 
+    public int RangeInKM
+    {
+        get
+        { return int.Parse(_configuration.GetSection("Configurations:RangeInKM").Value!); }
+    }
+
     public OrdersRepository(
         TILTContext context,
         ICacheRepository cacheRepository,
@@ -46,9 +52,9 @@ public class OrdersRepository :
         var orders = await _cacheRepository.GetNearObjects<OrderResponse>(point.X, point.Y);
         if (orders == null || orders.Count == 0)
         {
-            var rangeInKM = int.Parse(_configuration.GetSection("Configurations:RangeInKM").Value!);
-
-            var ordersFromBase = await Filter(u => u.Point!.Distance(point) < rangeInKM, includeProperties: nameof(User));
+            var ordersFromBase = await Filter(
+                u => u.Point!.Distance(point) < RangeInKM,
+                includeProperties: IncludeProperties);
 
             if (ordersFromBase != null && ordersFromBase.Count > 0)
                 await _cacheRepository.GeoAdd(ordersFromBase.Select(x => (OrderResponse)x).ToList());
