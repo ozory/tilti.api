@@ -17,6 +17,7 @@ public static class UserEndpoint
         users.MapGet("/", GetAllUsers).WithOpenApi();
         users.MapPost("/", CreateUser).WithOpenApi();
         users.MapPut("/", UpdateUser).WithOpenApi();
+        users.MapPost("/rate", RateUser).WithOpenApi();
     }
 
     private static async Task<IResult> GetAllUsers(
@@ -41,6 +42,24 @@ public static class UserEndpoint
         [FromBody] CreateUserCommand createUserCommand,
         [FromServices] IMediator mediator
     )
+    {
+        try
+        {
+            var result = await mediator.Send(createUserCommand);
+            if (result.IsFailed) return TypedResults.BadRequest(result.Errors);
+            return TypedResults.Ok(result.Value);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+
+    }
+
+    private static async Task<IResult> RateUser(
+    [FromBody] CreateUserCommand createUserCommand,
+    [FromServices] IMediator mediator
+)
     {
         try
         {

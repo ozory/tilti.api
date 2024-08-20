@@ -3,8 +3,6 @@ using Domain.Features.Orders.Entities;
 using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NetTopologySuite.Geometries;
-using DomainLocation = Domain.ValueObjects.Name;
 namespace Infrastructure.Data.Postgreesql.Features.Orders.Configurations;
 
 public class OrderConfiguration : IEntityTypeConfiguration<Order>

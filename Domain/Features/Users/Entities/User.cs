@@ -31,6 +31,10 @@ public class User : Entity
 
     public virtual ICollection<Order> UserOrders { get; protected set; } = null!;
     public virtual ICollection<Order> DriverOrders { get; protected set; } = null!;
+
+    public virtual ICollection<Rate> SourceRates { get; protected set; } = null!;
+    public virtual ICollection<Rate> TargetRates { get; protected set; } = null!;
+
     public virtual Subscription? Subscription { get; protected set; } = null!;
     public virtual ICollection<Rejection> Rejections { get; protected set; } = [];
 
