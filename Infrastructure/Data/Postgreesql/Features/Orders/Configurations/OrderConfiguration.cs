@@ -91,6 +91,11 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasForeignKey(e => e.OrderId)
             .IsRequired(false);
 
+        builder.HasMany(e => e.Rates)
+            .WithOne(e => e.Order)
+            .HasForeignKey(e => e.OrderId)
+            .IsRequired(false);
+
         builder.Ignore(x => x.Items);
         builder.Ignore(x => x.DomainEvents);
         builder.Ignore(x => x.Location);

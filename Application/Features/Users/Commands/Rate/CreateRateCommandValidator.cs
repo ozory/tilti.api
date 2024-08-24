@@ -3,7 +3,7 @@ using Domain.Features.Users.Repository;
 using FluentResults;
 using FluentValidation;
 
-namespace Application.Features.Users.Commands.CreateUser;
+namespace Application.Features.Users.Commands.Rate;
 
 public class CreateRateCommandValidator : AbstractValidator<CreateRateCommand>
 {

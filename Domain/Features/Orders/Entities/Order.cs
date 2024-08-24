@@ -19,6 +19,7 @@ public class Order : Entity
 
     internal List<Item> _items = new();
     internal List<Address> _addresses = new();
+    internal List<Rate> _rates = new();
 
     public long UserId { get; protected set; }
     public long? DriverId { get; protected set; }
@@ -39,6 +40,7 @@ public class Order : Entity
 
     public IReadOnlyCollection<Item> Items => new ReadOnlyCollection<Item>(_items);
     public IReadOnlyCollection<Address> Addresses => new ReadOnlyCollection<Address>(_addresses);
+    public IReadOnlyCollection<Rate> Rates => new ReadOnlyCollection<Rate>(_rates);
 
     public GeoPoint Point { get; protected set; } = null!;
 
@@ -51,6 +53,14 @@ public class Order : Entity
     #region CONSTRUCTORS
 
     public Order() { }
+
+    public static Order Create(long? id)
+    {
+        return new Order()
+        {
+            Id = id ?? 0,
+        };
+    }
 
     public static Order Create(
         long? id,

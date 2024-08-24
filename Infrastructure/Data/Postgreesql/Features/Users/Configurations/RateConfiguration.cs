@@ -48,6 +48,11 @@ public class RateConfiguration : IEntityTypeConfiguration<Rate>
             .HasForeignKey(e => e.TargetUserId)
             .IsRequired(true);
 
+        builder.HasOne(e => e.Order)
+            .WithMany(s => s.Rates)
+            .HasForeignKey(e => e.OrderId)
+            .IsRequired(true);
+
         builder.Ignore(x => x.DomainEvents);
     }
 }
