@@ -3,18 +3,21 @@ using System;
 using Infrastructure.Data.Postgreesql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Infrastructure.Data.Postgreesql.Migrations
+namespace Infrastructure.Infrastructure.Data.Postgreesql.Migrations
 {
     [DbContext(typeof(TILTContext))]
-    partial class TILTContextModelSnapshot : ModelSnapshot
+    [Migration("20240824214405_RateDescriptionColumnType")]
+    partial class RateDescriptionColumnType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,58 +33,6 @@ namespace Infrastructure.Data.Postgreesql.Migrations
 
             modelBuilder.HasSequence("Sequence-Users")
                 .IncrementsBy(10);
-
-            modelBuilder.Entity("Domain.Features.Orders.Entities.Message", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(0);
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("Created")
-                        .HasColumnOrder(4);
-
-                    b.Property<long>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("OrderId")
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(1);
-
-                    b.Property<long>("SourceUserId")
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(2);
-
-                    b.Property<long>("TargetUserId")
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(3);
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("Updated")
-                        .HasColumnOrder(5);
-
-                    b.Property<long?>("UpdatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("SourceUserId");
-
-                    b.HasIndex("TargetUserId");
-
-                    b.ToTable("Messages", "tilt");
-                });
 
             modelBuilder.Entity("Domain.Features.Orders.Entities.Order", b =>
                 {
@@ -101,16 +52,6 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("Amount")
                         .HasColumnOrder(4);
-
-                    b.Property<string>("CancelDescription")
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("CancelDescription")
-                        .HasColumnOrder(13);
-
-                    b.Property<string>("CancelRasons")
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("CancelRasons")
-                        .HasColumnOrder(14);
 
                     b.Property<DateTime?>("CancelationTime")
                         .HasColumnType("timestamp")
@@ -140,11 +81,6 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.Property<int>("DurationInSeconds")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Notes")
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("Notes")
-                        .HasColumnOrder(12);
-
                     b.Property<Point>("Point")
                         .IsRequired()
                         .HasColumnType("geography(POINT, 4326)")
@@ -155,18 +91,10 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .HasColumnName("RequestedTime")
                         .HasColumnOrder(7);
 
-                    b.Property<DateTime?>("ScheduleTime")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<ushort>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("Status")
                         .HasColumnOrder(3);
-
-                    b.Property<ushort>("Type")
-                        .HasColumnType("integer")
-                        .HasColumnName("Type")
-                        .HasColumnOrder(11);
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp")
@@ -187,67 +115,6 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Orders", "tilt");
-                });
-
-            modelBuilder.Entity("Domain.Features.Orders.Entities.Rate", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("Created")
-                        .HasColumnOrder(4);
-
-                    b.Property<long>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("Description")
-                        .HasColumnOrder(6);
-
-                    b.Property<long>("OrderId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("SourceUserId")
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(1);
-
-                    b.Property<string>("Tags")
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("Tags")
-                        .HasColumnOrder(7);
-
-                    b.Property<long>("TargetUserId")
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(2);
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("Updated")
-                        .HasColumnOrder(5);
-
-                    b.Property<long?>("UpdatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<float>("Value")
-                        .HasColumnType("real")
-                        .HasColumnName("Value")
-                        .HasColumnOrder(3);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("SourceUserId");
-
-                    b.HasIndex("TargetUserId");
-
-                    b.ToTable("Rates", "tilt");
                 });
 
             modelBuilder.Entity("Domain.Features.Orders.Entities.Rejection", b =>
@@ -398,6 +265,67 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.ToTable("Subscriptions", "tilt");
                 });
 
+            modelBuilder.Entity("Domain.Features.Users.Entities.Rate", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("Created")
+                        .HasColumnOrder(4);
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("Description")
+                        .HasColumnOrder(6);
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("SourceUserId")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(1);
+
+                    b.Property<string>("Tags")
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("Tags")
+                        .HasColumnOrder(7);
+
+                    b.Property<long>("TargetUserId")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(2);
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("Updated")
+                        .HasColumnOrder(5);
+
+                    b.Property<long?>("UpdatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<float>("Value")
+                        .HasColumnType("real")
+                        .HasColumnName("Value")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("SourceUserId");
+
+                    b.HasIndex("TargetUserId");
+
+                    b.ToTable("Rates", "tilt");
+                });
+
             modelBuilder.Entity("Domain.Features.Users.Entities.User", b =>
                 {
                     b.Property<long>("Id")
@@ -525,31 +453,6 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.ToTable("RefeshTokens", "security");
                 });
 
-            modelBuilder.Entity("Domain.Features.Orders.Entities.Message", b =>
-                {
-                    b.HasOne("Domain.Features.Orders.Entities.Order", "Order")
-                        .WithMany("Messages")
-                        .HasForeignKey("OrderId");
-
-                    b.HasOne("Domain.Features.Users.Entities.User", "SourceUser")
-                        .WithMany("SourceMessages")
-                        .HasForeignKey("SourceUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Features.Users.Entities.User", "TargetUser")
-                        .WithMany("TargetMessages")
-                        .HasForeignKey("TargetUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("SourceUser");
-
-                    b.Navigation("TargetUser");
-                });
-
             modelBuilder.Entity("Domain.Features.Orders.Entities.Order", b =>
                 {
                     b.HasOne("Domain.Features.Users.Entities.User", "Driver")
@@ -621,33 +524,6 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Features.Orders.Entities.Rate", b =>
-                {
-                    b.HasOne("Domain.Features.Orders.Entities.Order", "Order")
-                        .WithMany("Rates")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Features.Users.Entities.User", "SourceUser")
-                        .WithMany("SourceRates")
-                        .HasForeignKey("SourceUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Features.Users.Entities.User", "TargetUser")
-                        .WithMany("TargetRates")
-                        .HasForeignKey("TargetUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("SourceUser");
-
-                    b.Navigation("TargetUser");
-                });
-
             modelBuilder.Entity("Domain.Features.Orders.Entities.Rejection", b =>
                 {
                     b.HasOne("Domain.Features.Users.Entities.User", "User")
@@ -682,6 +558,33 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.Navigation("Plan");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Features.Users.Entities.Rate", b =>
+                {
+                    b.HasOne("Domain.Features.Orders.Entities.Order", "Order")
+                        .WithMany("Rates")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Features.Users.Entities.User", "SourceUser")
+                        .WithMany("SourceRates")
+                        .HasForeignKey("SourceUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Features.Users.Entities.User", "TargetUser")
+                        .WithMany("TargetRates")
+                        .HasForeignKey("TargetUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("SourceUser");
+
+                    b.Navigation("TargetUser");
                 });
 
             modelBuilder.Entity("Domain.Features.Users.Entities.User", b =>
@@ -747,8 +650,6 @@ namespace Infrastructure.Data.Postgreesql.Migrations
 
             modelBuilder.Entity("Domain.Features.Orders.Entities.Order", b =>
                 {
-                    b.Navigation("Messages");
-
                     b.Navigation("Rates");
 
                     b.Navigation("Rejections");
@@ -765,13 +666,9 @@ namespace Infrastructure.Data.Postgreesql.Migrations
 
                     b.Navigation("Rejections");
 
-                    b.Navigation("SourceMessages");
-
                     b.Navigation("SourceRates");
 
                     b.Navigation("Subscription");
-
-                    b.Navigation("TargetMessages");
 
                     b.Navigation("TargetRates");
 

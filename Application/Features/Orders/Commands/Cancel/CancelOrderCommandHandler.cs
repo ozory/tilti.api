@@ -50,6 +50,10 @@ public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Ord
             if (openedOrder.Status == OrderStatus.Canceled) return Result.Fail("Pedido já foi cancelado");
             if (openedOrder.Status == OrderStatus.Finished) return Result.Fail("Pedido já foi Finalizado");
 
+            openedOrder.SetStatus(OrderStatus.Canceled);
+            openedOrder.SetCancelDescription(request.description);
+            openedOrder.SetCancelRasons(string.Join(",", request.reason));
+
             // Save user
             var canceledOrder = await _repository.UpdateAsync(openedOrder);
 

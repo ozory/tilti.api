@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Features.Users.Entities;
+using Domain.Features.Orders.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -37,6 +37,17 @@ public class RateConfiguration : IEntityTypeConfiguration<Rate>
             .HasColumnOrder(5)
             .HasColumnName("Updated")
             .HasColumnType("timestamp");
+
+
+        builder.Property(x => x.Description)
+            .HasColumnOrder(6)
+            .HasColumnName("Description")
+            .HasColumnType("varchar(500)");
+
+        builder.Property(x => x.Tags)
+            .HasColumnOrder(7)
+            .HasColumnName("Tags")
+            .HasColumnType("varchar(500)");
 
         builder.HasOne(e => e.SourceUser)
              .WithMany(s => s.SourceRates)

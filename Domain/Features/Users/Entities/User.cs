@@ -37,6 +37,8 @@ public class User : Entity
 
     public virtual Subscription? Subscription { get; protected set; } = null!;
     public virtual ICollection<Rejection> Rejections { get; protected set; } = [];
+    public virtual ICollection<Message> SourceMessages { get; protected set; } = [];
+    public virtual ICollection<Message> TargetMessages { get; protected set; } = [];
 
     #endregion
 

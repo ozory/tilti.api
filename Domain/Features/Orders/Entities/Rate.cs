@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain.Abstractions;
 using Domain.Features.Orders.Entities;
+using Domain.Features.Users.Entities;
 
-namespace Domain.Features.Users.Entities;
+namespace Domain.Features.Orders.Entities;
 
 public class Rate : Entity
 {
@@ -15,6 +16,8 @@ public class Rate : Entity
     public long TargetUserId { get; protected set; }
     public long OrderId { get; protected set; }
     public float Value { get; protected set; }
+    public string? Description { get; protected set; } = string.Empty;
+    public string? Tags { get; protected set; } = string.Empty;
 
     public User? SourceUser { get; protected set; } = null!;
     public User? TargetUser { get; protected set; } = null!;
@@ -32,22 +35,31 @@ public class Rate : Entity
     /// <param name="sourceUserId"></param>
     /// <param name="targetUserId"></param>
     /// <param name="value"></param>
-    private Rate(Order order, User sourceUser, User targetUser, float value)
+    private Rate(
+        Order order,
+        User sourceUser,
+        User targetUser,
+        float value,
+        string? description = null,
+        string? tags = null)
     {
+        Order = order;
         SourceUser = sourceUser;
         TargetUser = targetUser;
         Value = value;
+        Description = description;
+        Tags = tags;
     }
 
-    public static Rate Create(Order order, User sourceUser, User targetUser, float value)
+    public static Rate Create(
+        Order order,
+        User sourceUser,
+        User targetUser,
+        float value,
+        string? description = null,
+        string? tags = null)
     {
-        var rate = new Rate(order, sourceUser, targetUser, value);
-        return rate;
-    }
-
-    public static Rate Create(long OrderId, long sourceUserId, long targetUserId, float value)
-    {
-        var rate = new Rate(Order.Create(OrderId), User.Create(sourceUserId), User.Create(targetUserId), value);
+        var rate = new Rate(order, sourceUser, targetUser, value, description, tags);
         return rate;
     }
 

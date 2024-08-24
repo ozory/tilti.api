@@ -7,13 +7,13 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Features.Users.Events;
+namespace Application.Features.Orders.Events;
 
 public class OrderCreatedEventHandler : INotificationHandler<OrderCreatedDomainEvent>
 {
     private readonly IMessageRepository _messageRepository;
     private readonly IConfiguration _configuration;
-    private readonly ILogger<UserCreatedEventHandler> _logger;
+    private readonly ILogger<OrderCreatedDomainEvent> _logger;
     private readonly ICacheRepository _cacheRepository;
 
     private readonly string _exchangeName = null!;
@@ -24,7 +24,7 @@ public class OrderCreatedEventHandler : INotificationHandler<OrderCreatedDomainE
 
     public OrderCreatedEventHandler(
         IConfiguration configuration,
-        ILogger<UserCreatedEventHandler> logger,
+        ILogger<OrderCreatedDomainEvent> logger,
         IMessageRepository messageRepository,
         ICacheRepository cacheRepository)
     {

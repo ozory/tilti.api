@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using Domain.Abstractions;
 using Domain.Enums;
+using Domain.Features.Orders.Enums;
 using Domain.Features.Users.Entities;
 using Domain.Shared.Abstractions;
 using Domain.Shared.ValueObjects;
@@ -20,6 +21,7 @@ public class Order : Entity
     internal List<Item> _items = new();
     internal List<Address> _addresses = new();
     internal List<Rate> _rates = new();
+    internal List<Message> _messages = new();
 
     public long UserId { get; protected set; }
     public long? DriverId { get; protected set; }
@@ -31,6 +33,7 @@ public class Order : Entity
     public int DistanceInKM { get; protected set; }
     public int DurationInSeconds { get; protected set; }
 
+    public DateTime? ScheduleTime { get; protected set; }
     public DateTime? RequestedTime { get; protected set; }
     public DateTime? AcceptanceTime { get; protected set; }
     public DateTime? CompletionTime { get; protected set; }
@@ -41,12 +44,21 @@ public class Order : Entity
     public IReadOnlyCollection<Item> Items => new ReadOnlyCollection<Item>(_items);
     public IReadOnlyCollection<Address> Addresses => new ReadOnlyCollection<Address>(_addresses);
     public IReadOnlyCollection<Rate> Rates => new ReadOnlyCollection<Rate>(_rates);
+    public IReadOnlyCollection<Message> Messages => new ReadOnlyCollection<Message>(_messages);
 
     public GeoPoint Point { get; protected set; } = null!;
 
     public Location Location { get; set; } = null!;
 
     public OrderStatus Status { get; protected set; }
+
+    public OrderType Type { get; protected set; } = OrderType.Standard;
+
+    public string? Notes { get; protected set; } = null;
+
+    public string? CancelDescription { get; protected set; } = null;
+
+    public string? CancelRasons { get; protected set; } = null;
 
     #endregion
 
@@ -67,7 +79,9 @@ public class Order : Entity
         User? user,
         DateTime requestedTime,
         List<Address> address,
-        DateTime? createdAt)
+        DateTime? createdAt,
+        OrderType type = OrderType.Standard,
+        string? Notes = null)
     {
         var order = new Order()
         {
@@ -80,6 +94,8 @@ public class Order : Entity
         order.CreatedAt = createdAt ?? DateTime.Now;
         order.RequestedTime = DateTime.Now;
         order.Status = OrderStatus.PendingPayment;
+        order.Type = type;
+        order.Notes = Notes;
 
         var startAddress = address.First(x => x.AddressType == AddressType.StartPoint);
         var startPointLatitude = startAddress.Latitude;
@@ -175,6 +191,18 @@ public class Order : Entity
         this.Location = new Location(latitude, longitude);
         this.Point = new GeoPoint(latitude, longitude);
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetCancelDescription(string? value) => this.CancelDescription = value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetCancelRasons(string? value) => this.CancelRasons = value;
 
     #endregion
 }
