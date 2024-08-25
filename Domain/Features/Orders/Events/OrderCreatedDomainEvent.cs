@@ -6,13 +6,14 @@ using Domain.ValueObjects;
 using Domain.Features.Users.Entities;
 using Domain.Enums;
 using Domain.Shared.ValueObjects;
+using Domain.Features.Orders.Enums;
 
 namespace Domain.Features.Orders.Events;
 
 public record OrderCreatedDomainEvent
 (
     long Id,
-
+    OrderType Type,
     string UserName,
     string UserEmail,
     string UserDocument,
@@ -32,7 +33,8 @@ public record OrderCreatedDomainEvent
     DateTime? CompletionTime,
     DateTime? CancelationTime,
     int DistanceInKM,
-    int DurationInSeconds
+    int DurationInSeconds,
+    string? Notes = null
 
 ) : IDomainEvent, IGeoData
 {
@@ -46,7 +48,7 @@ public record OrderCreatedDomainEvent
 
         var odrderCreated = new OrderCreatedDomainEvent(
                  order.Id,
-
+                order.Type,
                  order.User!.Name!.Value!,
                  order.User!.Email!.Value!,
                  order.User!.Document!.Value!,
@@ -63,7 +65,8 @@ public record OrderCreatedDomainEvent
                  order.CompletionTime,
                  order.CancelationTime,
                  order.DistanceInKM,
-                 order.DurationInSeconds);
+                 order.DurationInSeconds,
+                 order.Notes);
 
         odrderCreated.UserId = order.User!.Id;
         return odrderCreated;
@@ -86,7 +89,9 @@ public record OrderCreatedDomainEvent
             user,
             orderCreated.RequestedTime!.Value,
             [.. orderCreated.Addresses],
-            orderCreated.Created);
+            orderCreated.Created,
+            orderCreated.type,
+            orderCreated.Notes);
 
         order.SetAmount(orderCreated.Amount);
         order.SetStatus((OrderStatus)Enum.Parse(typeof(OrderStatus), orderCreated.Status));

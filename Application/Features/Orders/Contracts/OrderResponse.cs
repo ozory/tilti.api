@@ -1,5 +1,6 @@
 using Domain.Enums;
 using Domain.Features.Orders.Entities;
+using Domain.Features.Orders.Enums;
 using Domain.Features.Orders.Events;
 using Domain.Shared.Abstractions;
 using Domain.Shared.ValueObjects;
@@ -11,6 +12,7 @@ public record OrderResponse
 (
     long Id,
     long? DriverId,
+    OrderType OrderType,
 
     OrderUserResponse User,
 
@@ -24,7 +26,8 @@ public record OrderResponse
     DateTime? CompletionTime,
     DateTime? CancelationTime,
     int DistanceInKM,
-    int DurationInSeconds
+    int DurationInSeconds,
+    string? Notes
 ) : IGeoData
 {
     public long UserId { get; set; }
@@ -36,7 +39,7 @@ public record OrderResponse
                   order.Id,
 
                   order.Driver?.Id,
-
+                    order.Type,
                   new OrderUserResponse(
                     order.User!.Id,
                     order.User.Name.Value!,
@@ -53,7 +56,8 @@ public record OrderResponse
                   order.CompletionTime,
                   order.CancelationTime,
                   order.DistanceInKM,
-                  order.DurationInSeconds);
+                  order.DurationInSeconds,
+                  order.Notes);
 
         orderResponse.UserId = order.User.Id;
         orderResponse.Location = order.Location ?? new Location(order.Point.Y, order.Point.X);
@@ -66,7 +70,7 @@ public record OrderResponse
         var orderResponse = new OrderResponse(
                   order.Id,
                   order.DriverId,
-
+                    order.Type,
                   new OrderUserResponse(
                      order.UserId,
                      order.UserName,
@@ -83,7 +87,8 @@ public record OrderResponse
                   order.CompletionTime,
                   order.CancelationTime,
                   order.DistanceInKM,
-                  order.DurationInSeconds);
+                  order.DurationInSeconds,
+                  order.Notes);
 
         orderResponse.UserId = order.UserId;
         orderResponse.Location = order.Location;
@@ -108,7 +113,9 @@ public record OrderResponse
             user,
             orderCreated.RequestedTime!.Value,
             orderCreated.Addresses.Select(x => (Domain.ValueObjects.Address)x).ToList(),
-            orderCreated.Created);
+            orderCreated.Created,
+            orderCreated.OrderType,
+            orderCreated.Notes);
 
         order.SetAmount(orderCreated.Amount);
         order.SetStatus((OrderStatus)Enum.Parse(typeof(OrderStatus), orderCreated.Status));

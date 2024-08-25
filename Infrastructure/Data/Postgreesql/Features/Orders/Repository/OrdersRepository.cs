@@ -2,6 +2,7 @@ using Application.Features.Orders.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Enums;
 using Domain.Features.Orders.Entities;
+using Domain.Features.Orders.Enums;
 using Domain.Features.Orders.Events;
 using Domain.Features.Orders.Repository;
 using Domain.Features.Users.Entities;
@@ -47,13 +48,16 @@ public class OrdersRepository :
         return orders!;
     }
 
-    public async Task<IReadOnlyList<Order?>> GetOrdersByPoint(Point point)
+    public async Task<IReadOnlyList<Order?>> GetOrdersByPoint(Point point, OrderType orderType)
     {
         var orders = await _cacheRepository.GetNearObjects<OrderResponse>(point.X, point.Y);
-        if (orders == null || orders.Count == 0)
+        var filtredByTypeOrders = orders.Where(x => x?.OrderType == orderType).ToList();
+
+        if (filtredByTypeOrders == null || filtredByTypeOrders.Count == 0)
         {
             var ordersFromBase = await Filter(
-                u => u.Point!.Distance(point) < RangeInKM,
+                u => u.Point!.Distance(point) < RangeInKM
+                && u.Type == orderType,
                 includeProperties: IncludeProperties);
 
             if (ordersFromBase != null && ordersFromBase.Count > 0)
@@ -61,7 +65,7 @@ public class OrdersRepository :
 
             return ordersFromBase!;
         }
-        return orders.Select(x => (Order)x!).ToList();
+        return filtredByTypeOrders.Select(x => (Order)x!).ToList();
     }
 
     public async Task<IReadOnlyList<Order?>> GetOpenedOrdersThatExpired(DateTime expireTime)
