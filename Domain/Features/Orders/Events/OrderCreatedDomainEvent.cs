@@ -90,7 +90,7 @@ public record OrderCreatedDomainEvent
             orderCreated.RequestedTime!.Value,
             [.. orderCreated.Addresses],
             orderCreated.Created,
-            orderCreated.type,
+            orderCreated.Type,
             orderCreated.Notes);
 
         order.SetAmount(orderCreated.Amount);

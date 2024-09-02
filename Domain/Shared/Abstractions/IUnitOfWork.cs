@@ -18,6 +18,7 @@ public interface IUnitOfWork
     IRateRepository RateRepository { get; }
     ISubscriptionRepository SubscriptionRepository { get; }
     IOrderMessageRepository OrderMessageRepository { get; }
+    ITrackingRepository TrackingRepository { get; }
 
     Task<bool> CommitAsync(CancellationToken cancellationToken);
 }

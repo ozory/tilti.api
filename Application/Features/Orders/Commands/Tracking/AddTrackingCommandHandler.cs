@@ -8,22 +8,23 @@ using Domain.Features.Orders.Events;
 using Domain.Features.Orders.Repository;
 using Domain.Features.Users.Repository;
 using Domain.Shared.Abstractions;
+using Domain.Shared.ValueObjects;
 using FluentResults;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Features.Orders.Commands.CreateOrder;
+namespace Application.Features.Orders.Commands.OrderTracking;
 
-public class AddMessageCommandHandler : ICommandHandler<AddMessageCommand, bool>
+public class AddTrackingCommandHandler : ICommandHandler<AddTrackingCommand, bool>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<AddMessageCommandHandler> _logger;
-    private readonly IValidator<AddMessageCommand> _validator;
-    private readonly string className = nameof(CreateOrderCommandHandler);
+    private readonly ILogger<AddTrackingCommandHandler> _logger;
+    private readonly IValidator<AddTrackingCommand> _validator;
+    private readonly string className = nameof(AddTrackingCommandHandler);
 
-    public AddMessageCommandHandler(
-        ILogger<AddMessageCommandHandler> logger,
-        IValidator<AddMessageCommand> validator,
+    public AddTrackingCommandHandler(
+        ILogger<AddTrackingCommandHandler> logger,
+        IValidator<AddTrackingCommand> validator,
         IUnitOfWork unitOfWork)
     {
         _logger = logger;
@@ -31,7 +32,7 @@ public class AddMessageCommandHandler : ICommandHandler<AddMessageCommand, bool>
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<bool>> Handle(AddMessageCommand request, CancellationToken cancellationToken)
+    public async Task<Result<bool>> Handle(AddTrackingCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("[{className}] Add mensage to Order {OrderId}", className, request.OrderId);
 
@@ -40,12 +41,6 @@ public class AddMessageCommandHandler : ICommandHandler<AddMessageCommand, bool>
             var validationResult = _validator.Validate(request);
             if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-            var userValidate = await CreateUserCommandValidator.ValidateUser(_unitOfWork.UserRepository, request.SourceUserId);
-            if (userValidate.IsFailed) return Result.Fail(userValidate.Errors);
-
-            var driverValidate = await CreateUserCommandValidator.ValidateUser(_unitOfWork.UserRepository, request.TargetUserId);
-            if (userValidate.IsFailed) return Result.Fail(userValidate.Errors);
-
             var order = await _unitOfWork.OrderRepository.GetByIdAsync(request.OrderId);
             if (order == null ||
                 (
@@ -53,20 +48,18 @@ public class AddMessageCommandHandler : ICommandHandler<AddMessageCommand, bool>
                     || order.Status == OrderStatus.Canceled
                     || order.Status == OrderStatus.Expired)) { return Result.Fail("Ordem já finalizada ou expirada"); }
 
-            var user = userValidate.Value;
-            var message = Message.Create(request.SourceUserId, request.TargetUserId, request.OrderId, request.Message);
+            var tracking = Tracking.Create(order.Id, new Location(request.Latitude, request.Longitude));
 
             // Save user
-            var savedMessage = await _unitOfWork.OrderMessageRepository.SaveAsync(message);
-            savedMessage.AddDomainEvent((CreateMessageDomainEvent)savedMessage);
+            var savedTracking = await _unitOfWork.TrackingRepository.SaveAsync(tracking);
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            _logger.LogInformation("[{className}] Order Message Created {savedMessage}", className, savedMessage.Id);
+            _logger.LogInformation("[{className}] Order Tracking Created {savedTracking}", className, savedTracking.Id);
             return Result.Ok(true);
         }
         catch (Exception ex)
         {
-            _logger.LogError("[{className}] Error creating Order :{request} Error: {ex}", className, request, ex);
+            _logger.LogError("[{className}] Error creating Order Tracking :{request} Error: {ex}", className, request, ex);
             throw;
         }
 

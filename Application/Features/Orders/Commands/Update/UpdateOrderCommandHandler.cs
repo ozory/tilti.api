@@ -64,8 +64,6 @@ public class UpdateOrderCommandHandler : ICommandHandler<UpdateOrderCommand, Ord
             order.SetAmount(request.amount);
             order.SetDistanceInKM(request.totalDiscance);
             order.SetDurationInSeconds(request.totalDuration);
-
-
             // Save user
             var updatedOrder = await _repository.UpdateAsync(order);
 

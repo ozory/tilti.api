@@ -17,6 +17,7 @@ public sealed class UnitOfWork : IUnitOfWork
     private readonly IPlanRepository _planRepository;
     private readonly IRateRepository _rateRepository;
     private readonly IOrderMessageRepository _messageRepository;
+    private readonly ITrackingRepository _trackingRepository;
     private readonly TILTContext _context;
     private readonly IMediator _mediator;
 
@@ -28,7 +29,8 @@ public sealed class UnitOfWork : IUnitOfWork
         ISubscriptionRepository subscriptionRepository,
         IPlanRepository planRepository,
         IRateRepository rateRepository,
-        IOrderMessageRepository messageRepository)
+        IOrderMessageRepository messageRepository,
+        ITrackingRepository trackingRepository)
     {
         this._context = context;
         this._mediator = mediator;
@@ -38,6 +40,7 @@ public sealed class UnitOfWork : IUnitOfWork
         this._planRepository = planRepository;
         this._rateRepository = rateRepository;
         this._messageRepository = messageRepository;
+        this._trackingRepository = trackingRepository;
     }
 
     public IUserRepository UserRepository { get { return _userRepository; } }
@@ -46,6 +49,7 @@ public sealed class UnitOfWork : IUnitOfWork
     public IPlanRepository PlanRepository { get { return _planRepository; } }
     public IRateRepository RateRepository { get { return _rateRepository; } }
     public IOrderMessageRepository OrderMessageRepository { get { return _messageRepository; } }
+    public ITrackingRepository TrackingRepository { get { return _trackingRepository; } }
 
     public async Task<bool> CommitAsync(CancellationToken cancellationToken)
     {

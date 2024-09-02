@@ -18,10 +18,11 @@ public class Order : Entity
 {
     #region PROPERTIES
 
-    internal List<Item> _items = new();
-    internal List<Address> _addresses = new();
-    internal List<Rate> _rates = new();
-    internal List<Message> _messages = new();
+    internal List<Item> _items = [];
+    internal List<Address> _addresses = [];
+    internal List<Rate> _rates = [];
+    internal List<Message> _messages = [];
+    internal List<Tracking> _trackings = [];
 
     public long UserId { get; protected set; }
     public long? DriverId { get; protected set; }
@@ -45,6 +46,7 @@ public class Order : Entity
     public IReadOnlyCollection<Address> Addresses => new ReadOnlyCollection<Address>(_addresses);
     public IReadOnlyCollection<Rate> Rates => new ReadOnlyCollection<Rate>(_rates);
     public IReadOnlyCollection<Message> Messages => new ReadOnlyCollection<Message>(_messages);
+    public IReadOnlyCollection<Tracking> Trackings => new ReadOnlyCollection<Tracking>(_trackings);
 
     public GeoPoint Point { get; protected set; } = null!;
 

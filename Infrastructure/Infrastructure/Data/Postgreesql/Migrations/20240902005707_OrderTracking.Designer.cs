@@ -3,18 +3,21 @@ using System;
 using Infrastructure.Data.Postgreesql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Infrastructure.Data.Postgreesql.Migrations
+namespace Infrastructure.Infrastructure.Data.Postgreesql.Migrations
 {
     [DbContext(typeof(TILTContext))]
-    partial class TILTContextModelSnapshot : ModelSnapshot
+    [Migration("20240902005707_OrderTracking")]
+    partial class OrderTracking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -44,6 +44,7 @@ public static class DependencyInjection
         services.AddScoped<ISecurityRepository, SecurityRepository>();
         services.AddScoped<IRejectRepository, RejectionRepository>();
         services.AddScoped<IOrderMessageRepository, OrderMessageRepository>();
+        services.AddScoped<ITrackingRepository, TrackingRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<ICacheRepository, CacheRepository>();
