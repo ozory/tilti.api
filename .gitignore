@@ -427,6 +427,7 @@ test-results/
 .DS_Store
 .AppleDouble
 .LSOverride
+.TODO
 
 # Icon must end with two \r
 Icon
@@ -475,3 +476,4 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+*.TODO
