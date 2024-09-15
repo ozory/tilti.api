@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Application.Features.Orders.Contracts;
-using Domain.Features.Orders.Enums;
 using FluentResults;
 using MediatR;
 

@@ -5,6 +5,7 @@ using Domain.Enums;
 using Domain.Features.Orders.Entities;
 using Domain.Features.Orders.Repository;
 using Domain.Features.Users.Repository;
+using Domain.Orders.Enums;
 using FluentResults;
 using FluentValidation;
 using Microsoft.Extensions.Logging;

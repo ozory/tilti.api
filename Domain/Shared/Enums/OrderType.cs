@@ -1,4 +1,4 @@
-namespace Domain.Features.Orders.Enums;
+namespace Domain.Shared.Enums;
 
 public enum OrderType : ushort
 {

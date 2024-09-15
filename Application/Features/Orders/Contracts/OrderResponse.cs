@@ -1,8 +1,9 @@
 using Domain.Enums;
 using Domain.Features.Orders.Entities;
-using Domain.Features.Orders.Enums;
 using Domain.Features.Orders.Events;
+using Domain.Orders.Enums;
 using Domain.Shared.Abstractions;
+using Domain.Shared.Enums;
 using Domain.Shared.ValueObjects;
 using DomainUser = Domain.Features.Users.Entities.User;
 

@@ -1,6 +1,7 @@
 using Domain.Enums;
 using Domain.Features.Orders.Entities;
-using Domain.Features.Orders.Enums;
+using Domain.Orders.Enums;
+using Domain.Shared.Enums;
 using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

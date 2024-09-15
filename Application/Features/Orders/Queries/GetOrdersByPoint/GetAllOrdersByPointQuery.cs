@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using Application.Features.Orders.Contracts;
-using Domain.Features.Orders.Enums;
+using Domain.Shared.Enums;
 using FluentResults;
 using MediatR;
 
@@ -12,4 +12,7 @@ public class GetAllOrdersByPointQuery : IRequest<Result<ImmutableList<OrderRespo
     public OrderType OrderType { get; set; }
     public double Latitude { get; set; }
     public double Longitude { get; set; }
+
+    public double? DestinationLatitude { get; set; }
+    public double? DestinationLongitude { get; set; }
 }

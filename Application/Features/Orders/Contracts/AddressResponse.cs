@@ -29,7 +29,7 @@ public record AddressResponse(
     public static explicit operator Address(AddressResponse address)
        => new Address()
        {
-           AddressType = (Domain.Enums.AddressType)address.AddressType,
+           AddressType = (Domain.Orders.Enums.AddressType)address.AddressType,
            Street = address.Street,
            Number = address.Number,
            Complment = address.Complment,

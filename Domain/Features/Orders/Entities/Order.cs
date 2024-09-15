@@ -1,10 +1,10 @@
 
 using System.Collections.ObjectModel;
 using Domain.Abstractions;
-using Domain.Enums;
-using Domain.Features.Orders.Enums;
 using Domain.Features.Users.Entities;
+using Domain.Orders.Enums;
 using Domain.Shared.Abstractions;
+using Domain.Shared.Enums;
 using Domain.Shared.ValueObjects;
 using Domain.ValueObjects;
 using GeoPoint = NetTopologySuite.Geometries.Point;

@@ -4,9 +4,9 @@ using Domain.ValueObjects;
 
 
 using Domain.Features.Users.Entities;
-using Domain.Enums;
 using Domain.Shared.ValueObjects;
-using Domain.Features.Orders.Enums;
+using Domain.Shared.Enums;
+using Domain.Orders.Enums;
 
 namespace Domain.Features.Orders.Events;
 

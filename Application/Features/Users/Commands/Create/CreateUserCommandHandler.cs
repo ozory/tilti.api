@@ -37,6 +37,7 @@ public class CreateUserCommandHandler(
             user.SetVerificationSalt(securitySalt);
             user.SetPassword(securityExtensions.ComputeHash(securitySalt, request.Password));
             user.SetVerificationCode(securityExtensions.ComputeValidationCode());
+            user.SetDriveEnable(request.DriveEnable);
 
             var savedUser = await unitOfWork.UserRepository.SaveAsync(user);
             savedUser.AddDomainEvent(UserCreatedDomainEvent.Create(user));

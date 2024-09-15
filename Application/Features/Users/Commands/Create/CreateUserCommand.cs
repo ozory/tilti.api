@@ -7,7 +7,8 @@ public sealed record CreateUserCommand
     string Name,
     string Email,
     string Document,
-    string Password
+    string Password,
+    Boolean DriveEnable = false
 
 ) : ICommand<UserResponse>;
 
