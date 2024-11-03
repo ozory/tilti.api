@@ -3,8 +3,6 @@ using Application.Features.Users.Commands.CreateUser;
 using Application.Shared.Abstractions;
 using Domain.Features.Orders.Entities;
 using Domain.Features.Orders.Events;
-using Domain.Features.Orders.Repository;
-using Domain.Features.Users.Repository;
 using Domain.Shared.Abstractions;
 using FluentResults;
 using FluentValidation;
@@ -12,7 +10,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Orders.Commands.CreateOrder;
 
+/// <summary>
+/// CreateOrderCommandHandler class.
+/// </summary>
 public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, OrderResponse>
+
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<CreateOrderCommandHandler> _logger;
@@ -29,6 +31,13 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Ord
         _unitOfWork = unitOfWork;
     }
 
+    /// <summary>
+    /// Handles the creation of an order.
+    /// </summary>
+    /// <param name="request">The command containing the order details.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the result of the order creation.</returns>
+    /// <exception cref="Exception">Thrown when an error occurs during order creation.</exception>
     public async Task<Result<OrderResponse>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("[{className}] Creating an Order {UserId}", className, request.UserId);
@@ -45,11 +54,11 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Ord
             if (openedOrder.Any()) return Result.Fail("Usuário já possui uma ordem aberta");
 
             var user = userValidate.Value;
-            var order = Order.Create(null, user, request.requestedTime, request.addresses, DateTime.Now);
+            var order = Order.Create(null, user, request.RequestedTime, request.Addresses, DateTime.Now);
 
-            order.SetAmount(request.amount);
-            order.SetDistanceInKM(request.distanceInKM);
-            order.SetDurationInSeconds(request.durationInSeconds);
+            order.SetAmount(request.Amount);
+            order.SetDistanceInKM(request.DistanceInKM);
+            order.SetDurationInSeconds(request.DurationInSeconds);
 
             // Save user
             var savedOrder = await _unitOfWork.OrderRepository.SaveAsync(order);
