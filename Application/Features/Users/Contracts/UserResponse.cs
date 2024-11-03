@@ -1,3 +1,4 @@
+using Domain.Enums;
 using DomainUser = Domain.Features.Users.Entities.User;
 
 namespace Application.Features.Users.Contracts;

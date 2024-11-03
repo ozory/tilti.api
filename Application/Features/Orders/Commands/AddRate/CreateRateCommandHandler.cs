@@ -16,6 +16,21 @@ public class CreateRateCommandHandler(
 
     private readonly string className = nameof(CreateRateCommandHandler);
 
+    /// <summary>
+    /// Handles the creation of a new rate for an order between two users.
+    /// </summary>
+    /// <param name="request">The command containing rate creation details including order ID, source user ID, target user ID, rate value, description and tags.</param>
+    /// <param name="cancellationToken">Cancellation token to cancel the operation if needed.</param>
+    /// <returns>A Result containing a boolean indicating success (true) or failure with error messages.</returns>
+    /// <remarks>
+    /// The method performs the following steps:
+    /// 1. Validates the request using the validator
+    /// 2. Checks if the order exists
+    /// 3. Validates both source and target users
+    /// 4. Verifies if a rate already exists for the given combination
+    /// 5. Creates and saves the new rate
+    /// </remarks>
+    /// <exception cref="Exception">Thrown when an unexpected error occurs during rate creation.</exception>
     public async Task<Result<bool>> Handle(CreateRateCommand request, CancellationToken cancellationToken)
     {
         try
