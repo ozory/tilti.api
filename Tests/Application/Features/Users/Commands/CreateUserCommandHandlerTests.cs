@@ -38,8 +38,8 @@ public class CreateUserCommandHandlerTests
     {
         // Arrange
         var command = new CreateUserCommand(
+             "Test User",
             "test@email.com",
-            "Test User",
             "12345678",
             "123456789"
         );

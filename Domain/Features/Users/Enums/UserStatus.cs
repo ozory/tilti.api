@@ -6,5 +6,6 @@ namespace Domain.Enums
         PendingRegisterConfirmation = 2,
         PendingPaymentInformation = 3,
         Inactive = 4,
+        ResetPasswor = 5,
     }
 }

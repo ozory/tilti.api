@@ -168,7 +168,7 @@ public class User : Entity
 
     }
 
-    public void SetVerificationCode(string verificationCode)
+    public void SetVerificationCode(string? verificationCode)
         => this.VerificationCode = verificationCode;
 
     public void SetVerificationSalt(string verificationSalt)
