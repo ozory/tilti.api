@@ -1,3 +1,4 @@
+using Application.Features.Orders.Commands.AddMessage;
 using Application.Features.Orders.Commands.CreateOrder;
 using Application.Features.Orders.Commands.PrecifyOrder;
 using Application.Features.Orders.Queries.GetOrdersByPoint;
@@ -14,6 +15,7 @@ public static class OrdersEndpoint
         orders.MapPost("/", CreateOrder).WithOpenApi();
         orders.MapPost("/precify", PrecifyOrder).WithOpenApi();
         orders.MapPost("/getByPoint", GetByPoint).WithOpenApi();
+        orders.MapPost("/message", AddMessage).WithOpenApi();
     }
 
     private static async Task<IResult> GetByPoint(
@@ -62,6 +64,22 @@ public static class OrdersEndpoint
         try
         {
             var result = await mediator.Send(createOrderCommand);
+            if (result.IsFailed) return TypedResults.BadRequest(result.Errors);
+            return TypedResults.Ok(result.Value);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    private static async Task<IResult> AddMessage(
+     [FromBody] AddMessageCommand addMessageCommand,
+     [FromServices] IMediator mediator)
+    {
+        try
+        {
+            var result = await mediator.Send(addMessageCommand);
             if (result.IsFailed) return TypedResults.BadRequest(result.Errors);
             return TypedResults.Ok(result.Value);
         }

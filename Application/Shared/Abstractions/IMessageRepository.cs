@@ -12,13 +12,13 @@ public interface IMessageRepository
 {
     IMessageRepository CreateNewInstance();
 
-    IConnection GetConnectionFactory();
+    Task<IConnection> GetConnectionFactory();
 
-    IModel StartNewChannel(string queueName);
+    Task<IChannel> StartNewChannel(string queueName);
 
-    void Consume<T>(IModel sharedChannel, Action<T> action) where T : IDomainEvent;
+    Task Consume<T>(IChannel sharedChannel, Action<T> action) where T : IDomainEvent;
 
-    void PublishAsync<T>(
+    Task PublishAsync<T>(
         T @event,
         string? exchangeName,
         string? exchangeType,

@@ -34,7 +34,7 @@ public class MessageRepository : IMessageRepository
         return new MessageRepository(this._configuration);
     }
 
-    public void PublishAsync<T>(
+    public async Task PublishAsync<T>(
         T @event,
         string? exchangeName,
         string? exchangeType,
@@ -45,41 +45,42 @@ public class MessageRepository : IMessageRepository
         try
         {
             var factory = new ConnectionFactory() { Uri = new Uri(_connectionString) };
-            using var connection = factory.CreateConnection();
-            using var channel = connection.CreateModel();
+            using var connection = await factory.CreateConnectionAsync();
+            using var channel = await connection.CreateChannelAsync();
 
             if (!string.IsNullOrEmpty(exchangeName))
             {
-                channel.ExchangeDeclare(exchangeName, exchangeType?.ToLower(), true);
+                await channel.ExchangeDeclareAsync(exchangeName, exchangeType?.ToLower() ?? "direct", true);
             }
 
-            channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
-            channel.QueueBind(queue: queueName,
-                      exchange: exchangeName,
-                      routingKey: routingKey);
+            await channel.QueueDeclareAsync(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+            await channel.QueueBindAsync(queue: queueName,
+                      exchange: exchangeName!,
+                      routingKey: routingKey!);
 
             var options = new JsonSerializerOptions { WriteIndented = true };
             var message = JsonSerializer.Serialize<T>(@event, options);
 
-            channel.BasicPublish(exchange: exchangeName,
-                                routingKey: routingKey ?? queueName,
-                                basicProperties: null,
-                                body: Encoding.UTF8.GetBytes(message));
+            await channel.BasicPublishAsync<BasicProperties>(
+                exchangeName!,
+                routingKey ?? queueName,
+                false, new BasicProperties(), Encoding.UTF8.GetBytes(message));
 
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw;
+            throw new InvalidOperationException("Failed to publish message", ex);
         }
     }
 
-    public void Consume<T>(IModel sharedChannel, Action<T> action) where T : IDomainEvent
+    public async Task Consume<T>(IChannel sharedChannel, Action<T> action) where T : IDomainEvent
     {
         try
         {
-            var consumer = new EventingBasicConsumer(sharedChannel);
-            sharedChannel.BasicConsume(queue: sharedChannel.CurrentQueue, autoAck: false, consumer: consumer);
-            consumer.Received += (model, eventsArgs) =>
+            var consumer = new AsyncEventingBasicConsumer(sharedChannel);
+            await sharedChannel.BasicConsumeAsync(queue: sharedChannel.CurrentQueue!, autoAck: false, consumer: consumer);
+
+            consumer.ReceivedAsync += async (model, eventsArgs) =>
             {
                 byte[] body = eventsArgs.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
@@ -87,7 +88,7 @@ public class MessageRepository : IMessageRepository
                 var messageContent = JsonSerializer.Deserialize<T>(message);
 
                 action(messageContent!);
-                sharedChannel.BasicAck(deliveryTag: eventsArgs.DeliveryTag, multiple: false);
+                await sharedChannel.BasicAckAsync(deliveryTag: eventsArgs.DeliveryTag, multiple: false);
             };
         }
         catch (Exception)
@@ -96,16 +97,16 @@ public class MessageRepository : IMessageRepository
         }
     }
 
-    public IModel StartNewChannel(string queueName)
+    public async Task<IChannel> StartNewChannel(string queueName)
     {
-        var connection = GetConnectionFactory();
-        IModel channel = connection.CreateModel();
-        channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
-        channel.BasicQos(prefetchSize: 0, prefetchCount: 100, global: false);
+        var connection = await GetConnectionFactory();
+        IChannel channel = await connection.CreateChannelAsync();
+        await channel.QueueDeclareAsync(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+        await channel.BasicQosAsync(prefetchSize: 0, prefetchCount: 100, global: false);
         return channel;
     }
 
-    public IConnection GetConnectionFactory()
+    public async Task<IConnection> GetConnectionFactory()
     {
         var factory = new ConnectionFactory() { Uri = new Uri(_connectionString) };
 
@@ -115,7 +116,7 @@ public class MessageRepository : IMessageRepository
         // attempt recovery every 10 seconds
         factory.NetworkRecoveryInterval = TimeSpan.FromSeconds(10);
 
-        var connection = factory.CreateConnection();
+        var connection = await factory.CreateConnectionAsync();
         return connection;
     }
 }

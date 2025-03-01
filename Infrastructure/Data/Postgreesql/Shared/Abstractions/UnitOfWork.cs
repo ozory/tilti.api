@@ -15,6 +15,9 @@ public sealed class UnitOfWork : IUnitOfWork
     private readonly IOrderRepository _ordersRepository;
     private readonly ISubscriptionRepository _subscriptionRepository;
     private readonly IPlanRepository _planRepository;
+    private readonly IRateRepository _rateRepository;
+    private readonly IOrderMessageRepository _messageRepository;
+    private readonly ITrackingRepository _trackingRepository;
     private readonly TILTContext _context;
     private readonly IMediator _mediator;
 
@@ -24,7 +27,10 @@ public sealed class UnitOfWork : IUnitOfWork
         IUserRepository userRepository,
         IOrderRepository ordersRepository,
         ISubscriptionRepository subscriptionRepository,
-        IPlanRepository planRepository)
+        IPlanRepository planRepository,
+        IRateRepository rateRepository,
+        IOrderMessageRepository messageRepository,
+        ITrackingRepository trackingRepository)
     {
         this._context = context;
         this._mediator = mediator;
@@ -32,12 +38,18 @@ public sealed class UnitOfWork : IUnitOfWork
         this._ordersRepository = ordersRepository;
         this._subscriptionRepository = subscriptionRepository;
         this._planRepository = planRepository;
+        this._rateRepository = rateRepository;
+        this._messageRepository = messageRepository;
+        this._trackingRepository = trackingRepository;
     }
 
     public IUserRepository UserRepository { get { return _userRepository; } }
     public IOrderRepository OrderRepository { get { return _ordersRepository; } }
     public ISubscriptionRepository SubscriptionRepository { get { return _subscriptionRepository; } }
     public IPlanRepository PlanRepository { get { return _planRepository; } }
+    public IRateRepository RateRepository { get { return _rateRepository; } }
+    public IOrderMessageRepository OrderMessageRepository { get { return _messageRepository; } }
+    public ITrackingRepository TrackingRepository { get { return _trackingRepository; } }
 
     public async Task<bool> CommitAsync(CancellationToken cancellationToken)
     {
@@ -54,7 +66,6 @@ public sealed class UnitOfWork : IUnitOfWork
             }
             catch (Exception)
             {
-                //Log Exception Handling message                      
                 returnValue = false;
                 dbContextTransaction.Rollback();
                 throw;

@@ -37,20 +37,17 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IRateRepository, RateRepository>();
         services.AddScoped<IPlanRepository, PlanRepository>();
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
         services.AddScoped<IOrderRepository, OrdersRepository>();
         services.AddScoped<ISecurityRepository, SecurityRepository>();
         services.AddScoped<IRejectRepository, RejectionRepository>();
+        services.AddScoped<IOrderMessageRepository, OrderMessageRepository>();
+        services.AddScoped<ITrackingRepository, TrackingRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<ICacheRepository, CacheRepository>();
-
-        services.AddStackExchangeRedisCache(options =>
-        {
-            options.Configuration = configuration.GetSection("Infrastructure:Redis:Server").Value;
-            options.InstanceName = configuration.GetSection("Infrastructure:Redis:InstanceName").Value;
-        });
 
         services.AddSingleton<IMapServices>(sp =>
         {
