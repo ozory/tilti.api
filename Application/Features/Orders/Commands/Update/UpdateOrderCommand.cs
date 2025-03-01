@@ -12,7 +12,8 @@ public sealed record UpdateOrderCommand
 
     decimal amount,
     int totalDiscance,
-    int totalDuration
+    int totalDuration,
+    short orderStatus
 ) : ICommand<OrderResponse>;
 
 

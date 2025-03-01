@@ -16,6 +16,8 @@ public class UserCreatedEventHandler : INotificationHandler<UserCreatedDomainEve
     private readonly string _routingKey = null!;
     private readonly string _queueName = null!;
     private readonly string _exchangeType = null!;
+    private readonly string className = nameof(UserCreatedEventHandler)!;
+
 
     public UserCreatedEventHandler(
         IConfiguration configuration,
@@ -34,15 +36,21 @@ public class UserCreatedEventHandler : INotificationHandler<UserCreatedDomainEve
 
     public async Task Handle(UserCreatedDomainEvent notification, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Publicando evento de criação de usuário {email}", notification.Email);
+        _logger.LogInformation("[{class}] Publicando evento de criação de usuário {email}", className, notification.Email);
 
-        _messageRepository.PublishAsync(
-            notification,
-            _exchangeName,
-            _exchangeType,
-            _routingKey,
-            _queueName);
-
-        await Task.CompletedTask;
+        try
+        {
+            await _messageRepository.PublishAsync(
+                notification,
+                _exchangeName,
+                _exchangeType,
+                _routingKey,
+                _queueName);
+        }
+        catch (Exception)
+        {
+            _logger.LogError("[{class}] Erro ao Publicar evento de criação de usuário {email}", className, notification.Email);
+            throw;
+        }
     }
 }

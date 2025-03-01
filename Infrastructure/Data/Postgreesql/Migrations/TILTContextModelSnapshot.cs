@@ -31,6 +31,61 @@ namespace Infrastructure.Data.Postgreesql.Migrations
             modelBuilder.HasSequence("Sequence-Users")
                 .IncrementsBy(10);
 
+<<<<<<< HEAD
+=======
+            modelBuilder.Entity("Domain.Features.Orders.Entities.Message", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("Created")
+                        .HasColumnOrder(4);
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(1);
+
+                    b.Property<long>("SourceUserId")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(2);
+
+                    b.Property<long>("TargetUserId")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(3);
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("Updated")
+                        .HasColumnOrder(5);
+
+                    b.Property<long?>("UpdatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("SourceUserId");
+
+                    b.HasIndex("TargetUserId");
+
+                    b.ToTable("Messages", "tilt");
+                });
+
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
             modelBuilder.Entity("Domain.Features.Orders.Entities.Order", b =>
                 {
                     b.Property<long>("Id")
@@ -50,6 +105,19 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .HasColumnName("Amount")
                         .HasColumnOrder(4);
 
+<<<<<<< HEAD
+=======
+                    b.Property<string>("CancelDescription")
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("CancelDescription")
+                        .HasColumnOrder(13);
+
+                    b.Property<string>("CancelRasons")
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("CancelRasons")
+                        .HasColumnOrder(14);
+
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
                     b.Property<DateTime?>("CancelationTime")
                         .HasColumnType("timestamp")
                         .HasColumnName("CancelationTime")
@@ -78,6 +146,14 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.Property<int>("DurationInSeconds")
                         .HasColumnType("integer");
 
+<<<<<<< HEAD
+=======
+                    b.Property<string>("Notes")
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("Notes")
+                        .HasColumnOrder(12);
+
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
                     b.Property<Point>("Point")
                         .IsRequired()
                         .HasColumnType("geography(POINT, 4326)")
@@ -88,11 +164,25 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .HasColumnName("RequestedTime")
                         .HasColumnOrder(7);
 
+<<<<<<< HEAD
+=======
+                    b.Property<DateTime?>("ScheduleTime")
+                        .HasColumnType("timestamp with time zone");
+
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
                     b.Property<ushort>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("Status")
                         .HasColumnOrder(3);
 
+<<<<<<< HEAD
+=======
+                    b.Property<ushort>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("Type")
+                        .HasColumnOrder(11);
+
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp")
                         .HasColumnName("Updated")
@@ -114,6 +204,70 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.ToTable("Orders", "tilt");
                 });
 
+<<<<<<< HEAD
+=======
+            modelBuilder.Entity("Domain.Features.Orders.Entities.Rate", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("Created")
+                        .HasColumnOrder(4);
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("Description")
+                        .HasColumnOrder(6);
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("SourceUserId")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(1);
+
+                    b.Property<string>("Tags")
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("Tags")
+                        .HasColumnOrder(7);
+
+                    b.Property<long>("TargetUserId")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(2);
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("Updated")
+                        .HasColumnOrder(5);
+
+                    b.Property<long?>("UpdatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<float>("Value")
+                        .HasColumnType("real")
+                        .HasColumnName("Value")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("SourceUserId");
+
+                    b.HasIndex("TargetUserId");
+
+                    b.ToTable("Rates", "tilt");
+                });
+
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
             modelBuilder.Entity("Domain.Features.Orders.Entities.Rejection", b =>
                 {
                     b.Property<long>("Id")
@@ -156,6 +310,50 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.ToTable("Rejections", "tilt");
                 });
 
+<<<<<<< HEAD
+=======
+            modelBuilder.Entity("Domain.Features.Orders.Entities.Tracking", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("Created")
+                        .HasColumnOrder(2);
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(1);
+
+                    b.Property<Point>("Point")
+                        .IsRequired()
+                        .HasColumnType("geography(POINT, 4326)")
+                        .HasColumnName("Location");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("Updated")
+                        .HasColumnOrder(3);
+
+                    b.Property<long?>("UpdatedBy")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Trackings", "tilt");
+                });
+
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
             modelBuilder.Entity("Domain.Features.Plans.Entities.Plan", b =>
                 {
                     b.Property<long>("Id")
@@ -389,6 +587,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.ToTable("RefeshTokens", "security");
                 });
 
+<<<<<<< HEAD
             modelBuilder.Entity("Domain.Features.Orders.Entities.Order", b =>
                 {
                     b.HasOne("Domain.Features.Users.Entities.User", "Driver")
@@ -455,11 +654,134 @@ namespace Infrastructure.Data.Postgreesql.Migrations
 
                     b.Navigation("Addresses");
 
+=======
+            modelBuilder.Entity("Domain.Features.Orders.Entities.Message", b =>
+                {
+                    b.HasOne("Domain.Features.Orders.Entities.Order", "Order")
+                        .WithMany("Messages")
+                        .HasForeignKey("OrderId");
+
+                    b.HasOne("Domain.Features.Users.Entities.User", "SourceUser")
+                        .WithMany("SourceMessages")
+                        .HasForeignKey("SourceUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Features.Users.Entities.User", "TargetUser")
+                        .WithMany("TargetMessages")
+                        .HasForeignKey("TargetUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("SourceUser");
+
+                    b.Navigation("TargetUser");
+                });
+
+            modelBuilder.Entity("Domain.Features.Orders.Entities.Order", b =>
+                {
+                    b.HasOne("Domain.Features.Users.Entities.User", "Driver")
+                        .WithMany("DriverOrders")
+                        .HasForeignKey("DriverId");
+
+                    b.HasOne("Domain.Features.Users.Entities.User", "User")
+                        .WithMany("UserOrders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsMany("Domain.ValueObjects.Address", "Addresses", b1 =>
+                        {
+                            b1.Property<long>("OrderId")
+                                .HasColumnType("bigint");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("AddressType")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Complment")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<double>("Latitude")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double>("Longitude")
+                                .HasColumnType("double precision");
+
+                            b1.Property<string>("Neighborhood")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Number")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("ZipCode")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("OrderId", "Id");
+
+                            b1.ToTable("Orders", "tilt");
+
+                            b1.ToJson("Addresses");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
+                    b.Navigation("Addresses");
+
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
                     b.Navigation("Driver");
 
                     b.Navigation("User");
                 });
 
+<<<<<<< HEAD
+=======
+            modelBuilder.Entity("Domain.Features.Orders.Entities.Rate", b =>
+                {
+                    b.HasOne("Domain.Features.Orders.Entities.Order", "Order")
+                        .WithMany("Rates")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Features.Users.Entities.User", "SourceUser")
+                        .WithMany("SourceRates")
+                        .HasForeignKey("SourceUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Features.Users.Entities.User", "TargetUser")
+                        .WithMany("TargetRates")
+                        .HasForeignKey("TargetUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("SourceUser");
+
+                    b.Navigation("TargetUser");
+                });
+
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
             modelBuilder.Entity("Domain.Features.Orders.Entities.Rejection", b =>
                 {
                     b.HasOne("Domain.Features.Users.Entities.User", "User")
@@ -479,6 +801,20 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.Navigation("User");
                 });
 
+<<<<<<< HEAD
+=======
+            modelBuilder.Entity("Domain.Features.Orders.Entities.Tracking", b =>
+                {
+                    b.HasOne("Domain.Features.Orders.Entities.Order", "Order")
+                        .WithMany("Trackings")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
             modelBuilder.Entity("Domain.Features.Subscriptions.Entities.Subscription", b =>
                 {
                     b.HasOne("Domain.Features.Plans.Entities.Plan", "Plan")
@@ -559,7 +895,17 @@ namespace Infrastructure.Data.Postgreesql.Migrations
 
             modelBuilder.Entity("Domain.Features.Orders.Entities.Order", b =>
                 {
+<<<<<<< HEAD
                     b.Navigation("Rejections");
+=======
+                    b.Navigation("Messages");
+
+                    b.Navigation("Rates");
+
+                    b.Navigation("Rejections");
+
+                    b.Navigation("Trackings");
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
                 });
 
             modelBuilder.Entity("Domain.Features.Plans.Entities.Plan", b =>
@@ -573,8 +919,21 @@ namespace Infrastructure.Data.Postgreesql.Migrations
 
                     b.Navigation("Rejections");
 
+<<<<<<< HEAD
                     b.Navigation("Subscription");
 
+=======
+                    b.Navigation("SourceMessages");
+
+                    b.Navigation("SourceRates");
+
+                    b.Navigation("Subscription");
+
+                    b.Navigation("TargetMessages");
+
+                    b.Navigation("TargetRates");
+
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
                     b.Navigation("UserOrders");
                 });
 #pragma warning restore 612, 618

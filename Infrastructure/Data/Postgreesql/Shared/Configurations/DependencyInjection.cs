@@ -37,21 +37,33 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IUserRepository, UserRepository>();
+<<<<<<< HEAD
+=======
+        services.AddScoped<IRateRepository, RateRepository>();
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
         services.AddScoped<IPlanRepository, PlanRepository>();
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
         services.AddScoped<IOrderRepository, OrdersRepository>();
         services.AddScoped<ISecurityRepository, SecurityRepository>();
         services.AddScoped<IRejectRepository, RejectionRepository>();
+<<<<<<< HEAD
+=======
+        services.AddScoped<IOrderMessageRepository, OrderMessageRepository>();
+        services.AddScoped<ITrackingRepository, TrackingRepository>();
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<ICacheRepository, CacheRepository>();
 
+<<<<<<< HEAD
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = configuration.GetSection("Infrastructure:Redis:Server").Value;
             options.InstanceName = configuration.GetSection("Infrastructure:Redis:InstanceName").Value;
         });
 
+=======
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
         services.AddSingleton<IMapServices>(sp =>
         {
             var valuePerKM = Decimal.Parse(

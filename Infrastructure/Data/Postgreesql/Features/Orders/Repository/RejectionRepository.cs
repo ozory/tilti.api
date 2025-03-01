@@ -3,10 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Shared.Abstractions;
+<<<<<<< HEAD
 using Domain.Enums;
 using Domain.Features.Orders.Entities;
 using Domain.Features.Orders.Repository;
 using Domain.Features.Users.Entities;
+=======
+using Domain.Features.Orders.Entities;
+using Domain.Features.Orders.Repository;
+using Domain.Features.Users.Entities;
+using Domain.Orders.Enums;
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
 using Infrastructure.Data.Postgreesql.Shared;
 using Microsoft.Extensions.Configuration;
 

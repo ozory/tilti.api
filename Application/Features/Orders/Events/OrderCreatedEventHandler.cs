@@ -7,23 +7,24 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Features.Users.Events;
+namespace Application.Features.Orders.Events;
 
 public class OrderCreatedEventHandler : INotificationHandler<OrderCreatedDomainEvent>
 {
     private readonly IMessageRepository _messageRepository;
     private readonly IConfiguration _configuration;
-    private readonly ILogger<UserCreatedEventHandler> _logger;
+    private readonly ILogger<OrderCreatedDomainEvent> _logger;
     private readonly ICacheRepository _cacheRepository;
 
     private readonly string _exchangeName = null!;
     private readonly string _routingKey = null!;
     private readonly string _queueName = null!;
     private readonly string _exchangeType = null!;
+    private readonly string className = nameof(OrderCreatedEventHandler)!;
 
     public OrderCreatedEventHandler(
         IConfiguration configuration,
-        ILogger<UserCreatedEventHandler> logger,
+        ILogger<OrderCreatedDomainEvent> logger,
         IMessageRepository messageRepository,
         ICacheRepository cacheRepository)
     {
@@ -40,7 +41,16 @@ public class OrderCreatedEventHandler : INotificationHandler<OrderCreatedDomainE
 
     public async Task Handle(OrderCreatedDomainEvent notification, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Publicando evento de criação de pedido {id}", notification.Id);
-        await _cacheRepository.GeoAdd((OrderResponse)notification);
+        _logger.LogInformation("[{class}] Publicando evento de criação de pedido {id}", className, notification.Id);
+
+        try
+        {
+            await _cacheRepository.GeoAdd((OrderResponse)notification);
+        }
+        catch (System.Exception)
+        {
+            _logger.LogError("[{class}] Erro ao Publicar evento de criação de pedido {id}", className, notification.Id);
+            throw;
+        }
     }
 }

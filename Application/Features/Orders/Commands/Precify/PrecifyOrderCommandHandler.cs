@@ -18,6 +18,7 @@ public class PrecifyOrderCommandHandler : ICommandHandler<PrecifyOrderCommand, O
     private readonly ILogger<PrecifyOrderCommandHandler> _logger;
     private readonly IValidator<PrecifyOrderCommand> _validator;
     private readonly ISecurityExtensions _securityExtensions;
+    private readonly string className = nameof(PrecifyOrderCommandHandler);
 
     public PrecifyOrderCommandHandler(
         ILogger<PrecifyOrderCommandHandler> logger,
@@ -39,20 +40,29 @@ public class PrecifyOrderCommandHandler : ICommandHandler<PrecifyOrderCommand, O
         PrecifyOrderCommand request,
         CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Precifying an Order {UserId}", request.UserId);
+        _logger.LogInformation("[{className}] Precifying an Order {UserId}", className, request.UserId);
 
-        var validationResult = _validator.Validate(request);
-        if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
+        try
+        {
+            var validationResult = _validator.Validate(request);
+            if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        var userValidate = await CreateUserCommandValidator.ValidateUser(_userRepository, request.UserId);
-        if (userValidate.IsFailed) return Result.Fail(userValidate.Errors);
+            var userValidate = await CreateUserCommandValidator.ValidateUser(_userRepository, request.UserId);
+            if (userValidate.IsFailed) return Result.Fail(userValidate.Errors);
 
-        var user = userValidate.Value;
-        var currentDate = DateTime.Now;
-        var order = Order.Create(null, user, currentDate, request.address, currentDate);
+            var user = userValidate.Value;
+            var currentDate = DateTime.Now;
+            var order = Order.Create(null, user, currentDate, request.address, currentDate);
 
-        order = await _mapServices.CalculateOrderAsync(order);
+            order = await _mapServices.CalculateOrderAsync(order);
 
-        return Result.Ok((OrderResponse)order);
+            return Result.Ok((OrderResponse)order);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("[{className}] Error Precifying Order : {request} Error: {ex}", className, request, ex);
+            throw;
+        }
+
     }
 }

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 using Microsoft.EntityFrameworkCore.Migrations;
+=======
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
 
 #nullable disable
 

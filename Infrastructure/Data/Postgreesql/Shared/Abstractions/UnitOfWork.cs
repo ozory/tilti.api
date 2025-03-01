@@ -15,6 +15,12 @@ public sealed class UnitOfWork : IUnitOfWork
     private readonly IOrderRepository _ordersRepository;
     private readonly ISubscriptionRepository _subscriptionRepository;
     private readonly IPlanRepository _planRepository;
+<<<<<<< HEAD
+=======
+    private readonly IRateRepository _rateRepository;
+    private readonly IOrderMessageRepository _messageRepository;
+    private readonly ITrackingRepository _trackingRepository;
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
     private readonly TILTContext _context;
     private readonly IMediator _mediator;
 
@@ -24,7 +30,14 @@ public sealed class UnitOfWork : IUnitOfWork
         IUserRepository userRepository,
         IOrderRepository ordersRepository,
         ISubscriptionRepository subscriptionRepository,
+<<<<<<< HEAD
         IPlanRepository planRepository)
+=======
+        IPlanRepository planRepository,
+        IRateRepository rateRepository,
+        IOrderMessageRepository messageRepository,
+        ITrackingRepository trackingRepository)
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
     {
         this._context = context;
         this._mediator = mediator;
@@ -32,12 +45,24 @@ public sealed class UnitOfWork : IUnitOfWork
         this._ordersRepository = ordersRepository;
         this._subscriptionRepository = subscriptionRepository;
         this._planRepository = planRepository;
+<<<<<<< HEAD
+=======
+        this._rateRepository = rateRepository;
+        this._messageRepository = messageRepository;
+        this._trackingRepository = trackingRepository;
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
     }
 
     public IUserRepository UserRepository { get { return _userRepository; } }
     public IOrderRepository OrderRepository { get { return _ordersRepository; } }
     public ISubscriptionRepository SubscriptionRepository { get { return _subscriptionRepository; } }
     public IPlanRepository PlanRepository { get { return _planRepository; } }
+<<<<<<< HEAD
+=======
+    public IRateRepository RateRepository { get { return _rateRepository; } }
+    public IOrderMessageRepository OrderMessageRepository { get { return _messageRepository; } }
+    public ITrackingRepository TrackingRepository { get { return _trackingRepository; } }
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
 
     public async Task<bool> CommitAsync(CancellationToken cancellationToken)
     {
@@ -54,7 +79,10 @@ public sealed class UnitOfWork : IUnitOfWork
             }
             catch (Exception)
             {
+<<<<<<< HEAD
                 //Log Exception Handling message                      
+=======
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
                 returnValue = false;
                 dbContextTransaction.Rollback();
                 throw;

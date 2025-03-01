@@ -417,6 +417,7 @@ autom4te.cache/
 *.tar.gz
 tarballs/
 test-results/
+.idea/*
 
 # Mac bundle stuff
 *.dmg
@@ -427,6 +428,7 @@ test-results/
 .DS_Store
 .AppleDouble
 .LSOverride
+.TODO
 
 # Icon must end with two \r
 Icon
@@ -475,3 +477,4 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+*.TODO

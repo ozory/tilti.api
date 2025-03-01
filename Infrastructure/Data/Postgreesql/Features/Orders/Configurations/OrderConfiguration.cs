@@ -1,10 +1,10 @@
 using Domain.Enums;
 using Domain.Features.Orders.Entities;
+using Domain.Orders.Enums;
+using Domain.Shared.Enums;
 using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NetTopologySuite.Geometries;
-using DomainLocation = Domain.ValueObjects.Name;
 namespace Infrastructure.Data.Postgreesql.Features.Orders.Configurations;
 
 public class OrderConfiguration : IEntityTypeConfiguration<Order>
@@ -70,6 +70,28 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasColumnName("CancelationTime")
             .HasColumnType("timestamp");
 
+        builder.Property(b => b.Type)
+           .HasColumnOrder(11)
+           .HasColumnName("Type")
+           .HasConversion(
+           c => (ushort)c,
+           c => (OrderType)c);
+
+        builder.Property(x => x.Notes)
+            .HasColumnOrder(12)
+            .HasColumnName("Notes")
+            .HasColumnType("varchar(500)");
+
+        builder.Property(x => x.CancelDescription)
+            .HasColumnOrder(13)
+            .HasColumnName("CancelDescription")
+            .HasColumnType("varchar(500)");
+
+        builder.Property(x => x.CancelRasons)
+            .HasColumnOrder(14)
+            .HasColumnName("CancelRasons")
+            .HasColumnType("varchar(500)");
+
         builder.Property(b => b.Point)
             .HasColumnType("geography(POINT, 4326)")
             .HasColumnName("Location")
@@ -89,6 +111,21 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .IsRequired(false);
 
         builder.HasMany(e => e.Rejections)
+            .WithOne(e => e.Order)
+            .HasForeignKey(e => e.OrderId)
+            .IsRequired(false);
+
+        builder.HasMany(e => e.Rates)
+            .WithOne(e => e.Order)
+            .HasForeignKey(e => e.OrderId)
+            .IsRequired(false);
+
+        builder.HasMany(e => e.Messages)
+            .WithOne(e => e.Order)
+            .HasForeignKey(e => e.OrderId)
+            .IsRequired(false);
+
+        builder.HasMany(e => e.Trackings)
             .WithOne(e => e.Order)
             .HasForeignKey(e => e.OrderId)
             .IsRequired(false);

@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Application.Shared.Abstractions;
 using Domain.Features.Users.Events;
 using Microsoft.Extensions.Configuration;
@@ -5,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 
 namespace Application.Features.Users.Consumers;
 
@@ -20,7 +20,9 @@ public class UserCreatedConsumer : BackgroundService
     private readonly string _queueName = null!;
 
     protected IConnection Connection { get; set; } = null!;
-    protected IModel SharedChannel { get; set; } = null!;
+    protected IChannel SharedChannel { get; set; } = null!;
+
+    private readonly string className = nameof(UserCreatedConsumer);
 
     public UserCreatedConsumer(
         ILogger<UserCreatedConsumer> logger,
@@ -28,23 +30,31 @@ public class UserCreatedConsumer : BackgroundService
         IServiceProvider serviceProvider)
     {
         _logger = logger;
-        _configuration = configuration;
-        _serviceProvider = serviceProvider;
+        try
+        {
+            _configuration = configuration;
+            _serviceProvider = serviceProvider;
 
-        _queueName = _configuration["Infrastructure:UserCreatedMessages:queue"]!;
-        _instances = int.Parse(_configuration["Infrastructure:UserCreatedMessages:consumerIntances"]!);
-        _delayInterval = int.Parse(_configuration["Infrastructure:UserCreatedMessages:delayInterval"]!);
+            _queueName = _configuration["Infrastructure:UserCreatedMessages:queue"]!;
+            _instances = int.Parse(_configuration["Infrastructure:UserCreatedMessages:consumerIntances"]!);
+            _delayInterval = int.Parse(_configuration["Infrastructure:UserCreatedMessages:delayInterval"]!);
 
-        ConfigureStart();
+            Task.Run(async () => await ConfigureStart()).Wait();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("[{className}] Error starting User Created Consumer : Error: {ex}", className, ex);
+            throw;
+        }
     }
 
-    private void ConfigureStart()
+    private async Task ConfigureStart()
     {
         using (var scope = _serviceProvider.CreateScope())
         {
             var messageRepository = scope.ServiceProvider.GetRequiredService<IMessageRepository>();
-            this.Connection = messageRepository.GetConnectionFactory();
-            this.SharedChannel = messageRepository.StartNewChannel(_queueName);
+            this.Connection = await messageRepository.GetConnectionFactory();
+            this.SharedChannel = await messageRepository.StartNewChannel(_queueName);
             for (int i = 0; i < _instances; i++)
             {
                 messageRepositories.Add(messageRepository.CreateNewInstance());
@@ -54,18 +64,26 @@ public class UserCreatedConsumer : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        messageRepositories.ForEach(repo =>
+        try
         {
-            repo.Consume<UserCreatedDomainEvent>(this.SharedChannel, this.ConsumeMessage);
-        });
+            messageRepositories.ForEach(repo =>
+            {
+                repo.Consume<UserCreatedDomainEvent>(this.SharedChannel, this.ConsumeMessage);
+            });
 
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            _logger.LogInformation("[{Classe}] ({intances}) Worker's ativo", nameof(UserCreatedConsumer), _instances);
-            await Task.Delay(_delayInterval, stoppingToken);
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                _logger.LogInformation("[{Classe}] ({intances}) Worker's ativo", nameof(UserCreatedConsumer), _instances);
+                await Task.Delay(_delayInterval, stoppingToken);
+            }
+
+            await Task.CompletedTask;
         }
-
-        await Task.CompletedTask;
+        catch (Exception ex)
+        {
+            _logger.LogError("[{className}] Error when executing User Created Consumer : Error: {ex}", className, ex);
+            throw;
+        }
     }
 
     private void ConsumeMessage(UserCreatedDomainEvent userCreatedDomainEvent)

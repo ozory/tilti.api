@@ -39,7 +39,11 @@ public class MapServices : IMapServices
 
         DistanceMatrixRequest dm = new DistanceMatrixRequest();
         dm.Key = apiKey;
+<<<<<<< HEAD
         dm.TravelMode = TravelMode.Driving;
+=======
+        dm.TravelMode = TravelMode.DRIVING;
+>>>>>>> 7b148c2b8ae7f452586616b92a970a41fd43347c
         dm.DepartureTime = DateTime.UtcNow;
 
         dm.Origins = orderAddress.SkipLast(1).Select(x => new LocationEx(new Address(x.Street))).ToList();

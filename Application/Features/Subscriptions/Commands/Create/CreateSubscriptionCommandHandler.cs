@@ -12,56 +12,64 @@ namespace Application.Features.Subscriptions.Commands.Create;
 
 public class CreateSubscriptionCommandHandler : ICommandHandler<CreateSubscriptionCommand, SubscriptionResponse>
 {
-        private readonly ISubscriptionRepository _repository;
-        private readonly IUserRepository _userRepository;
-        private readonly IPlanRepository _planRepository;
-        private readonly ILogger<CreateSubscriptionCommandHandler> _logger;
-        private readonly IValidator<CreateSubscriptionCommand> _validator;
+    private readonly ISubscriptionRepository _repository;
+    private readonly IUserRepository _userRepository;
+    private readonly IPlanRepository _planRepository;
+    private readonly ILogger<CreateSubscriptionCommandHandler> _logger;
+    private readonly IValidator<CreateSubscriptionCommand> _validator;
+    private readonly string className = nameof(CreateSubscriptionCommandHandler);
 
-        public CreateSubscriptionCommandHandler(
-            ILogger<CreateSubscriptionCommandHandler> logger,
-            ISubscriptionRepository repository,
-            IUserRepository userRepository,
-            IPlanRepository planRepository,
-            IValidator<CreateSubscriptionCommand> validator)
+    public CreateSubscriptionCommandHandler(
+        ILogger<CreateSubscriptionCommandHandler> logger,
+        ISubscriptionRepository repository,
+        IUserRepository userRepository,
+        IPlanRepository planRepository,
+        IValidator<CreateSubscriptionCommand> validator)
+    {
+        _repository = repository;
+        _logger = logger;
+        _userRepository = userRepository;
+        _planRepository = planRepository;
+        _validator = validator;
+    }
+
+    public async Task<Result<SubscriptionResponse>> Handle(CreateSubscriptionCommand request, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("[{className}] Criando assinatura", className);
+        try
         {
-                _repository = repository;
-                _logger = logger;
-                _userRepository = userRepository;
-                _planRepository = planRepository;
-                _validator = validator;
-        }
+            var validationResult = await _validator.ValidateAsync(request);
+            if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-        public async Task<Result<SubscriptionResponse>> Handle(CreateSubscriptionCommand request, CancellationToken cancellationToken)
+            var currentSubscription = await _repository.GetSubscriptionByUser(request.userId);
+            if (currentSubscription != null) return Result.Fail("This user allready have a Subscription!");
+
+            var user = await _userRepository.GetByIdAsync(request.userId);
+            if (user == null) return Result.Fail("User not Found");
+            if (user.Status != Domain.Enums.UserStatus.Active) return Result.Fail("This user can't get a Subscription!");
+            if (!user.DriveEnable) return Result.Fail("Only a driver can use Subscription!");
+
+            var plan = await _planRepository.GetByIdAsync(request.planId);
+            if (plan == null) return Result.Fail("Plan not Found");
+            if (plan.Status != Domain.Plans.Enums.PlanStatus.Active) return Result.Fail("Its not possible to use this Plan!");
+
+            var subscription = Subscription.Create(
+                null,
+                user!,
+                plan!,
+                DateTime.Now);
+
+            Subscription savedSub = await _repository.SaveAsync(subscription);
+
+            _logger.LogInformation("[{className}] Assinatura criada com sucesso: {Id}", className, savedSub.Id);
+
+            return Result.Ok((SubscriptionResponse)(savedSub));
+        }
+        catch (Exception ex)
         {
-                _logger.LogInformation("Criando assinatura");
-
-                var validationResult = await _validator.ValidateAsync(request);
-                if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
-
-                var currentSubscription = await _repository.GetSubscriptionByUser(request.userId);
-                if (currentSubscription != null) return Result.Fail("This user allready have a Subscription!");
-
-                var user = await _userRepository.GetByIdAsync(request.userId);
-                if (user == null) return Result.Fail("User not Found");
-                if (user.Status != Domain.Enums.UserStatus.Active) return Result.Fail("This user can't get a Subscription!");
-                if (!user.DriveEnable) return Result.Fail("Only a driver can use Subscription!");
-
-                var plan = await _planRepository.GetByIdAsync(request.planId);
-                if (plan == null) return Result.Fail("Plan not Found");
-                if (plan.Status != Domain.Plans.Enums.PlanStatus.Active) return Result.Fail("Its not possible to use this Plan!");
-
-                var subscription = Subscription.Create(
-                    null,
-                    user!,
-                    plan!,
-                    DateTime.Now);
-
-                Subscription savedSub = await _repository.SaveAsync(subscription);
-
-                _logger.LogInformation("Assinatura criada com sucesso: {Id}", savedSub.Id);
-
-                return Result.Ok((SubscriptionResponse)(savedSub));
+            _logger.LogError("[{className}] Error on creating Subscription : {request} Error: {ex}", className, request, ex);
+            throw;
         }
+    }
 
 }

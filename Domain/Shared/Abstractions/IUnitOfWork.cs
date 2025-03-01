@@ -15,7 +15,10 @@ public interface IUnitOfWork
     IUserRepository UserRepository { get; }
     IOrderRepository OrderRepository { get; }
     IPlanRepository PlanRepository { get; }
+    IRateRepository RateRepository { get; }
     ISubscriptionRepository SubscriptionRepository { get; }
+    IOrderMessageRepository OrderMessageRepository { get; }
+    ITrackingRepository TrackingRepository { get; }
 
     Task<bool> CommitAsync(CancellationToken cancellationToken);
 }
