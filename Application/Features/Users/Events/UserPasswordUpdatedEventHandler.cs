@@ -40,18 +40,16 @@ public class UserPasswordUpdatedEventHandler : INotificationHandler<UserCreatedD
 
         try
         {
-            _messageRepository.PublishAsync(
+            await _messageRepository.PublishAsync(
                 notification,
                 _exchangeName,
                 _exchangeType,
                 _routingKey,
                 _queueName);
-
-            await Task.CompletedTask;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            _logger.LogError("[{class}] Erro ao Publicar evento de password atualizado {email}", className, notification.Email);
+            _logger.LogError("[{class}] Erro ao Publicar evento de password atualizado {email}: {error}", className, notification.Email, ex.Message);
             throw;
         }
     }

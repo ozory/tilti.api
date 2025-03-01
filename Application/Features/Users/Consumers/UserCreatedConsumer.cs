@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Application.Shared.Abstractions;
 using Domain.Features.Users.Events;
 using Microsoft.Extensions.Configuration;
@@ -19,7 +20,7 @@ public class UserCreatedConsumer : BackgroundService
     private readonly string _queueName = null!;
 
     protected IConnection Connection { get; set; } = null!;
-    protected IModel SharedChannel { get; set; } = null!;
+    protected IChannel SharedChannel { get; set; } = null!;
 
     private readonly string className = nameof(UserCreatedConsumer);
 
@@ -38,7 +39,7 @@ public class UserCreatedConsumer : BackgroundService
             _instances = int.Parse(_configuration["Infrastructure:UserCreatedMessages:consumerIntances"]!);
             _delayInterval = int.Parse(_configuration["Infrastructure:UserCreatedMessages:delayInterval"]!);
 
-            ConfigureStart();
+            Task.Run(async () => await ConfigureStart()).Wait();
         }
         catch (Exception ex)
         {
@@ -47,13 +48,13 @@ public class UserCreatedConsumer : BackgroundService
         }
     }
 
-    private void ConfigureStart()
+    private async Task ConfigureStart()
     {
         using (var scope = _serviceProvider.CreateScope())
         {
             var messageRepository = scope.ServiceProvider.GetRequiredService<IMessageRepository>();
-            this.Connection = messageRepository.GetConnectionFactory();
-            this.SharedChannel = messageRepository.StartNewChannel(_queueName);
+            this.Connection = await messageRepository.GetConnectionFactory();
+            this.SharedChannel = await messageRepository.StartNewChannel(_queueName);
             for (int i = 0; i < _instances; i++)
             {
                 messageRepositories.Add(messageRepository.CreateNewInstance());

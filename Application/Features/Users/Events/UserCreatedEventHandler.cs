@@ -40,14 +40,12 @@ public class UserCreatedEventHandler : INotificationHandler<UserCreatedDomainEve
 
         try
         {
-            _messageRepository.PublishAsync(
+            await _messageRepository.PublishAsync(
                 notification,
                 _exchangeName,
                 _exchangeType,
                 _routingKey,
                 _queueName);
-
-            await Task.CompletedTask;
         }
         catch (Exception)
         {
