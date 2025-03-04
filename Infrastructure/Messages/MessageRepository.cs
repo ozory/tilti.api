@@ -73,7 +73,7 @@ public class MessageRepository : IMessageRepository
         }
     }
 
-    public async Task Consume<T>(IChannel sharedChannel, Action<T> action) where T : IDomainEvent
+    public async Task ConsumeAsync<T>(IChannel sharedChannel, Func<T, Task> action) where T : IDomainEvent
     {
         try
         {
@@ -87,13 +87,13 @@ public class MessageRepository : IMessageRepository
 
                 var messageContent = JsonSerializer.Deserialize<T>(message);
 
-                action(messageContent!);
+                await action(messageContent!);
                 await sharedChannel.BasicAckAsync(deliveryTag: eventsArgs.DeliveryTag, multiple: false);
             };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw;
+            throw new InvalidOperationException("Error during message consumption", ex);
         }
     }
 

@@ -16,7 +16,7 @@ public interface IMessageRepository
 
     Task<IChannel> StartNewChannel(string queueName);
 
-    Task Consume<T>(IChannel sharedChannel, Action<T> action) where T : IDomainEvent;
+    Task ConsumeAsync<T>(IChannel sharedChannel, Func<T, Task> action) where T : IDomainEvent;
 
     Task PublishAsync<T>(
         T @event,

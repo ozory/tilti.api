@@ -15,6 +15,7 @@ using Infrastructure.Data.Postgreesql.Features.Subscriptions.Repository;
 using Infrastructure.Data.Postgreesql.Features.Users.Repository;
 using Infrastructure.Data.Postgreesql.Shared.Abstractions;
 using Infrastructure.External.Features.Maps.Services;
+using Infrastructure.External.Features.Services;
 using Infrastructure.Messages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
@@ -66,6 +67,7 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddSingleton<IPaymentServices, PaymentServices>();
 
         return services;
     }

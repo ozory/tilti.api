@@ -7,6 +7,7 @@ using Domain.Features.Users.Entities;
 using Domain.Shared.Abstractions;
 using Infrastructure.External.Features.Payments.Contracts;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RestSharp;
 
@@ -14,39 +15,45 @@ namespace Infrastructure.External.Features.Services;
 
 public class PaymentServices : IPaymentServices
 {
-    private readonly IUnitOfWork _unitOfWork;
     ILogger<PaymentServices> _logger;
     private readonly IConfiguration _configuration;
+    private readonly IServiceProvider _serviceProvider;
     private string BaseUrl { get; set; } = null!;
-    private string APIKEY { get; set; } = null!;
+    private string APITOKEN { get; set; } = null!;
+
+    private JsonSerializerOptions SerializationOpt = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
     public PaymentServices(
-        IUnitOfWork unitOfWork,
         ILogger<PaymentServices> logger,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IServiceProvider serviceProvider)
     {
-        _unitOfWork = unitOfWork;
         _logger = logger;
         _configuration = configuration;
+        _serviceProvider = serviceProvider;
 
-        BaseUrl = configuration.GetSection("Security:PaymentUrl").Value!;
-        APIKEY = configuration.GetSection("Security:PaymentKey").Value!;
+        BaseUrl = configuration.GetSection("Configurations:PaymentUrl").Value!;
+        APITOKEN = configuration.GetSection("Configurations:PaymentToken").Value!;
     }
 
     public async Task<User> CreateUser(long idUser, CancellationToken? cancellationToken)
     {
-        var user = await _unitOfWork.UserRepository.GetByIdAsync(idUser);
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var _unitOfWorkScopde = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            var user = await _unitOfWorkScopde.UserRepository.GetByIdAsync(idUser) ?? throw new Exception("user not found");
+            if (user != null && !string.IsNullOrEmpty(user.PaymentUserIdentifier))
+                return user;
 
-        if (user == null)
-            throw new Exception("user not found");
+            var paymentUserResponse = await CreateUserRequest(user, cancellationToken)
+                ?? throw new Exception("Failed to create payment user");
 
-        if (user != null && !string.IsNullOrEmpty(user.PaymentUserIdentifier))
-            throw new Exception("Payment user identifier already exists");
+            user!.SetPaymentUserIdentifier(paymentUserResponse.id);
+            await _unitOfWorkScopde.UserRepository.UpdateAsync(user);
+            await _unitOfWorkScopde.CommitAsync(cancellationToken ?? CancellationToken.None);
 
-        var paymentUserResponse = await CreateUserRequest(user, cancellationToken);
-
-        user!.SetPaymentUserIdentifier(paymentUserResponse!.Id);
-        return user;
+            return user;
+        }
     }
 
     public Task<Payment> CreateToken(long idUser, CancellationToken? cancellationToken)
@@ -59,10 +66,12 @@ public class PaymentServices : IPaymentServices
         var client = new RestClient(new RestClientOptions(this.BaseUrl));
         var request = new RestRequest("v3/customers", Method.Post);
 
-        var paymentUser = JsonSerializer.Serialize((PaymentUserRequest)user!);
+        var paymentUser = JsonSerializer.Serialize((PaymentUserRequest)user!, SerializationOpt);
 
-        request.AddHeader("access_token", $"{APIKEY}");
-        request.AddStringBody(paymentUser, DataFormat.Json);
+        request.AddHeader("access_token", $"{APITOKEN}");
+        request.AddHeader("accept", "application/json");
+        request.AddHeader("content-type", "application/json");
+        request.AddJsonBody(paymentUser);
 
         // The cancellation token comes from the caller. You can still make a call without it.
         RestResponse response = await client.ExecuteAsync(request);

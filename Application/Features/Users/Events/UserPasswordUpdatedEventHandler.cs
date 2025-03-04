@@ -6,11 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Users.Events;
 
-public class UserPasswordUpdatedEventHandler : INotificationHandler<UserCreatedDomainEvent>
+public class UserPasswordUpdatedEventHandler : INotificationHandler<UserUpdatePasswordDomainEvent>
 {
     private readonly IMessageRepository _messageRepository;
     private readonly IConfiguration _configuration;
-    private readonly ILogger<UserCreatedEventHandler> _logger;
+    private readonly ILogger<UserPasswordUpdatedEventHandler> _logger;
 
     private readonly string _exchangeName = null!;
     private readonly string _routingKey = null!;
@@ -21,7 +21,7 @@ public class UserPasswordUpdatedEventHandler : INotificationHandler<UserCreatedD
 
     public UserPasswordUpdatedEventHandler(
         IConfiguration configuration,
-        ILogger<UserCreatedEventHandler> logger,
+        ILogger<UserPasswordUpdatedEventHandler> logger,
         IMessageRepository messageRepository)
     {
         _configuration = configuration;
@@ -34,7 +34,7 @@ public class UserPasswordUpdatedEventHandler : INotificationHandler<UserCreatedD
         _exchangeType = _configuration["Infrastructure:UserCreatedMessages:exchanteType"]!;
     }
 
-    public async Task Handle(UserCreatedDomainEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(UserUpdatePasswordDomainEvent notification, CancellationToken cancellationToken)
     {
         _logger.LogInformation("[{class}] Publicando evento de password atualizado {email}", className, notification.Email);
 

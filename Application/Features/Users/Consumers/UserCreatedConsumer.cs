@@ -15,6 +15,8 @@ public class UserCreatedConsumer : BackgroundService
     private readonly IConfiguration _configuration;
     private List<IMessageRepository> messageRepositories = [];
     private readonly IServiceProvider _serviceProvider;
+    private readonly string _className = nameof(UserCreatedConsumer);
+
     private readonly int _instances = 0;
     private readonly int _delayInterval = 5000;
     private readonly string _queueName = null!;
@@ -68,7 +70,7 @@ public class UserCreatedConsumer : BackgroundService
         {
             messageRepositories.ForEach(repo =>
             {
-                repo.Consume<UserCreatedDomainEvent>(this.SharedChannel, this.ConsumeMessage);
+                repo.ConsumeAsync<UserCreatedDomainEvent>(this.SharedChannel, this.ConsumeMessage);
             });
 
             while (!stoppingToken.IsCancellationRequested)
@@ -76,8 +78,6 @@ public class UserCreatedConsumer : BackgroundService
                 _logger.LogInformation("[{Classe}] ({intances}) Worker's ativo", nameof(UserCreatedConsumer), _instances);
                 await Task.Delay(_delayInterval, stoppingToken);
             }
-
-            await Task.CompletedTask;
         }
         catch (Exception ex)
         {
@@ -86,8 +86,15 @@ public class UserCreatedConsumer : BackgroundService
         }
     }
 
-    private void ConsumeMessage(UserCreatedDomainEvent userCreatedDomainEvent)
+    private async Task ConsumeMessage(UserCreatedDomainEvent userCreatedDomainEvent)
     {
         _logger.LogInformation("Consumindo criação de usuário: {Email}", userCreatedDomainEvent.Email);
+
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var scopedPaymentService = scope.ServiceProvider.GetRequiredService<IPaymentServices>();
+            await scopedPaymentService.CreateUser(userCreatedDomainEvent.Id, null);
+        }
+
     }
 }
