@@ -15,7 +15,6 @@ public class UserCreatedConsumer : BackgroundService
     private readonly IConfiguration _configuration;
     private List<IMessageRepository> messageRepositories = [];
     private readonly IServiceProvider _serviceProvider;
-    private readonly string _className = nameof(UserCreatedConsumer);
 
     private readonly int _instances = 0;
     private readonly int _delayInterval = 5000;
@@ -93,7 +92,11 @@ public class UserCreatedConsumer : BackgroundService
         using (var scope = _serviceProvider.CreateScope())
         {
             var scopedPaymentService = scope.ServiceProvider.GetRequiredService<IPaymentServices>();
-            await scopedPaymentService.CreateUser(userCreatedDomainEvent.Id, null);
+            var user = await scopedPaymentService.CreateUser(userCreatedDomainEvent.Id, null);
+
+            // TODO : Send confirmation email
+            var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+            await emailService.SendConfirmationEmail(user);
         }
 
     }

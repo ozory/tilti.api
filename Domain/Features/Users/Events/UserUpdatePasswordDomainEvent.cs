@@ -16,9 +16,9 @@ public class UserUpdatePasswordDomainEvent : IDomainEvent
     public Boolean DriveEnable { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-    public static UserCreatedDomainEvent Create(User user)
+    public static UserUpdatePasswordDomainEvent Create(User user)
     {
-        return new UserCreatedDomainEvent
+        return new UserUpdatePasswordDomainEvent
         {
             Id = user.Id,
             Name = user.Name.Value!,
