@@ -12,6 +12,7 @@ public class UserCreatedDomainEvent : IDomainEvent
     public long Id { get; set; }
     public string Name { get; set; } = null!;
     public string Email { get; set; } = null!;
+    public string VerificationCode { get; set; } = null!;
     public string Document { get; set; } = null!;
     public Boolean DriveEnable { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
@@ -23,6 +24,7 @@ public class UserCreatedDomainEvent : IDomainEvent
             Id = user.Id,
             Name = user.Name.Value!,
             Email = user.Email.Value!,
+            VerificationCode = user.VerificationCode!,
             Document = user.Document.Value!,
             DriveEnable = user.DriveEnable,
             CreatedAt = user.CreatedAt

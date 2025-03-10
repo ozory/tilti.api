@@ -1,43 +1,83 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using Application.Shared.Abstractions;
 using Domain.Features.Users.Entities;
 using Domain.Features.Users.Events;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.External.Features.Notifications;
 
 public class EmailServices : IEmailService
 {
-    public Task SendConfirmationEmail(User user)
+    ILogger<EmailServices> _logger;
+    private readonly IConfiguration _configuration;
+    private readonly IServiceProvider _serviceProvider;
+    private string SMTP { get; set; } = null!;
+    private string EMAIL { get; set; } = null!;
+    private string PASSWORD { get; set; } = null!;
+
+    public EmailServices(
+        ILogger<EmailServices> logger,
+        IConfiguration configuration,
+        IServiceProvider serviceProvider)
     {
-        if (user == null)
-            throw new ArgumentNullException(nameof(user));
+        _logger = logger;
+        _configuration = configuration;
+        _serviceProvider = serviceProvider;
 
-        if (user.VerificationCode == null)
-            throw new ArgumentNullException(nameof(user.VerificationCode));
+        SMTP = configuration.GetSection("Email:Host").Value!;
+        EMAIL = configuration.GetSection("Email:UserName").Value!;
+        PASSWORD = configuration.GetSection("Email:Password").Value!;
+    }
 
-        // Send email
-
-        var smtpClient = new System.Net.Mail.SmtpClient("smtp.gmail.com")
+    public async Task SendConfirmationEmail(UserCreatedDomainEvent user)
+    {
+        try
         {
-            Port = 587,
-            Credentials = new System.Net.NetworkCredential("your-email@gmail.com", "your-password"),
-            EnableSsl = true,
-        };
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
-        var mailMessage = new System.Net.Mail.MailMessage
+            if (string.IsNullOrEmpty(user.VerificationCode))
+                throw new ArgumentNullException(nameof(user.VerificationCode));
+
+            // Send email
+
+            var smtpClient = new SmtpClient(SMTP, 587)
+            {
+                Credentials = new NetworkCredential(EMAIL, PASSWORD, SMTP),
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                EnableSsl = true,
+                UseDefaultCredentials = false
+            };
+
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress(EMAIL),
+                Sender = new MailAddress(EMAIL),
+                Subject = "Email Verification",
+                Body = $"Please verify your email using this code: {user.VerificationCode}",
+                IsBodyHtml = false,
+            };
+
+            mailMessage.To.Add(user.Email!);
+
+            await smtpClient.SendMailAsync(mailMessage);
+            smtpClient.Dispose();
+        }
+        catch (SmtpException ex)
         {
-            From = new System.Net.Mail.MailAddress("your-email@gmail.com"),
-            Subject = "Email Verification",
-            Body = $"Please verify your email using this code: {user.VerificationCode}",
-            IsBodyHtml = false
-        };
-        mailMessage.To.Add(user.Email);
-
-        await smtpClient.SendMailAsync(mailMessage);
-        return Task.CompletedTask;
-
+            _logger.LogError(ex, "Failed to send email. SMTP server response: {Message}", ex.Message);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred while sending email.");
+            throw;
+        }
     }
 }

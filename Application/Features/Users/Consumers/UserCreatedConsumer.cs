@@ -87,16 +87,14 @@ public class UserCreatedConsumer : BackgroundService
 
     private async Task ConsumeMessage(UserCreatedDomainEvent userCreatedDomainEvent)
     {
-        _logger.LogInformation("Consumindo criação de usuário: {Email}", userCreatedDomainEvent.Email);
+        _logger.LogInformation("[{Classe}] Consumindo criação de usuário: {Email}",
+            nameof(UserCreatedConsumer),
+            userCreatedDomainEvent.Email);
 
         using (var scope = _serviceProvider.CreateScope())
         {
-            var scopedPaymentService = scope.ServiceProvider.GetRequiredService<IPaymentServices>();
-            var user = await scopedPaymentService.CreateUser(userCreatedDomainEvent.Id, null);
-
-            // TODO : Send confirmation email
             var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
-            await emailService.SendConfirmationEmail(user);
+            await emailService.SendConfirmationEmail(userCreatedDomainEvent);
         }
 
     }
