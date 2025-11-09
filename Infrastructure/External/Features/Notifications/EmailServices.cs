@@ -49,10 +49,11 @@ public class EmailServices : IEmailService
 
             var smtpClient = new SmtpClient(SMTP, 587)
             {
-                Credentials = new NetworkCredential(EMAIL, PASSWORD, SMTP),
+                Credentials = new NetworkCredential(EMAIL, PASSWORD),
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 EnableSsl = true,
-                UseDefaultCredentials = false
+                UseDefaultCredentials = false,
+                Timeout = 20000 // 20 segundos
             };
 
             var mailMessage = new MailMessage

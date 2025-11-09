@@ -80,6 +80,14 @@ public class OrdersRepository :
         return orders!;
     }
 
+    public async Task<IReadOnlyList<Order?>> GetOrdersByUser(long userId)
+    {
+        var orders = await Filter(
+            u => u.UserId == userId || u.DriverId == userId,
+            includeProperties: IncludeProperties);
+        return orders!;
+    }
+
     private double CalculateDistance(double lat1, double lng1, double lat2, double lng2)
     {
         const double R = 6371; // Raio da Terra em quilômetros

@@ -10,4 +10,5 @@ public interface IOrderRepository : IGenericRepository<Order>
     Task<IReadOnlyList<Order?>> GetOpenedOrdersByUser(long idUser);
     Task<IReadOnlyList<Order?>> GetOpenedOrdersThatExpired(DateTime expireTime);
     Task<IReadOnlyList<Order?>> GetOrdersByPoint(Point point, Point? destinationPoint, OrderType type);
+    Task<IReadOnlyList<Order?>> GetOrdersByUser(long userId);
 }

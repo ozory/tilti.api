@@ -29,6 +29,7 @@ public class Tracking : Entity
         OrderId = orderId;
         Location = location;
         this.Point = new GeoPoint(location.Latitude, location.Longitude);
+        this.CreatedAt = DateTime.Now;
     }
 
     public static Tracking Create(long orderId, Location location)

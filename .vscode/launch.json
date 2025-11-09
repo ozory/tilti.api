@@ -24,6 +24,37 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "sourceFileMap": {
+        "/Views": "${workspacZeFolder}/Views"
+      }
+    },
+    {
+      "name": ".NET Core NETDBG",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/Api/bin/Debug/net9.0/Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/Api",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "pipeTransport": {
+        "pipeCwd": "${workspaceFolder}",
+        "pipeProgram": "bash",
+        "pipeArgs": ["-c"],
+        "debuggerPath": "/Users/paulo/Documents/netcoredbg/netcoredbg",
+        "debuggerArgs": ["--interpreter=vscode"],
+        "quoteArgs": true
+      },
+      "logging": {
+        "moduleLoad": false
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "sourceFileMap": {
         "/Views": "${workspaceFolder}/Views"
       }
     },
