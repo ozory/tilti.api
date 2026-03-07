@@ -1,11 +1,10 @@
-using System.Collections.Immutable;
 using Application.Features.Plans.Contracts;
+using Application.Shared.Abstractions;
 using FluentResults;
-using MediatR;
 
 namespace Application.Features.Plans.Queries.GetPlanBy;
 
-public class GetPlanByIdQuery : IRequest<Result<PlanResponse?>>
+public class GetPlanByIdQuery : IQuery<Result<PlanResponse?>>
 {
     public long Id { get; set; }
 }

@@ -1,5 +1,6 @@
 using Application.Features.Orders.Contracts;
 using Application.Shared.Abstractions;
+using FluentResults;
 
 namespace Application.Features.Orders.Commands.AddTracking;
 
@@ -8,4 +9,4 @@ public sealed record AddTrackingCommand(
     long DriverId,
     double Latitude,
     double Longitude
-) : ICommand<OrderResponse>;
+) : ICommand<Result<OrderResponse>>;

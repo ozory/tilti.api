@@ -2,8 +2,6 @@ using Application.Features.Orders.Contracts;
 using Application.Shared.Abstractions;
 using Application.Shared.Extensions;
 using Domain.Features.Orders.Events;
-using Domain.Features.Users.Events;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 

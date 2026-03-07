@@ -1,11 +1,10 @@
 using System.Collections.Immutable;
 using Application.Features.Orders.Contracts;
+using Application.Shared.Abstractions;
 using FluentResults;
-using MediatR;
 
 namespace Application.Features.Orders.Queries.GetAllOrders;
 
-public class GetAllOrdersQuery : IRequest<Result<ImmutableList<OrderResponse>>>
+public class GetAllOrdersQuery : IQuery<Result<ImmutableList<OrderResponse>>>
 {
-
 }

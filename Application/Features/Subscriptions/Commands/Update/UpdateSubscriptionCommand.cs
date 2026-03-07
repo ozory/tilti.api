@@ -1,5 +1,6 @@
 using Application.Features.Subscriptions.Contracts;
 using Application.Shared.Abstractions;
+using FluentResults;
 
 namespace Application.Features.Subscriptions.Commands.Update;
 
@@ -9,4 +10,4 @@ public sealed record UpdateSubscriptionCommand
     long PlanId,
     DateTime DueDate,
     ushort Status
-) : ICommand<SubscriptionResponse>;
+) : ICommand<Result<SubscriptionResponse>>;

@@ -1,11 +1,10 @@
 using System.Collections.Immutable;
 using Application.Features.Users.Contracts;
+using Application.Shared.Abstractions;
 using FluentResults;
-using MediatR;
 
 namespace Application.Features.Users.Queries.GetAllUsers;
 
-public class GetAllUsersQuery : IRequest<Result<ImmutableList<UserResponse>>>
+public class GetAllUsersQuery : IQuery<Result<ImmutableList<UserResponse>>>
 {
-
 }

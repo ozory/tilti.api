@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using MediatR;
 using Application.Features.Users.Commands.CreateUser;
 using Application.Features.Users.Commands.UpdateUser;
 using Application.Features.Users.Queries.GetAllUsers;
 using System.Security.Claims;
 using Application.Features.Users.Commands.RegisterValidation;
 using Application.Features.Users.Commands.GenerateNewVerificationCode;
+using Application.Shared.Abstractions;
 
 namespace Api.Endpoints;
 

@@ -1,5 +1,6 @@
 using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
+using FluentResults;
 namespace Application.Features.Users.Commands.CreateUser;
 
 public sealed record CreateUserCommand
@@ -10,6 +11,6 @@ public sealed record CreateUserCommand
     string Password,
     Boolean DriveEnable = false
 
-) : ICommand<UserResponse>;
+) : ICommand<Result<UserResponse>>;
 
 

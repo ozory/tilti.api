@@ -5,4 +5,4 @@ using FluentResults;
 
 namespace Application.Features.Orders.Queries.GetOrdersByUser;
 
-public record GetOrdersByUserQuery(long UserId) : IQuery<ImmutableList<OrderResponse>>;
+public record GetOrdersByUserQuery(long UserId) : IQuery<Result<ImmutableList<OrderResponse>>>;

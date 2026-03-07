@@ -54,7 +54,7 @@ public class CacheRepository : ICacheRepository
         where T : class?
     {
         var value = await _redisDB.StringGetAsync(key);
-        if (value.HasValue) return JsonSerializer.Deserialize<T>(value!)!;
+        if (value.HasValue) return JsonSerializer.Deserialize<T>(value.ToString(), _serializationOptions);
         return default(T?);
     }
 
@@ -96,25 +96,24 @@ public class CacheRepository : ICacheRepository
             Order.Ascending,
             GeoRadiusOptions.WithCoordinates);
 
-        if (results is null || results.Length == 0) return [];
+        if (results is null || results.Length == 0) return new List<T?>();
 
-        List<T?> items = [];
+        List<T?> items = new List<T?>();
 
-        var tasks = results.ToList().Select(async i =>
+        foreach (var i in results)
         {
-            var cachedObject = await GetAsync<T>(i.Member.ToString());
+            var memberKey = i.Member.ToString();
+            var cachedObject = await GetAsync<T>(memberKey);
 
             if (cachedObject is not null)
             {
                 items.Add(cachedObject);
-                return items;
             }
-
-            await RemoveAsync(i.Member.ToString());
-            return items;
-        });
-
-        await Task.WhenAll(tasks);
+            else
+            {
+                await RemoveAsync(memberKey);
+            }
+        }
 
         return items;
     }

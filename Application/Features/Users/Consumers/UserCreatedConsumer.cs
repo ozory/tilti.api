@@ -14,7 +14,7 @@ public class UserCreatedConsumer : BackgroundService
     private readonly ILogger<UserCreatedConsumer> _logger;
     private readonly IConfiguration _configuration;
     private List<IMessageRepository> messageRepositories = [];
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
     private readonly int _instances = 0;
     private readonly int _delayInterval = 5000;
@@ -28,13 +28,13 @@ public class UserCreatedConsumer : BackgroundService
     public UserCreatedConsumer(
         ILogger<UserCreatedConsumer> logger,
         IConfiguration configuration,
-        IServiceProvider serviceProvider)
+        IServiceScopeFactory serviceScopeFactory)
     {
         _logger = logger;
         try
         {
             _configuration = configuration;
-            _serviceProvider = serviceProvider;
+            _serviceScopeFactory = serviceScopeFactory;
 
             _queueName = _configuration["Infrastructure:UserCreatedMessages:queue"]!;
             _instances = int.Parse(_configuration["Infrastructure:UserCreatedMessages:consumerIntances"]!);
@@ -51,7 +51,7 @@ public class UserCreatedConsumer : BackgroundService
 
     private async Task ConfigureStart()
     {
-        using (var scope = _serviceProvider.CreateScope())
+        using (var scope = _serviceScopeFactory.CreateScope())
         {
             var messageRepository = scope.ServiceProvider.GetRequiredService<IMessageRepository>();
             this.Connection = await messageRepository.GetConnectionFactory();
@@ -91,11 +91,10 @@ public class UserCreatedConsumer : BackgroundService
             nameof(UserCreatedConsumer),
             userCreatedDomainEvent.Email);
 
-        using (var scope = _serviceProvider.CreateScope())
+        using (var scope = _serviceScopeFactory.CreateScope())
         {
             var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
             await emailService.SendConfirmationEmail(userCreatedDomainEvent);
         }
-
     }
 }

@@ -2,7 +2,7 @@ using Application.Features.Plans.Commands.Create;
 using Application.Features.Plans.Commands.Update;
 using Application.Features.Plans.Queries.GetAllPlans;
 using Application.Features.Plans.Queries.GetPlanBy;
-using MediatR;
+using Application.Shared.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Endpoints;

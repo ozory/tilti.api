@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Application.Shared.Abstractions;
 using Domain.Features.Orders.Events;
-using MediatR;
 
 namespace Application.Features.Orders.Events;
 

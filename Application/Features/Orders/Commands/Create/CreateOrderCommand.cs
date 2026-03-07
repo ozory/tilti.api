@@ -2,6 +2,7 @@
 using Application.Features.Orders.Contracts;
 using Application.Shared.Abstractions;
 using Domain.ValueObjects;
+using FluentResults;
 namespace Application.Features.Orders.Commands.CreateOrder;
 
 /// <summary>
@@ -24,6 +25,6 @@ public sealed record CreateOrderCommand
     int DistanceInKM,
     int DurationInSeconds
 
-) : ICommand<OrderResponse>;
+) : ICommand<Result<OrderResponse>>;
 
 

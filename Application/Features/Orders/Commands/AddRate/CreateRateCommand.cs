@@ -1,5 +1,6 @@
 
 using Application.Shared.Abstractions;
+using FluentResults;
 namespace Application.Features.Orders.Commands.AddRate;
 
 public sealed record CreateRateCommand
@@ -11,6 +12,6 @@ public sealed record CreateRateCommand
     string? Description = null,
     string? Tags = null
 
-) : ICommand<bool>;
+) : ICommand<Result<bool>>;
 
 

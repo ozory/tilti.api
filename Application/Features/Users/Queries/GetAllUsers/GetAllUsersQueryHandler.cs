@@ -1,13 +1,13 @@
 using System.Collections.Immutable;
 using Application.Features.Users.Contracts;
+using Application.Shared.Abstractions;
 using Domain.Features.Users.Repository;
 using FluentResults;
-using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Users.Queries.GetAllUsers;
 
-public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Result<ImmutableList<UserResponse>>>
+public class GetAllUsersQueryHandler : IQueryHandler<GetAllUsersQuery, ImmutableList<UserResponse>>
 {
     private readonly IUserRepository _repository;
     private readonly ILogger<GetAllUsersQueryHandler> _logger;

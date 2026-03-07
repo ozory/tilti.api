@@ -5,7 +5,6 @@ using Domain.Features.Plans.Repository;
 using Domain.Features.Subscriptions.Repository;
 using Domain.Features.Users.Repository;
 using Domain.Shared.Abstractions;
-using MediatR;
 
 namespace Infrastructure.Data.Postgreesql.Shared.Abstractions;
 

@@ -1,16 +1,15 @@
 using System.Collections.Immutable;
 using Application.Features.Orders.Contracts;
+using Application.Shared.Abstractions;
 using Domain.Features.Orders.Entities;
 using Domain.Features.Orders.Repository;
 using FluentResults;
-using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
 
 namespace Application.Features.Orders.Queries.GetOrdersByPoint;
 
-public class GetAllOrdersByPointQueryHandler : IRequestHandler<GetAllOrdersByPointQuery, Result<ImmutableList<OrderResponse>>>
+public class GetAllOrdersByPointQueryHandler : IQueryHandler<GetAllOrdersByPointQuery, ImmutableList<OrderResponse>>
 {
     private readonly IOrderRepository _repository;
     private readonly IRejectRepository _rejectionRepository;

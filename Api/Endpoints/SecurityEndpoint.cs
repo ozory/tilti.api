@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using MediatR;
 using Application.Features.Security.Commands.Authenticate;
 using Application.Features.Users.Commands.RefreshToken;
+using Application.Shared.Abstractions;
 
 namespace Api.Endpoints;
 

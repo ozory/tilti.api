@@ -1,6 +1,5 @@
 using Application.Shared.Abstractions;
 using Domain.Features.Users.Events;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 

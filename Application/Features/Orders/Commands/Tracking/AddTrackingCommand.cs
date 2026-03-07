@@ -1,6 +1,7 @@
 using Application.Features.Orders.Contracts;
 using Application.Shared.Abstractions;
 using Domain.ValueObjects;
+using FluentResults;
 namespace Application.Features.Orders.Commands.OrderTracking;
 
 public sealed record AddTrackingCommand
@@ -9,6 +10,6 @@ public sealed record AddTrackingCommand
     Double Latitude,
     Double Longitude
 
-) : ICommand<bool>;
+) : ICommand<Result<bool>>;
 
 

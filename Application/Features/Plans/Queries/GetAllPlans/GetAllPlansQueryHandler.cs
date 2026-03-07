@@ -1,13 +1,13 @@
 using System.Collections.Immutable;
 using Application.Features.Plans.Contracts;
+using Application.Shared.Abstractions;
 using Domain.Features.Plans.Repository;
 using FluentResults;
-using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Plans.Queries.GetAllPlans;
 
-public class GetAllUsersQueryHandler : IRequestHandler<GetAllPlansQuery, Result<ImmutableList<PlanResponse>>>
+public class GetAllUsersQueryHandler : IQueryHandler<GetAllPlansQuery, ImmutableList<PlanResponse>>
 {
     private readonly IPlanRepository _repository;
     private readonly ILogger<GetAllUsersQueryHandler> _logger;

@@ -1,6 +1,7 @@
 using Application.Features.Orders.Contracts;
 using Application.Shared.Abstractions;
 using Domain.ValueObjects;
+using FluentResults;
 namespace Application.Features.Orders.Commands.UpdateOrder;
 
 public sealed record UpdateOrderCommand
@@ -14,6 +15,6 @@ public sealed record UpdateOrderCommand
     int totalDiscance,
     int totalDuration,
     short orderStatus
-) : ICommand<OrderResponse>;
+) : ICommand<Result<OrderResponse>>;
 
 

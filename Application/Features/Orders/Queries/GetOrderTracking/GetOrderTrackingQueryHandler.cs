@@ -1,18 +1,13 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Features.Orders.Contracts;
-using Application.Features.Orders.Queries.GetOrdersByPoint;
+using Application.Shared.Abstractions;
 using Domain.Features.Orders.Repository;
 using FluentResults;
-using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Orders.Queries.GetOrderTracking;
 
-public class GetOrderTrackingQueryHandler : IRequestHandler<GetOrderTrackingQuery, Result<ImmutableList<OrderTrackingResponse>>>
+public class GetOrderTrackingQueryHandler : IQueryHandler<GetOrderTrackingQuery, ImmutableList<OrderTrackingResponse>>
 {
     private readonly ITrackingRepository _repository;
     private readonly ILogger<GetOrderTrackingQueryHandler> _logger;

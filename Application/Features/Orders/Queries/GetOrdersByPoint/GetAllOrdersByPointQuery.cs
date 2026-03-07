@@ -1,12 +1,12 @@
 using System.Collections.Immutable;
 using Application.Features.Orders.Contracts;
+using Application.Shared.Abstractions;
 using Domain.Shared.Enums;
 using FluentResults;
-using MediatR;
 
 namespace Application.Features.Orders.Queries.GetOrdersByPoint;
 
-public class GetAllOrdersByPointQuery : IRequest<Result<ImmutableList<OrderResponse>>>
+public class GetAllOrdersByPointQuery : IQuery<Result<ImmutableList<OrderResponse>>>
 {
     public long? DriverId { get; set; }
     public OrderType OrderType { get; set; }

@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Orders.Commands.CloseOrder;
 
-public class CloseExpiredOrdersCommandHandler : ICommandHandler<CloseExpiredOrdersCommand, Result<ImmutableList<OrderResponse>>>
+public class CloseExpiredOrdersCommandHandler : ICommandHandler<CloseExpiredOrdersCommand, ImmutableList<OrderResponse>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<CloseExpiredOrdersCommandHandler> _logger;
@@ -37,7 +37,7 @@ public class CloseExpiredOrdersCommandHandler : ICommandHandler<CloseExpiredOrde
         _cacheRepository = cacheRepository;
     }
 
-    public async Task<Result<Result<ImmutableList<OrderResponse>>>> Handle(
+    public async Task<Result<ImmutableList<OrderResponse>>> Handle(
         CloseExpiredOrdersCommand request,
         CancellationToken cancellationToken)
     {

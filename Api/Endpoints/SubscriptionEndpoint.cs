@@ -3,7 +3,7 @@ using Application.Features.Subscriptions.Commands.Update;
 using Application.Features.Subscriptions.Queries.GetAllSubscriptions;
 using Application.Features.Subscriptions.Queries.GetMemberById;
 using Application.Features.Subscriptions.Queries.GetSubscriptionByUser;
-using MediatR;
+using Application.Shared.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Endpoints

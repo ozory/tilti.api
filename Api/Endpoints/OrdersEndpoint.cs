@@ -4,7 +4,7 @@ using Application.Features.Orders.Commands.CreateOrder;
 using Application.Features.Orders.Commands.PrecifyOrder;
 using Application.Features.Orders.Queries.GetOrdersByPoint;
 using Application.Features.Orders.Queries.GetOrdersByUser;
-using MediatR;
+using Application.Shared.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Endpoints;

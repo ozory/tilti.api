@@ -7,14 +7,25 @@ using FluentValidation;
 using Microsoft.Extensions.Logging;
 namespace Application.Features.Orders.Commands.AddRate;
 
-public class CreateRateCommandHandler(
-    IUnitOfWork unitOfWork,
-    ILogger<CreateRateCommandHandler> logger,
-    IValidator<CreateRateCommand> validator
-    ) : ICommandHandler<CreateRateCommand, bool>
+public class CreateRateCommandHandler : ICommandHandler<CreateRateCommand, bool>
 {
-
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<CreateRateCommandHandler> _logger;
+    private readonly IValidator<CreateRateCommand> _validator;
     private readonly string className = nameof(CreateRateCommandHandler);
+
+    public CreateRateCommandHandler(
+         IUnitOfWork unitOfWork,
+        ILogger<CreateRateCommandHandler> logger,
+        IValidator<CreateRateCommand> validator
+    )
+    {
+        _logger = logger;
+        _validator = validator;
+        _unitOfWork = unitOfWork;
+    }
+
+
 
     /// <summary>
     /// Handles the creation of a new rate for an order between two users.
@@ -35,21 +46,21 @@ public class CreateRateCommandHandler(
     {
         try
         {
-            logger.LogInformation("[{className}] Validando usuário ", className);
+            _logger.LogInformation("[{className}] Validando usuário ", className);
 
-            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+            var validationResult = await _validator.ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid) return Result.Fail(validationResult.Errors.Select(x => x.ErrorMessage));
 
-            var order = await unitOfWork.OrderRepository.GetByIdAsync(request.OrderId);
+            var order = await _unitOfWork.OrderRepository.GetByIdAsync(request.OrderId);
             if (order is null) return Result.Fail("Order not found");
 
-            var sourceUser = await CreateUserCommandValidator.ValidateUser(unitOfWork.UserRepository, request.SourceUserId);
+            var sourceUser = await CreateUserCommandValidator.ValidateUser(_unitOfWork.UserRepository, request.SourceUserId);
             if (sourceUser.IsFailed) return Result.Fail(sourceUser.Errors);
 
-            var targetUser = await CreateUserCommandValidator.ValidateUser(unitOfWork.UserRepository, request.TargetUserId);
+            var targetUser = await CreateUserCommandValidator.ValidateUser(_unitOfWork.UserRepository, request.TargetUserId);
             if (targetUser.IsFailed) return Result.Fail(targetUser.Errors);
 
-            var exists = await unitOfWork.RateRepository.Filter(
+            var exists = await _unitOfWork.RateRepository.Filter(
                 x => x.SourceUserId == request.SourceUserId
                 && x.TargetUserId == request.TargetUserId
                 && x.OrderId == request.OrderId);
@@ -66,15 +77,15 @@ public class CreateRateCommandHandler(
                 request.Tags);
 
             // Save user
-            var savedRate = await unitOfWork.RateRepository.SaveAsync(rate);
-            await unitOfWork.CommitAsync(cancellationToken);
+            var savedRate = await _unitOfWork.RateRepository.SaveAsync(rate);
+            await _unitOfWork.CommitAsync(cancellationToken);
 
-            logger.LogInformation("[{className}] Avaliação cadastrada com sucesso", className);
+            _logger.LogInformation("[{className}] Avaliação cadastrada com sucesso", className);
             return Result.Ok(true);
         }
         catch (Exception ex)
         {
-            logger.LogError("[{className}] Error on creating User : {request} Error: {ex}", className, request, ex);
+            _logger.LogError("[{className}] Error on creating User : {request} Error: {ex}", className, request, ex);
             throw;
         }
 

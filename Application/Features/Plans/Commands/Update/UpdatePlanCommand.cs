@@ -1,5 +1,6 @@
 using Application.Features.Plans.Contracts;
 using Application.Shared.Abstractions;
+using FluentResults;
 
 namespace Application.Features.Plans.Commands.Update;
 
@@ -10,4 +11,4 @@ public record UpdatePlanCommand
     string Description,
     decimal Amount,
     ushort Status = 0
-) : ICommand<PlanResponse>;
+) : ICommand<Result<PlanResponse>>;

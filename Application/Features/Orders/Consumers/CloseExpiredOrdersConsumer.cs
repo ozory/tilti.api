@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Features.Orders.Commands.CloseOrder;
-using MediatR;
+using Application.Shared.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,20 +17,19 @@ public class CloseExpiredOrdersConsumer : BackgroundService
     private readonly IConfiguration _configuration;
     private readonly int _delayInterval = 50000;  // 5 minutos
     private readonly int _expiredMinutes = 5;  // 5 minutos 
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly string className = nameof(CloseExpiredOrdersConsumer)!;
 
     public CloseExpiredOrdersConsumer(
         ILogger<CloseExpiredOrdersConsumer> logger,
         IConfiguration configuration,
-        IMediator mediator,
-        IServiceProvider serviceProvider)
+        IServiceScopeFactory serviceScopeFactory)
     {
         _logger = logger;
         try
         {
             _configuration = configuration;
-            _serviceProvider = serviceProvider;
+            _serviceScopeFactory = serviceScopeFactory;
             _delayInterval = int.Parse(_configuration["Infrastructure:CloseExpiredOrders:delayInterval"]!);
             _expiredMinutes = int.Parse(_configuration["Infrastructure:CloseExpiredOrders:expiredMinutes"]!);
         }
@@ -39,7 +38,6 @@ public class CloseExpiredOrdersConsumer : BackgroundService
             _logger.LogError("[{className}] Error starting Close Expired Orders Consumer : Error: {ex}", className, ex);
             throw;
         }
-
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -50,7 +48,7 @@ public class CloseExpiredOrdersConsumer : BackgroundService
             {
                 _logger.LogInformation("[{Classe}] Worker's ativo", nameof(CloseExpiredOrdersConsumer));
 
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     var _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                     var command = new CloseExpiredOrdersCommand(DateTime.Now.AddMinutes(-_expiredMinutes));
@@ -67,6 +65,5 @@ public class CloseExpiredOrdersConsumer : BackgroundService
             _logger.LogError("[{className}] Error when executing Close Expired Orders Consumer : Error: {ex}", className, ex);
             throw;
         }
-
     }
 }

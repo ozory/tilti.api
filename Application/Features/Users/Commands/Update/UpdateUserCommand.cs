@@ -1,5 +1,6 @@
 using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
+using FluentResults;
 namespace Application.Features.Users.Commands.UpdateUser;
 
 public sealed record UpdateUserCommand
@@ -11,6 +12,6 @@ public sealed record UpdateUserCommand
     string? Password,
     ushort? Status
 
-) : ICommand<UserResponse>;
+) : ICommand<Result<UserResponse>>;
 
 

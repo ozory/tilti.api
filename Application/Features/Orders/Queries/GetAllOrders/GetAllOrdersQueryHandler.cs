@@ -1,13 +1,13 @@
 using System.Collections.Immutable;
 using Application.Features.Orders.Contracts;
+using Application.Shared.Abstractions;
 using Domain.Features.Orders.Repository;
 using FluentResults;
-using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Orders.Queries.GetAllOrders;
 
-public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, Result<ImmutableList<OrderResponse>>>
+public class GetAllOrdersQueryHandler : IQueryHandler<GetAllOrdersQuery, ImmutableList<OrderResponse>>
 {
     private readonly IOrderRepository _repository;
     private readonly ILogger<GetAllOrdersQueryHandler> _logger;

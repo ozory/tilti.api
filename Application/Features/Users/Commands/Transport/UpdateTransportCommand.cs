@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Features.Users.Contracts;
 using Application.Shared.Abstractions;
+using FluentResults;
 
 namespace Application.Features.Users.Commands.Transport;
 
@@ -14,5 +15,5 @@ public sealed record UpdateTransportCommand(
     ushort Year,
     string Plate,
     string Model
-) : ICommand<UserResponse>;
+) : ICommand<Result<UserResponse>>;
 

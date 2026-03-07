@@ -1,11 +1,11 @@
 using System.Collections.Immutable;
 using Application.Features.Orders.Contracts;
+using Application.Shared.Abstractions;
 using FluentResults;
-using MediatR;
 
-namespace Application.Features.Orders.Queries.GetOrdersByPoint;
+namespace Application.Features.Orders.Queries.GetOrderTracking;
 
-public class GetOrderTrackingQuery : IRequest<Result<ImmutableList<OrderTrackingResponse>>>
+public class GetOrderTrackingQuery : IQuery<Result<ImmutableList<OrderTrackingResponse>>>
 {
     public long OrderId { get; set; }
     public long TrackingId { get; set; }

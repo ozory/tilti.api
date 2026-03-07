@@ -6,11 +6,11 @@ using Application.Shared.Abstractions;
 using Domain.Features.Users.Events;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using MediatR.NotificationPublishers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Scrutor;
 
 namespace Application.Configurations;
 
@@ -19,11 +19,22 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services, WebApplicationBuilder builder)
     {
         var assembly = Assembly.GetExecutingAssembly();
-        services.AddMediatR(config =>
-        {
-            config.RegisterServicesFromAssembly(assembly);
-            config.NotificationPublisher = new TaskWhenAllPublisher();
-        });
+
+        // Register Mediator
+        services.AddScoped<Application.Shared.Abstractions.IMediator, Application.Shared.Abstractions.Mediator>();
+
+        // Register all handlers
+        services.Scan(scan => scan
+            .FromAssemblies(assembly)
+            .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)))
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+
+        services.Scan(scan => scan
+            .FromAssemblies(assembly)
+            .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)))
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
 
         services.AddFluentValidationAutoValidation();
         services.AddFluentValidationClientsideAdapters();
