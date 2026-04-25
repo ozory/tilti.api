@@ -5,6 +5,7 @@ using Application.Features.Users.Queries.GetAllUsers;
 using System.Security.Claims;
 using Application.Features.Users.Commands.RegisterValidation;
 using Application.Features.Users.Commands.GenerateNewVerificationCode;
+using Application.Features.Users.Commands.RateUser;
 using Application.Shared.Abstractions;
 
 namespace Api.Endpoints;
@@ -60,13 +61,13 @@ public static class UserEndpoint
     }
 
     private static async Task<IResult> RateUser(
-        [FromBody] CreateUserCommand createUserCommand,
+        [FromBody] RateUserCommand rateUserCommand,
         [FromServices] IMediator mediator
     )
     {
         try
         {
-            var result = await mediator.Send(createUserCommand);
+            var result = await mediator.Send(rateUserCommand);
             if (result.IsFailed) return TypedResults.BadRequest(result.Errors);
             return TypedResults.Ok(result.Value);
         }
