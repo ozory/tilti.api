@@ -16,6 +16,7 @@ public class TILTContext : DbContext
     public DbSet<Plan> Plans { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<Subscription> Subscriptions { get; set; }
+    public DbSet<DriverSubscription> DriverSubscriptions { get; set; }
     public DbSet<Rejection> Rejections { get; set; }
     public DbSet<RefreshTokens> RefreshTokens { get; set; }
     public DbSet<Rate> Rates { get; set; }

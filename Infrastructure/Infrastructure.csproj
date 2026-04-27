@@ -31,6 +31,7 @@
      <PackageReference Include="RabbitMQ.Client" Version="7.1.1" />
      <PackageReference Include="RestSharp" Version="112.1.0" />
      <PackageReference Include="StackExchange.Redis" Version="2.8.24" />
+     <PackageReference Include="Stripe.net" Version="51.1.0" />
   </ItemGroup>
 
   <ItemGroup>

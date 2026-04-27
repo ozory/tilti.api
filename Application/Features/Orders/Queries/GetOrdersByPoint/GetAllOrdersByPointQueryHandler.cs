@@ -3,6 +3,7 @@ using Application.Features.Orders.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Orders.Entities;
 using Domain.Features.Orders.Repository;
+using Domain.Features.Subscriptions.Repository;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
@@ -13,16 +14,19 @@ public class GetAllOrdersByPointQueryHandler : IQueryHandler<GetAllOrdersByPoint
 {
     private readonly IOrderRepository _repository;
     private readonly IRejectRepository _rejectionRepository;
+    private readonly IDriverSubscriptionRepository _driverSubscriptionRepository;
     private readonly ILogger<GetAllOrdersByPointQueryHandler> _logger;
 
     public GetAllOrdersByPointQueryHandler(
         IOrderRepository repository,
         ILogger<GetAllOrdersByPointQueryHandler> logger,
-        IRejectRepository rejectionRepository)
+        IRejectRepository rejectionRepository,
+        IDriverSubscriptionRepository driverSubscriptionRepository)
     {
         _repository = repository;
         _logger = logger;
         _rejectionRepository = rejectionRepository;
+        _driverSubscriptionRepository = driverSubscriptionRepository;
     }
 
     public async Task<Result<ImmutableList<OrderResponse>>> Handle(
@@ -31,7 +35,18 @@ public class GetAllOrdersByPointQueryHandler : IQueryHandler<GetAllOrdersByPoint
     {
         IReadOnlyList<Rejection?> rejections = [];
 
-        if (request.DriverId.HasValue) rejections = await _rejectionRepository.GetRejectionsByUser(request.DriverId!.Value);
+        if (request.DriverId.HasValue)
+        {
+            // Check if driver has active subscription
+            var hasActiveSubscription = await _driverSubscriptionRepository.HasActiveSubscription(request.DriverId!.Value);
+            if (!hasActiveSubscription)
+            {
+                _logger.LogWarning("Driver {DriverId} does not have an active subscription", request.DriverId);
+                return Result.Ok(ImmutableList<OrderResponse>.Empty);
+            }
+
+            rejections = await _rejectionRepository.GetRejectionsByUser(request.DriverId!.Value);
+        }
 
         var driveDestionation = request.DestinationLatitude.HasValue && request.DestinationLongitude.HasValue ?
         new Point(request.DestinationLongitude!.Value, request.DestinationLatitude!.Value) : null;

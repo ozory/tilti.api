@@ -7,5 +7,5 @@ namespace Domain.Features.Payments.Repository;
 
 public interface IPaymentRepository
 {
-    
+
 }

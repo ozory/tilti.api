@@ -24,6 +24,8 @@ public class User : Entity
     public UserStatus Status { get; protected set; }
     public string? PaymentToken { get; protected set; }
     public string? PaymentUserIdentifier { get; protected set; }
+    public bool IsDriver { get; protected set; } = false;
+    public string? AsaasWalletId { get; protected set; }
 
     public string? Photo { get; protected set; }
     public string? VerificationCode { get; protected set; }
@@ -179,6 +181,10 @@ public class User : Entity
 
     public void SetPaymentUserIdentifier(string? paymentUserIdentifier)
     => this.PaymentUserIdentifier = paymentUserIdentifier;
+
+    public void SetIsDriver(bool isDriver) => this.IsDriver = isDriver;
+
+    public void SetAsaasWalletId(string? asaasWalletId) => this.AsaasWalletId = asaasWalletId;
 
     #endregion METHODS
 }

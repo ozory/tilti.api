@@ -12,6 +12,7 @@ using Infrastructure.Data.Postgreesql.Features.Orders.Repository;
 using Infrastructure.Data.Postgreesql.Features.Plans.Repository;
 using Infrastructure.Data.Postgreesql.Features.Security.Repository;
 using Infrastructure.Data.Postgreesql.Features.Subscriptions.Repository;
+using Infrastructure.Data.Postgreesql.Features.Subscriptions.Repository;
 using Infrastructure.Data.Postgreesql.Features.Users.Repository;
 using Infrastructure.Data.Postgreesql.Shared.Abstractions;
 using Infrastructure.External.Features.Maps.Services;
@@ -42,6 +43,7 @@ public static class DependencyInjection
         services.AddScoped<IRateRepository, RateRepository>();
         services.AddScoped<IPlanRepository, PlanRepository>();
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+        services.AddScoped<IDriverSubscriptionRepository, DriverSubscriptionRepository>();
         services.AddScoped<IOrderRepository, OrdersRepository>();
         services.AddScoped<ISecurityRepository, SecurityRepository>();
         services.AddScoped<IRejectRepository, RejectionRepository>();
