@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Application.Shared.Abstractions;
 using Domain.Features.Subscriptions.Entities;
-using Domain.Features.Users.Entities;
 using Domain.Shared.Abstractions;
 using Infrastructure.External.Features.Payments.Contracts;
 using Microsoft.Extensions.Configuration;

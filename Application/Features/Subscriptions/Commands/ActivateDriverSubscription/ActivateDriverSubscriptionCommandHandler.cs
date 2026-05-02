@@ -9,7 +9,11 @@ using Microsoft.Extensions.Logging;
 namespace Application.Features.Subscriptions.Commands.ActivateDriverSubscription;
 
 /// <summary>
-/// Handler for ActivateDriverSubscriptionCommand
+/// Handler for ActivateDriverSubscriptionCommand.
+/// Ativado pelo webhook do Asaas quando um pagamento PIX é confirmado.
+/// Estratégia de busca (em ordem de prioridade):
+///   1. subscriptionId > 0  → busca direta pelo ID interno (vindo do externalReference do webhook)
+///   2. asaasPaymentId      → fallback, busca pelo ID do pagamento Asaas
 /// </summary>
 public class ActivateDriverSubscriptionCommandHandler : ICommandHandler<ActivateDriverSubscriptionCommand, bool>
 {
@@ -30,18 +34,20 @@ public class ActivateDriverSubscriptionCommandHandler : ICommandHandler<Activate
 
     public async Task<Result<bool>> Handle(ActivateDriverSubscriptionCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("[{className}] Activating driver subscription: {SubscriptionId}", className, request.subscriptionId);
+        _logger.LogInformation(
+            "[{className}] Activating driver subscription — subscriptionId={SubscriptionId}, asaasPaymentId={PaymentId}",
+            className, request.subscriptionId, request.asaasPaymentId);
 
         try
         {
             DriverSubscription? subscription;
 
-            // If subscriptionId is provided, use it directly
+            // Prioridade 1: ID interno da assinatura (externalReference do webhook Asaas)
             if (request.subscriptionId > 0)
             {
                 subscription = await _repository.GetByIdAsync(request.subscriptionId);
             }
-            // Otherwise, find by Asaas payment ID
+            // Prioridade 2: fallback por ID do pagamento Asaas
             else if (!string.IsNullOrEmpty(request.asaasPaymentId))
             {
                 subscription = await _repository.GetByAsaasPaymentId(request.asaasPaymentId);
@@ -52,20 +58,29 @@ public class ActivateDriverSubscriptionCommandHandler : ICommandHandler<Activate
             }
 
             if (subscription == null)
+            {
+                _logger.LogWarning("[{className}] Subscription not found — subscriptionId={SubscriptionId}, asaasPaymentId={PaymentId}",
+                    className, request.subscriptionId, request.asaasPaymentId);
                 return Result.Fail("Subscription not found");
+            }
 
-            // Verify payment with Asaas (if subscriptionId was provided)
-            if (request.subscriptionId > 0 && subscription.AsaasPaymentId != request.asaasPaymentId)
-                return Result.Fail("Payment ID mismatch");
+            // Salvar AsaasPaymentId caso ainda não esteja preenchido
+            if (!string.IsNullOrEmpty(request.asaasPaymentId) && string.IsNullOrEmpty(subscription.AsaasPaymentId))
+                subscription.SetAsaasPaymentId(request.asaasPaymentId);
 
-            // Activate subscription
-            subscription.SetStatus(SubscriptionStatus.Active);
+            // Ativar e marcar como pago
             subscription.MarkAsPaid();
+
+            // Renovação: atualizar data de vencimento se fornecida
+            if (request.dueDate.HasValue)
+                subscription.SetDueDate(request.dueDate.Value);
 
             await _repository.UpdateAsync(subscription);
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            _logger.LogInformation("[{className}] Driver subscription activated: {SubscriptionId}", className, request.subscriptionId);
+            _logger.LogInformation(
+                "[{className}] Driver subscription activated successfully — Id={Id}, DueDate={DueDate}",
+                className, subscription.Id, subscription.DueDate);
 
             return Result.Ok(true);
         }

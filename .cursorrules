@@ -1,0 +1,28 @@
+# .cursorrules
+{
+    "rules": {
+        "禁止使用MediatR": {
+            "banImports": [
+                "MediatR"
+            ],
+            "banNuGetPackages": [
+                "MediatR"
+            ]
+        },
+        "estrutura-de-pastas": {
+            "Application/Features/*": {
+                "Commands": "Commands/*Command.cs, Commands/*CommandHandler.cs",
+                "Queries": "Queries/*Query.cs, Queries/*QueryHandler.cs",
+                "Events": "Events/*EventHandler.cs"
+            }
+        },
+        "padrao-de-nomenclatura": {
+            "Commands": "[A-Z][a-zA-Z]+Command.cs",
+            "CommandHandlers": "[A-Z][a-zA-Z]+CommandHandler.cs",
+            "Queries": "[A-Z][a-zA-Z]+Query.cs",
+            "QueryHandlers": "[A-Z][a-zA-Z]+QueryHandler.cs",
+            "Events": "[A-Z][a-zA-Z]+Event.cs",
+            "EventHandlers": "[A-Z][a-zA-Z]+EventHandler.cs"
+        }
+    }
+}

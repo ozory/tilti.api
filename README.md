@@ -63,7 +63,7 @@ Motoristas só podem receber corridas se possuírem uma assinatura ativa. O flux
 
 2. **Pagamento**
    - O motorista realiza o pagamento pelo link gerado.
-   - O Asaas notifica o backend via webhook (`POST /webhooks/asaas`) quando o pagamento é aprovado.
+   - O Asaas notifica o backend via webhook (`POST /webhooks/asaas`) quando o pagamento é aprovado. O sistema utiliza o `externalReference` para localizar a assinatura interna de forma precisa.
 
 3. **Ativação da Assinatura**
    - O webhook processa o evento e ativa a assinatura (`status = Active`).
@@ -100,9 +100,9 @@ Motoristas só podem receber corridas se possuírem uma assinatura ativa. O flux
 - O contexto `TILTContext` possui `DbSet<DriverSubscription>`.
 - Há migration e configuração EF para a tabela `driver_subscriptions`.
 
-### Como evoluir ou consultar
 - Para criar novos fluxos de pagamento, siga o padrão de command/handler + endpoint + integração externa.
 - Consulte este README para endpoints e entidades.
+- Para detalhes técnicos do fluxo de motoristas, veja [Docs/driver-subscription-pix-flow.md](file:///Users/paulo/Documents/projects/tilt/backend/tilt.api/Docs/driver-subscription-pix-flow.md).
 - Para dúvidas ou novas features, peça exemplos de uso ou fluxos detalhados.
 
 ---

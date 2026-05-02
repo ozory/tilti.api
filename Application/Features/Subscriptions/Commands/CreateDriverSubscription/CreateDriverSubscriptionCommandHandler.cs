@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Domain.Features.Plans.Repository;
 using FluentValidation;
 using Application.Features.Subscriptions.Contracts;
-using Application.Shared.Abstractions;
 
 namespace Application.Features.Subscriptions.Commands.CreateDriverSubscription;
 

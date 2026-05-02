@@ -27,12 +27,7 @@ public class PlanConfiguration : IEntityTypeConfiguration<Plan>
 
         builder.Property(x => x.Name)
             .HasColumnOrder(2)
-            .HasColumnName("Name")
-            .HasMaxLength(250)
-            .HasConversion(
-            c => c.Value,
-            c => new Name(c!))
-            .IsRequired(true);
+            .HasColumnName("Name");
 
         builder.Property(x => x.Description)
             .HasColumnOrder(3)

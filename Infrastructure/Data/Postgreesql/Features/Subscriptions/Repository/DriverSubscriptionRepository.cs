@@ -40,4 +40,7 @@ public class DriverSubscriptionRepository :
 
     public async Task<DriverSubscription?> GetByAsaasPaymentId(string asaasPaymentId)
         => await FirstOrDefault(filter: s => s.AsaasPaymentId == asaasPaymentId, includeProperties: IncludeProperties);
+
+    public async Task<DriverSubscription?> GetByAsaasSubscriptionId(string asaasSubscriptionId)
+        => await FirstOrDefault(filter: s => s.AsaasSubscriptionId == asaasSubscriptionId, includeProperties: IncludeProperties);
 }

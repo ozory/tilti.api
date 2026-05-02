@@ -39,6 +39,18 @@ public record PaymentWebhookData
 
     [JsonPropertyName("dueDate")]
     public DateTime? DueDate { get; set; }
+
+    /// <summary>
+    /// ID interno da assinatura Tilt passado ao criar a cobrança no Asaas
+    /// </summary>
+    [JsonPropertyName("externalReference")]
+    public string? ExternalReference { get; set; }
+
+    /// <summary>
+    /// ID da assinatura recorrente no Asaas (presente em cobranças de assinatura)
+    /// </summary>
+    [JsonPropertyName("subscription")]
+    public string? Subscription { get; set; }
 }
 
 /// <summary>

@@ -9,4 +9,5 @@ public interface IDriverSubscriptionRepository : IGenericRepository<DriverSubscr
     Task<DriverSubscription?> GetActiveSubscriptionByUser(long idUser);
     Task<bool> HasActiveSubscription(long idUser);
     Task<DriverSubscription?> GetByAsaasPaymentId(string asaasPaymentId);
+    Task<DriverSubscription?> GetByAsaasSubscriptionId(string asaasSubscriptionId);
 }
