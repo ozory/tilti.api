@@ -41,7 +41,7 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Ord
     /// </summary>
     public async Task<Result<OrderResponse>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("[{className}] Creating an Order {UserId}, PaymentId: {PaymentId}", 
+        _logger.LogInformation("[{className}] Creating an Order {UserId}, PaymentId: {PaymentId}",
             className, request.UserId, request.AsaasPaymentId);
 
         try
@@ -70,7 +70,7 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Ord
             order.SetDistanceInKM(request.DistanceInKM);
             order.SetDurationInSeconds(request.DurationInSeconds);
             order.SetPaymentId(request.AsaasPaymentId);
-            
+
             // Set status to ReadyToAccept (payment confirmed)
             order.SetStatus(OrderStatus.ReadyToAccept);
 
@@ -89,7 +89,7 @@ public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Ord
 
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            _logger.LogInformation("[{className}] Order Created {savedOrderId} with Status: {Status}", 
+            _logger.LogInformation("[{className}] Order Created {savedOrderId} with Status: {Status}",
                 className, savedOrder.Id, savedOrder.Status);
             return Result.Ok((OrderResponse)savedOrder);
         }

@@ -1,4 +1,5 @@
 namespace Domain.Features.Payments.Enums;
+
 public enum PaymentType : int
 {
     CreditCard = 1,

@@ -93,14 +93,14 @@ public static class WebhookEndpoint
     {
         if (string.IsNullOrEmpty(payment.ExternalReference))
         {
-            logger.LogWarning("Cannot process passenger ride payment - no externalReference in payment {PaymentId}", 
+            logger.LogWarning("Cannot process passenger ride payment - no externalReference in payment {PaymentId}",
                 payment.Id);
             return;
         }
 
         // For passenger rides, payment confirmation means we can create the order
         // The externalReference contains the order info
-        logger.LogInformation("Passenger ride payment confirmed: {PaymentId}, ExternalRef: {ExternalRef}", 
+        logger.LogInformation("Passenger ride payment confirmed: {PaymentId}, ExternalRef: {ExternalRef}",
             payment.Id, payment.ExternalReference);
 
         // TODO: Implement order creation logic here
