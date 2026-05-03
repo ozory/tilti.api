@@ -34,7 +34,17 @@ public static class WebhookEndpoint
                 case "PAYMENT_RECEIVED":
                 case "PAYMENT_CONFIRMED":
                     if (webhookEvent.Payment != null)
-                        await HandlePaymentConfirmed(webhookEvent.Payment, mediator, logger);
+                    {
+                        // Check if this is a passenger ride payment
+                        if (IsPassengerRidePayment(webhookEvent.Payment))
+                        {
+                            await HandlePassengerRidePayment(webhookEvent.Payment, mediator, logger);
+                        }
+                        else
+                        {
+                            await HandlePaymentConfirmed(webhookEvent.Payment, mediator, logger);
+                        }
+                    }
                     break;
 
                 case "PAYMENT_EXPIRED":
@@ -61,6 +71,42 @@ public static class WebhookEndpoint
             logger.LogError(ex, "Error processing Asaas webhook");
             return TypedResults.Problem("Error processing webhook", statusCode: 500);
         }
+    }
+
+    /// <summary>
+    /// Check if payment is for passenger ride (externalReference is not a subscription)
+    /// </summary>
+    private static bool IsPassengerRidePayment(PaymentWebhookData payment)
+    {
+        // If externalReference is present and there's no subscription, it's likely a passenger ride
+        return !string.IsNullOrEmpty(payment.ExternalReference) &&
+               string.IsNullOrEmpty(payment.Subscription);
+    }
+
+    /// <summary>
+    /// Handle passenger ride payment confirmation
+    /// </summary>
+    private static async Task HandlePassengerRidePayment(
+        PaymentWebhookData payment,
+        IMediator mediator,
+        ILogger logger)
+    {
+        if (string.IsNullOrEmpty(payment.ExternalReference))
+        {
+            logger.LogWarning("Cannot process passenger ride payment - no externalReference in payment {PaymentId}", 
+                payment.Id);
+            return;
+        }
+
+        // For passenger rides, payment confirmation means we can create the order
+        // The externalReference contains the order info
+        logger.LogInformation("Passenger ride payment confirmed: {PaymentId}, ExternalRef: {ExternalRef}", 
+            payment.Id, payment.ExternalReference);
+
+        // TODO: Implement order creation logic here
+        // This depends on how you want to handle the flow:
+        // Option 1: Create order in webhook (if you have all order details)
+        // Option 2: Set a flag and let frontend poll/retry order creation
     }
 
     /// <summary>

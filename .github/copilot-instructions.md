@@ -140,3 +140,9 @@ public class GetOrderByIdQueryHandler : IQueryHandler<GetOrderByIdQuery, OrderRe
 - Manter consistência com as implementações já existentes
 - Utilizar injeção de dependência via construtor
 - Seguir as convenções de código do projeto (naming, comments, etc)
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan:
+specs/001-passenger-payment-flow/plan.md
+<!-- SPECKIT END -->

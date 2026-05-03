@@ -1,6 +1,7 @@
 using Application.Shared.Abstractions;
 using Domain.Abstractions;
 using Domain.Features.Orders.Repository;
+using Domain.Features.Payments.Repository;
 using Domain.Features.Plans.Repository;
 using Domain.Features.Subscriptions.Repository;
 using Domain.Features.Users.Repository;
@@ -17,6 +18,7 @@ public sealed class UnitOfWork : IUnitOfWork
     private readonly IRateRepository _rateRepository;
     private readonly IOrderMessageRepository _messageRepository;
     private readonly ITrackingRepository _trackingRepository;
+    private readonly IPaymentRepository _paymentRepository;
     private readonly TILTContext _context;
     private readonly IMediator _mediator;
 
@@ -29,7 +31,8 @@ public sealed class UnitOfWork : IUnitOfWork
         IPlanRepository planRepository,
         IRateRepository rateRepository,
         IOrderMessageRepository messageRepository,
-        ITrackingRepository trackingRepository)
+        ITrackingRepository trackingRepository,
+        IPaymentRepository paymentRepository)
     {
         this._context = context;
         this._mediator = mediator;
@@ -40,6 +43,7 @@ public sealed class UnitOfWork : IUnitOfWork
         this._rateRepository = rateRepository;
         this._messageRepository = messageRepository;
         this._trackingRepository = trackingRepository;
+        this._paymentRepository = paymentRepository;
     }
 
     public IUserRepository UserRepository { get { return _userRepository; } }
@@ -49,6 +53,7 @@ public sealed class UnitOfWork : IUnitOfWork
     public IRateRepository RateRepository { get { return _rateRepository; } }
     public IOrderMessageRepository OrderMessageRepository { get { return _messageRepository; } }
     public ITrackingRepository TrackingRepository { get { return _trackingRepository; } }
+    public IPaymentRepository PaymentRepository { get { return _paymentRepository; } }
 
     public async Task<bool> CommitAsync(CancellationToken cancellationToken)
     {

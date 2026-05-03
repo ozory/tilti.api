@@ -1,6 +1,7 @@
 using System.Reflection;
 using Domain.Abstractions;
 using Domain.Features.Orders.Entities;
+using Domain.Features.Payments.Entities;
 using Domain.Features.Plans.Entities;
 using Domain.Features.Subscriptions.Entities;
 using Domain.Features.Users.Entities;
@@ -21,6 +22,7 @@ public class TILTContext : DbContext
     public DbSet<RefreshTokens> RefreshTokens { get; set; }
     public DbSet<Rate> Rates { get; set; }
     public DbSet<Message> Messages { get; set; }
+    public DbSet<Payment> Payments { get; set; }  // NEW
 
     public TILTContext(DbContextOptions<TILTContext> options) : base(options)
     {

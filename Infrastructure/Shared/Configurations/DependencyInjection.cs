@@ -1,14 +1,17 @@
 using System.Globalization;
 using System.Reflection;
 using Application.Features.Users.Consumers;
+using Application.Features.Payments.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Orders.Repository;
+using Domain.Features.Payments.Repository;
 using Domain.Features.Plans.Repository;
 using Domain.Features.Subscriptions.Repository;
 using Domain.Features.Users.Repository;
 using Domain.Shared.Abstractions;
 using Infrastructure.Cache;
 using Infrastructure.Data.Postgreesql.Features.Orders.Repository;
+using Infrastructure.Data.Postgreesql.Features.Payments.Repository;
 using Infrastructure.Data.Postgreesql.Features.Plans.Repository;
 using Infrastructure.Data.Postgreesql.Features.Security.Repository;
 using Infrastructure.Data.Postgreesql.Features.Subscriptions.Repository;
@@ -73,6 +76,8 @@ public static class DependencyInjection
         services.AddSingleton<IPaymentServices, PaymentServices>();
         services.AddSingleton<IEmailService, EmailServices>();
         services.AddScoped<IDriverPaymentService, DriverPaymentService>();
+        services.AddScoped<IPassengerPaymentService, PassengerPaymentService>();
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
 
         return services;
     }

@@ -56,6 +56,10 @@ public class Order : Entity
 
     public OrderType Type { get; protected set; } = OrderType.Standard;
 
+    public string? PaymentId { get; protected set; } = null;  // Asaas payment ID
+
+    public void SetPaymentId(string? paymentId) => PaymentId = paymentId;
+
     public string? Notes { get; protected set; } = null;
 
     public string? CancelDescription { get; protected set; } = null;

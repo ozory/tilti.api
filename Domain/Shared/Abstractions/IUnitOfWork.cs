@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain.Abstractions;
 using Domain.Features.Orders.Repository;
+using Domain.Features.Payments.Repository;
 using Domain.Features.Plans.Repository;
 using Domain.Features.Subscriptions.Repository;
 using Domain.Features.Users.Repository;
@@ -19,6 +20,7 @@ public interface IUnitOfWork
     ISubscriptionRepository SubscriptionRepository { get; }
     IOrderMessageRepository OrderMessageRepository { get; }
     ITrackingRepository TrackingRepository { get; }
+    IPaymentRepository PaymentRepository { get; }
 
     Task<bool> CommitAsync(CancellationToken cancellationToken);
 }

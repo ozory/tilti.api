@@ -30,9 +30,11 @@ O projeto segue separacao por camadas:
 
 Padroes usados:
 
-- `Command/Query` com mediator interno
+- **CQRS** com `ICommandHandler<TCommand, TResponse>` e `IQueryHandler<TQuery, TResponse>` (sem MediatR)
 - `UnitOfWork` + repositorios
 - Eventos de dominio e consumo assíncrono (ex.: notificacoes por fila)
+- **FluentResults** para padronizacao de retornos
+- **FluentValidation** para validacao de Commands/Queries
 
 ## Stack tecnica
 

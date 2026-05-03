@@ -74,6 +74,7 @@ app.MapSecurityEndpoint();
 app.MapPlansEndpoint();
 app.MapSubscriptionsEndpoint();
 app.MapOrdersEndpoint();
+app.MapPaymentsEndpoint();
 app.MapWebhookEndpoints();
 
 app.Run();

@@ -28,6 +28,13 @@ public class Payment : Entity
     public DateTime? ApprovedAt { get; protected set; }
     public DateTime? CancelledAt { get; protected set; }
 
+    public long? OrderId { get; protected set; }  // Links payment to order
+
+    public void SetOrderId(long? orderId) => OrderId = orderId;
+    public string? AsaasPaymentId { get; protected set; }  // Asaas payment ID
+    public string? PixQrCode { get; protected set; }  // PIX QR code
+    public string? PixLink { get; protected set; }  // PIX link for frontend
+
     #endregion
 
     #region CONSTRUCTORS

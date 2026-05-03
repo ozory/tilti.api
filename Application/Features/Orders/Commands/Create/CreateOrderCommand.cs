@@ -23,7 +23,8 @@ public sealed record CreateOrderCommand
 
     decimal Amount,
     int DistanceInKM,
-    int DurationInSeconds
+    int DurationInSeconds,
+    string AsaasPaymentId  // NEW - Required for payment validation
 
 ) : ICommand<Result<OrderResponse>>;
 
