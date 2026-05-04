@@ -19,7 +19,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("tilt")
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
@@ -145,6 +145,9 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .HasColumnName("Notes")
                         .HasColumnOrder(12);
 
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("text");
+
                     b.Property<Point>("Point")
                         .IsRequired()
                         .HasColumnType("geography(POINT, 4326)")
@@ -158,12 +161,12 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.Property<DateTime?>("ScheduleTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<ushort>("Status")
+                    b.Property<int>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("Status")
                         .HasColumnOrder(3);
 
-                    b.Property<ushort>("Type")
+                    b.Property<int>("Type")
                         .HasColumnType("integer")
                         .HasColumnName("Type")
                         .HasColumnOrder(11);
@@ -333,6 +336,68 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.ToTable("Trackings", "tilt");
                 });
 
+            modelBuilder.Entity("Domain.Features.Payments.Entities.Payment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("AsaasPaymentId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid?>("Identifier")
+                        .HasColumnType("uuid");
+
+                    b.Property<long?>("OrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("PixLink")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PixQrCode")
+                        .HasColumnType("text");
+
+                    b.Property<long>("ReceiverId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("UpdatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Payments", "tilt");
+                });
+
             modelBuilder.Entity("Domain.Features.Plans.Entities.Plan", b =>
                 {
                     b.Property<long>("Id")
@@ -363,12 +428,11 @@ namespace Infrastructure.Data.Postgreesql.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("character varying(250)")
+                        .HasColumnType("text")
                         .HasColumnName("Name")
                         .HasColumnOrder(2);
 
-                    b.Property<ushort>("Status")
+                    b.Property<int>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("Status")
                         .HasColumnOrder(1);
@@ -395,16 +459,32 @@ namespace Infrastructure.Data.Postgreesql.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("AsaasPaymentId")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("AsaasPaymentId");
+
+                    b.Property<string>("AsaasPaymentLink")
+                        .HasColumnType("text")
+                        .HasColumnName("AsaasPaymentLink");
+
+                    b.Property<string>("AsaasSubscriptionId")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("AsaasSubscriptionId");
+
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("Created");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("CreatedBy")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("DueDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("DueDate");
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("PaidAt");
 
                     b.Property<string>("PaymentToken")
                         .HasMaxLength(1000)
@@ -414,10 +494,17 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.Property<long>("PlanId")
                         .HasColumnType("bigint");
 
-                    b.Property<ushort>("Status")
+                    b.Property<int>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("Status")
                         .HasColumnOrder(1);
+
+                    b.Property<int>("SubscriptionType")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("SubscriptionType")
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp")
@@ -448,6 +535,9 @@ namespace Infrastructure.Data.Postgreesql.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "Sequence-Users");
 
+                    b.Property<string>("AsaasWalletId")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp")
                         .HasColumnName("Created")
@@ -472,6 +562,9 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .HasColumnType("character varying(250)")
                         .HasColumnName("Email")
                         .HasColumnOrder(5);
+
+                    b.Property<bool>("IsDriver")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -505,7 +598,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .HasColumnName("Photo")
                         .HasColumnOrder(7);
 
-                    b.Property<ushort>("Status")
+                    b.Property<int>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("Status")
                         .HasColumnOrder(2);
@@ -608,7 +701,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                             b1.Property<long>("OrderId")
                                 .HasColumnType("bigint");
 
-                            b1.Property<int>("Id")
+                            b1.Property<int>("__synthesizedOrdinal")
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("integer");
 
@@ -645,7 +738,7 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                                 .IsRequired()
                                 .HasColumnType("text");
 
-                            b1.HasKey("OrderId", "Id");
+                            b1.HasKey("OrderId", "__synthesizedOrdinal");
 
                             b1.ToTable("Orders", "tilt");
 
@@ -717,6 +810,25 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .IsRequired();
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("Domain.Features.Payments.Entities.Payment", b =>
+                {
+                    b.HasOne("Domain.Features.Users.Entities.User", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Features.Users.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Features.Subscriptions.Entities.Subscription", b =>

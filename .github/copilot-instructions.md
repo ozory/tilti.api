@@ -1,5 +1,11 @@
 # GitHub Copilot Instructions
 
+## Nota: Unificação de Subscriptions
+- O projeto utiliza agora apenas a entidade `Subscription` unificada
+- A antiga `DriverSubscription` foi removida (spec 002-unify-subscriptions)
+- `Subscription` agora possui: SubscriptionType (Driver/Passenger), AsaasPaymentId, AsaasPaymentLink, AsaasSubscriptionId, PaidAt
+- Para criar subscription: use `CreateSubscriptionCommand` com parâmetro `SubscriptionType`
+
 ## Padrões de Desenvolvimento
 
 ### Estrutura de Pastas
@@ -144,5 +150,5 @@ public class GetOrderByIdQueryHandler : IQueryHandler<GetOrderByIdQuery, OrderRe
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan:
-specs/001-passenger-payment-flow/plan.md
+specs/002-unify-subscriptions/plan.md
 <!-- SPECKIT END -->

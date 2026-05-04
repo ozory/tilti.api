@@ -14,19 +14,19 @@ public class GetAllOrdersByPointQueryHandler : IQueryHandler<GetAllOrdersByPoint
 {
     private readonly IOrderRepository _repository;
     private readonly IRejectRepository _rejectionRepository;
-    private readonly IDriverSubscriptionRepository _driverSubscriptionRepository;
+    private readonly ISubscriptionRepository _subscriptionRepository;
     private readonly ILogger<GetAllOrdersByPointQueryHandler> _logger;
 
     public GetAllOrdersByPointQueryHandler(
         IOrderRepository repository,
         ILogger<GetAllOrdersByPointQueryHandler> logger,
         IRejectRepository rejectionRepository,
-        IDriverSubscriptionRepository driverSubscriptionRepository)
+        ISubscriptionRepository subscriptionRepository)
     {
         _repository = repository;
         _logger = logger;
         _rejectionRepository = rejectionRepository;
-        _driverSubscriptionRepository = driverSubscriptionRepository;
+        _subscriptionRepository = subscriptionRepository;
     }
 
     public async Task<Result<ImmutableList<OrderResponse>>> Handle(
@@ -38,7 +38,7 @@ public class GetAllOrdersByPointQueryHandler : IQueryHandler<GetAllOrdersByPoint
         if (request.DriverId.HasValue)
         {
             // Check if driver has active subscription
-            var hasActiveSubscription = await _driverSubscriptionRepository.HasActiveSubscription(request.DriverId!.Value);
+            var hasActiveSubscription = await _subscriptionRepository.HasActiveSubscription(request.DriverId!.Value);
             if (!hasActiveSubscription)
             {
                 _logger.LogWarning("Driver {DriverId} does not have an active subscription", request.DriverId);

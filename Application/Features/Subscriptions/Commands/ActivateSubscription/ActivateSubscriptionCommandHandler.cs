@@ -6,41 +6,41 @@ using Domain.Subscriptions.Enums;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Features.Subscriptions.Commands.ActivateDriverSubscription;
+namespace Application.Features.Subscriptions.Commands.ActivateSubscription;
 
 /// <summary>
-/// Handler for ActivateDriverSubscriptionCommand.
+/// Handler for ActivateSubscriptionCommand.
 /// Ativado pelo webhook do Asaas quando um pagamento PIX é confirmado.
 /// Estratégia de busca (em ordem de prioridade):
 ///   1. subscriptionId > 0  → busca direta pelo ID interno (vindo do externalReference do webhook)
 ///   2. asaasPaymentId      → fallback, busca pelo ID do pagamento Asaas
 /// </summary>
-public class ActivateDriverSubscriptionCommandHandler : ICommandHandler<ActivateDriverSubscriptionCommand, bool>
+public class ActivateSubscriptionCommandHandler : ICommandHandler<ActivateSubscriptionCommand, bool>
 {
-    private readonly IDriverSubscriptionRepository _repository;
+    private readonly ISubscriptionRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<ActivateDriverSubscriptionCommandHandler> _logger;
-    private readonly string className = nameof(ActivateDriverSubscriptionCommandHandler);
+    private readonly ILogger<ActivateSubscriptionCommandHandler> _logger;
+    private readonly string className = nameof(ActivateSubscriptionCommandHandler);
 
-    public ActivateDriverSubscriptionCommandHandler(
-        IDriverSubscriptionRepository repository,
+    public ActivateSubscriptionCommandHandler(
+        ISubscriptionRepository repository,
         IUnitOfWork unitOfWork,
-        ILogger<ActivateDriverSubscriptionCommandHandler> logger)
+        ILogger<ActivateSubscriptionCommandHandler> logger)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
-    public async Task<Result<bool>> Handle(ActivateDriverSubscriptionCommand request, CancellationToken cancellationToken)
+    public async Task<Result<bool>> Handle(ActivateSubscriptionCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation(
-            "[{className}] Activating driver subscription — subscriptionId={SubscriptionId}, asaasPaymentId={PaymentId}",
+            "[{className}] Activating subscription — subscriptionId={SubscriptionId}, asaasPaymentId={PaymentId}",
             className, request.subscriptionId, request.asaasPaymentId);
 
         try
         {
-            DriverSubscription? subscription;
+            Subscription? subscription;
 
             // Prioridade 1: ID interno da assinatura (externalReference do webhook Asaas)
             if (request.subscriptionId > 0)
@@ -79,7 +79,7 @@ public class ActivateDriverSubscriptionCommandHandler : ICommandHandler<Activate
             await _unitOfWork.CommitAsync(cancellationToken);
 
             _logger.LogInformation(
-                "[{className}] Driver subscription activated successfully — Id={Id}, DueDate={DueDate}",
+                "[{className}] Subscription activated successfully — Id={Id}, DueDate={DueDate}",
                 className, subscription.Id, subscription.DueDate);
 
             return Result.Ok(true);

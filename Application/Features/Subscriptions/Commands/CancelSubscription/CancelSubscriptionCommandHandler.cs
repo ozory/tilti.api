@@ -5,31 +5,31 @@ using Domain.Subscriptions.Enums;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Features.Subscriptions.Commands.CancelDriverSubscription;
+namespace Application.Features.Subscriptions.Commands.CancelSubscription;
 
 /// <summary>
-/// Handler for CancelDriverSubscriptionCommand
+/// Handler for CancelSubscriptionCommand
 /// </summary>
-public class CancelDriverSubscriptionCommandHandler : ICommandHandler<CancelDriverSubscriptionCommand, bool>
+public class CancelSubscriptionCommandHandler : ICommandHandler<CancelSubscriptionCommand, bool>
 {
-    private readonly IDriverSubscriptionRepository _repository;
+    private readonly ISubscriptionRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<CancelDriverSubscriptionCommandHandler> _logger;
-    private readonly string className = nameof(CancelDriverSubscriptionCommandHandler);
+    private readonly ILogger<CancelSubscriptionCommandHandler> _logger;
+    private readonly string className = nameof(CancelSubscriptionCommandHandler);
 
-    public CancelDriverSubscriptionCommandHandler(
-        IDriverSubscriptionRepository repository,
+    public CancelSubscriptionCommandHandler(
+        ISubscriptionRepository repository,
         IUnitOfWork unitOfWork,
-        ILogger<CancelDriverSubscriptionCommandHandler> logger)
+        ILogger<CancelSubscriptionCommandHandler> logger)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
-    public async Task<Result<bool>> Handle(CancelDriverSubscriptionCommand request, CancellationToken cancellationToken)
+    public async Task<Result<bool>> Handle(CancelSubscriptionCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("[{className}] Canceling driver subscription: {SubscriptionId}", className, request.subscriptionId);
+        _logger.LogInformation("[{className}] Canceling subscription: {SubscriptionId}", className, request.subscriptionId);
 
         try
         {
@@ -51,7 +51,7 @@ public class CancelDriverSubscriptionCommandHandler : ICommandHandler<CancelDriv
             await _repository.UpdateAsync(subscription);
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            _logger.LogInformation("[{className}] Driver subscription canceled: {SubscriptionId}. Reason: {Reason}",
+            _logger.LogInformation("[{className}] Subscription canceled: {SubscriptionId}. Reason: {Reason}",
                 className, request.subscriptionId, request.reason ?? "Not specified");
 
             return Result.Ok(true);

@@ -1,5 +1,6 @@
 using Domain.Shared.Abstractions;
 using FluentResults;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Abstractions;
 
@@ -10,6 +11,7 @@ public abstract class Entity
     public long CreatedBy { get; protected set; }
     public DateTime UpdatedAt { get; protected set; }
     public long? UpdatedBy { get; protected set; }
+    [NotMapped]
     public virtual List<IDomainEvent> DomainEvents { get; protected set; } = new();
 
     public virtual void SetCreated(DateTime? dateTime)

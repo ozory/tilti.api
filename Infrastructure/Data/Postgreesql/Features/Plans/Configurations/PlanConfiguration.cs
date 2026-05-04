@@ -27,7 +27,11 @@ public class PlanConfiguration : IEntityTypeConfiguration<Plan>
 
         builder.Property(x => x.Name)
             .HasColumnOrder(2)
-            .HasColumnName("Name");
+            .HasColumnName("Name")
+            .HasConversion(
+                c => c.Value,
+                c => new Name(c!))
+            .IsRequired(true);
 
         builder.Property(x => x.Description)
             .HasColumnOrder(3)

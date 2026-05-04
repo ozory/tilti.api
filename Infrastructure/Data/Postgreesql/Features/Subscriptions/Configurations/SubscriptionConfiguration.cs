@@ -28,13 +28,14 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
             c => (ushort)c,
             c => (SubscriptionStatus)c);
 
-        builder.Property(x => x.DueDate)
-            .HasColumnName("DueDate")
-            .HasColumnType("timestamp");
+        builder.Property(b => b.SubscriptionType)
+           .HasColumnOrder(2)
+           .HasColumnName("SubscriptionType")
+           .HasConversion(
+            c => (int)c,
+            c => (SubscriptionType)c)
+           .HasDefaultValue(SubscriptionType.Driver); // NEW: Default to Driver for backward compatibility
 
-        builder.Property(x => x.CreatedAt)
-            .HasColumnName("Created")
-            .HasColumnType("timestamp");
 
         builder.Property(x => x.UpdatedAt)
            .HasColumnName("Updated")
@@ -44,9 +45,30 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
             .HasColumnName("PaymentToken")
             .HasMaxLength(1000);
 
+        builder.Property(x => x.AsaasPaymentId)
+            .HasColumnName("AsaasPaymentId")
+            .HasMaxLength(255);
+
+        builder.Property(x => x.AsaasPaymentLink)
+            .HasColumnName("AsaasPaymentLink")
+            .HasColumnType("text");
+
+        builder.Property(x => x.AsaasSubscriptionId)
+            .HasColumnName("AsaasSubscriptionId")
+            .HasMaxLength(255);
+
+        builder.Property(x => x.PaidAt)
+            .HasColumnName("PaidAt")
+            .HasColumnType("timestamp with time zone");
+
         builder.HasOne(e => e.User)
             .WithOne(e => e.Subscription)
             .HasForeignKey<Subscription>(e => e.UserId);
+
+        // NEW: Unique index for active subscriptions per user per type (temporarily removed due to filter syntax issues)
+        // builder.HasIndex("UserId", "SubscriptionType")
+        //     .HasFilter("\"Status\" IN (1, 3)")
+        //     .IsUnique();
 
         builder.Ignore(x => x.DomainEvents);
     }

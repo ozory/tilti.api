@@ -7,5 +7,6 @@ public enum SubscriptionStatus : ushort
     PendingApproval = 3,
     Inactive = 4,
     Canceled = 5,
-    Expired = 6
+    Expired = 6,
+    PaymentFailed = 7
 }

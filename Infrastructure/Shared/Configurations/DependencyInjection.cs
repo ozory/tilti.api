@@ -46,7 +46,6 @@ public static class DependencyInjection
         services.AddScoped<IRateRepository, RateRepository>();
         services.AddScoped<IPlanRepository, PlanRepository>();
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
-        services.AddScoped<IDriverSubscriptionRepository, DriverSubscriptionRepository>();
         services.AddScoped<IOrderRepository, OrdersRepository>();
         services.AddScoped<ISecurityRepository, SecurityRepository>();
         services.AddScoped<IRejectRepository, RejectionRepository>();
@@ -75,7 +74,7 @@ public static class DependencyInjection
         services.AddScoped<IMessageRepository, MessageRepository>();
         services.AddSingleton<IPaymentServices, PaymentServices>();
         services.AddSingleton<IEmailService, EmailServices>();
-        services.AddScoped<IDriverPaymentService, DriverPaymentService>();
+        services.AddScoped<ISubscriptionPaymentService, DriverPaymentService>();
         services.AddScoped<IPassengerPaymentService, PassengerPaymentService>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
 

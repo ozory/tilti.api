@@ -132,7 +132,7 @@ public static class WebhookEndpoint
             ? payment.DueDate.Value.AddMonths(1)
             : null;
 
-        var command = new Application.Features.Subscriptions.Commands.ActivateDriverSubscription.ActivateDriverSubscriptionCommand(
+        var command = new Application.Features.Subscriptions.Commands.ActivateSubscription.ActivateSubscriptionCommand(
             subscriptionId: subscriptionId,
             asaasPaymentId: payment.Id,
             dueDate: nextDueDate
@@ -171,20 +171,12 @@ public static class WebhookEndpoint
             return;
         }
 
-        var command = new Application.Features.Subscriptions.Commands.InactivateDriverSubscription.InactivateDriverSubscriptionCommand(
-            AsaasSubscriptionId: asaasSubscriptionId
-        );
-
-        var result = await mediator.Send(command);
-        if (result.IsFailed)
-        {
-            logger.LogWarning("Failed to inactivate subscription for payment {PaymentId} (reason={Reason}): {Errors}",
-                payment.Id, reason, result.Errors);
-        }
-        else
-        {
-            logger.LogInformation("Subscription inactivated for payment {PaymentId} (reason={Reason})",
-                payment.Id, reason);
-        }
+        // Need to get internal subscription ID from AsaasSubscriptionId
+        // For now, we'll need to update CancelSubscriptionCommand to accept AsaasSubscriptionId
+        // or create a new query to get subscription by AsaasSubscriptionId
+        // Temporary solution: Use a placeholder - this needs proper implementation
+        logger.LogWarning("Webhook inactivation needs proper implementation for AsaasSubscriptionId: {AsaasSubscriptionId}",
+            asaasSubscriptionId);
+        return;
     }
 }

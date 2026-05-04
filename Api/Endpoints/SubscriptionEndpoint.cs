@@ -1,11 +1,11 @@
-using Application.Features.Subscriptions.Commands.CreateDriverSubscription;
-using Application.Features.Subscriptions.Commands.ActivateDriverSubscription;
-using Application.Features.Subscriptions.Commands.CancelDriverSubscription;
+using Application.Features.Subscriptions.Commands.CreateSubscription;
+using Application.Features.Subscriptions.Commands.ActivateSubscription;
+using Application.Features.Subscriptions.Commands.CancelSubscription;
 using Application.Features.Subscriptions.Commands.Update;
 using Application.Features.Subscriptions.Queries.GetAllSubscriptions;
 using Application.Features.Subscriptions.Queries.GetMemberById;
 using Application.Features.Subscriptions.Queries.GetSubscriptionByUser;
-using Application.Features.Subscriptions.Queries.GetDriverSubscription;
+using Application.Features.Subscriptions.Queries.GetSubscription;
 using Application.Shared.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,15 +23,15 @@ namespace Api.Endpoints
             subs.MapGet("/user/{userId}", GetSubscriptionByUser).WithOpenApi();
             subs.MapPut("/", UpdateSubscription).WithOpenApi();
 
-            // Driver subscription endpoints
-            subs.MapPost("/driver", CreateDriverSubscription).WithOpenApi();
-            subs.MapGet("/driver/{userId}", GetDriverSubscription).WithOpenApi();
-            subs.MapPost("/driver/activate", ActivateDriverSubscription).WithOpenApi();
-            subs.MapPost("/driver/cancel", CancelDriverSubscription).WithOpenApi();
+            // Subscription endpoints (unified for Driver and Passenger)
+            subs.MapPost("/create", CreateSubscription).WithOpenApi();
+            subs.MapGet("/get/{userId}", GetSubscription).WithOpenApi();
+            subs.MapPost("/activate", ActivateSubscription).WithOpenApi();
+            subs.MapPost("/cancel", CancelSubscription).WithOpenApi();
         }
 
-        private static async Task<IResult> CreateDriverSubscription(
-        [FromBody] CreateDriverSubscriptionCommand command,
+        private static async Task<IResult> CreateSubscription(
+        [FromBody] CreateSubscriptionCommand command,
         [FromServices] IMediator mediator)
         {
             try
@@ -46,13 +46,13 @@ namespace Api.Endpoints
             }
         }
 
-        private static async Task<IResult> GetDriverSubscription(
+        private static async Task<IResult> GetSubscription(
         [FromRoute] long userId,
         [FromServices] IMediator mediator)
         {
             try
             {
-                var result = await mediator.Send(new GetDriverSubscriptionQuery(userId));
+                var result = await mediator.Send(new GetSubscriptionQuery(userId));
                 if (result.IsFailed) return TypedResults.BadRequest(result.Errors);
                 return TypedResults.Ok(result.Value);
             }
@@ -62,8 +62,8 @@ namespace Api.Endpoints
             }
         }
 
-        private static async Task<IResult> ActivateDriverSubscription(
-        [FromBody] ActivateDriverSubscriptionCommand command,
+        private static async Task<IResult> ActivateSubscription(
+        [FromBody] ActivateSubscriptionCommand command,
         [FromServices] IMediator mediator)
         {
             try
@@ -78,8 +78,8 @@ namespace Api.Endpoints
             }
         }
 
-        private static async Task<IResult> CancelDriverSubscription(
-        [FromBody] CancelDriverSubscriptionCommand command,
+        private static async Task<IResult> CancelSubscription(
+        [FromBody] CancelSubscriptionCommand command,
         [FromServices] IMediator mediator)
         {
             try

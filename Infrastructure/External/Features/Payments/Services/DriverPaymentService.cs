@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Application.Shared.Abstractions;
 using Domain.Features.Subscriptions.Entities;
+using Domain.Subscriptions.Enums;
 using Domain.Shared.Abstractions;
 using Infrastructure.External.Features.Payments.Contracts;
 using Microsoft.Extensions.Configuration;
@@ -11,9 +12,9 @@ using RestSharp;
 namespace Infrastructure.External.Features.Payments.Services;
 
 /// <summary>
-/// Service for driver payment operations with Asaas
+/// Service for subscription payment operations with Asaas (unified for Driver and Passenger)
 /// </summary>
-public class DriverPaymentService : IDriverPaymentService
+public class DriverPaymentService : ISubscriptionPaymentService
 {
     private readonly ILogger<DriverPaymentService> _logger;
     private readonly IConfiguration _configuration;
@@ -36,21 +37,21 @@ public class DriverPaymentService : IDriverPaymentService
         _apiToken = configuration.GetSection("Configurations:PaymentToken").Value!;
     }
 
-    public async Task<string> CreatePaymentLinkAsync(DriverSubscription driverSubscription, CancellationToken cancellationToken = default)
+    public async Task<string> CreatePaymentLinkAsync(Subscription subscription, SubscriptionType subscriptionType, CancellationToken cancellationToken = default)
     {
         var client = new RestClient(new RestClientOptions(_baseUrl));
         var request = new RestRequest("v3/paymentLinks", Method.Post);
 
         var paymentLinkRequest = new PaymentLinkRequest(
-            name: $"Assinatura {driverSubscription.Plan.Name.Value}",
+            name: $"Assinatura {subscription.Plan.Name.Value}",
             billingType: "PIX",
             chargeType: "RECURRENT",
-            value: driverSubscription.Plan.Amount.Value,
-            description: $"Assinatura Plano Motorista - {driverSubscription.Plan.Name.Value}",
+            value: subscription.Plan.Amount.Value,
+            description: $"Assinatura Plano {GetSubscriptionTypeDescription(subscriptionType)} - {subscription.Plan.Name.Value}",
             dueDate: DateTime.Now.AddDays(3),
             installmentCount: 1,
             active: true,
-            externalReference: driverSubscription.Id.ToString()
+            externalReference: subscription.Id.ToString()
         );
 
         var jsonBody = JsonSerializer.Serialize(paymentLinkRequest, SerializationOpt);
@@ -74,21 +75,21 @@ public class DriverPaymentService : IDriverPaymentService
         return paymentLinkResponse.url;
     }
 
-    public async Task<(string subscriptionId, string paymentLink)> CreateSubscriptionAsync(DriverSubscription driverSubscription, CancellationToken cancellationToken = default)
+    public async Task<(string subscriptionId, string paymentLink)> CreateSubscriptionAsync(Subscription subscription, SubscriptionType subscriptionType, CancellationToken cancellationToken = default)
     {
         var client = new RestClient(new RestClientOptions(_baseUrl));
         var request = new RestRequest("v3/subscriptions", Method.Post);
 
         var subscriptionRequest = new SubscriptionRequest(
-            customer: driverSubscription.User.PaymentUserIdentifier ?? throw new Exception("User payment identifier not found"),
+            customer: subscription.User.PaymentUserIdentifier ?? throw new Exception("User payment identifier not found"),
             billingType: "PIX",
-            value: driverSubscription.Plan.Amount.Value,
-            nextDueDate: DateTime.Now.AddDays(3).ToString("yyyy-MM-dd"),
+            value: subscription.Plan.Amount.Value,
+            nextDueDate: DateTime.Now.ToString("yyyy-MM-dd"),
             cycle: "MONTHLY",
-            description: $"Assinatura Plano Motorista - {driverSubscription.Plan.Name.Value}",
+            description: $"Assinatura Plano {GetSubscriptionTypeDescription(subscriptionType)} - {subscription.Plan.Name.Value}",
             endDate: null,
             maxPayments: null,
-            externalReference: driverSubscription.Id.ToString()
+            externalReference: subscription.Id.ToString()
         );
 
         var jsonBody = JsonSerializer.Serialize(subscriptionRequest, SerializationOpt);
@@ -110,6 +111,16 @@ public class DriverPaymentService : IDriverPaymentService
             ?? throw new Exception("Failed to deserialize subscription response");
 
         return (subscriptionResponse.id, subscriptionResponse.paymentLink ?? "");
+    }
+
+    private static string GetSubscriptionTypeDescription(SubscriptionType subscriptionType)
+    {
+        return subscriptionType switch
+        {
+            SubscriptionType.Driver => "Motorista",
+            SubscriptionType.Passenger => "Passageiro",
+            _ => "Desconhecido"
+        };
     }
 
     public async Task<bool> CheckPaymentStatusAsync(string asaasPaymentId, CancellationToken cancellationToken = default)
