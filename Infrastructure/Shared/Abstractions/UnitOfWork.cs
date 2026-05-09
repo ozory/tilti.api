@@ -19,6 +19,7 @@ public sealed class UnitOfWork : IUnitOfWork
     private readonly IOrderMessageRepository _messageRepository;
     private readonly ITrackingRepository _trackingRepository;
     private readonly IPaymentRepository _paymentRepository;
+    private readonly IDriverTransferRepository _driverTransferRepository;
     private readonly TILTContext _context;
     private readonly IMediator _mediator;
 
@@ -32,7 +33,8 @@ public sealed class UnitOfWork : IUnitOfWork
         IRateRepository rateRepository,
         IOrderMessageRepository messageRepository,
         ITrackingRepository trackingRepository,
-        IPaymentRepository paymentRepository)
+        IPaymentRepository paymentRepository,
+        IDriverTransferRepository driverTransferRepository)
     {
         this._context = context;
         this._mediator = mediator;
@@ -44,6 +46,7 @@ public sealed class UnitOfWork : IUnitOfWork
         this._messageRepository = messageRepository;
         this._trackingRepository = trackingRepository;
         this._paymentRepository = paymentRepository;
+        this._driverTransferRepository = driverTransferRepository;
     }
 
     public IUserRepository UserRepository { get { return _userRepository; } }
@@ -54,6 +57,7 @@ public sealed class UnitOfWork : IUnitOfWork
     public IOrderMessageRepository OrderMessageRepository { get { return _messageRepository; } }
     public ITrackingRepository TrackingRepository { get { return _trackingRepository; } }
     public IPaymentRepository PaymentRepository { get { return _paymentRepository; } }
+    public IDriverTransferRepository DriverTransferRepository { get { return _driverTransferRepository; } }
 
     public async Task<bool> CommitAsync(CancellationToken cancellationToken)
     {

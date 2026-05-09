@@ -76,7 +76,9 @@ public static class DependencyInjection
         services.AddSingleton<IEmailService, EmailServices>();
         services.AddScoped<ISubscriptionPaymentService, DriverPaymentService>();
         services.AddScoped<IPassengerPaymentService, PassengerPaymentService>();
+        services.AddScoped<IDriverTransferService, DriverTransferService>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
+        services.AddScoped<IDriverTransferRepository, DriverTransferRepository>();
 
         return services;
     }

@@ -22,6 +22,12 @@ public class PaymentRepository : IPaymentRepository
             .FirstOrDefaultAsync(p => p.AsaasPaymentId == asaasPaymentId);
     }
 
+    public async Task<Payment?> GetByOrderIdAsync(long orderId)
+    {
+        return await _context.Payments
+            .FirstOrDefaultAsync(p => p.OrderId == orderId);
+    }
+
     public async Task<Payment> SaveAsync(Payment payment)
     {
         if (payment.Id == 0)

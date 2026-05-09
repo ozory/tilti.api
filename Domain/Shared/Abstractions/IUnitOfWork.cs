@@ -21,6 +21,7 @@ public interface IUnitOfWork
     IOrderMessageRepository OrderMessageRepository { get; }
     ITrackingRepository TrackingRepository { get; }
     IPaymentRepository PaymentRepository { get; }
+    IDriverTransferRepository DriverTransferRepository { get; }
 
     Task<bool> CommitAsync(CancellationToken cancellationToken);
 }

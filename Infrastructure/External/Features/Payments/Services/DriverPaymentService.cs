@@ -202,4 +202,30 @@ public class DriverPaymentService : ISubscriptionPaymentService
 
         return walletResponse.id;
     }
+
+    /// <summary>
+    /// Cancel subscription in Asaas
+    /// </summary>
+    public async Task<bool> CancelSubscriptionAsync(string asaasSubscriptionId, CancellationToken cancellationToken = default)
+    {
+        var client = new RestClient(new RestClientOptions(_baseUrl));
+        var request = new RestRequest($"v3/subscriptions/{asaasSubscriptionId}", Method.Delete);
+
+        request.AddHeader("access_token", _apiToken);
+        request.AddHeader("accept", "application/json");
+
+        var response = await client.ExecuteAsync(request, cancellationToken);
+
+        if (!response.IsSuccessful)
+        {
+            _logger.LogError("[{ClassName}] Failed to cancel subscription {SubscriptionId}: {Error}",
+                nameof(DriverPaymentService), asaasSubscriptionId, response.Content);
+            return false;
+        }
+
+        _logger.LogInformation("[{ClassName}] Subscription {SubscriptionId} canceled successfully in Asaas",
+            nameof(DriverPaymentService), asaasSubscriptionId);
+
+        return true;
+    }
 }

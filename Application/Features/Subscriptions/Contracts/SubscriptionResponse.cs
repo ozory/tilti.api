@@ -17,6 +17,7 @@ public record SubscriptionResponse
     DateTime DueDate,
     string? PaymentLink,
     string? AsaasPaymentId,
+    string? AsaasSubscriptionId,
     DateTime? PaidAt,
     PlanResponse Plan,
     UserResponse User
@@ -32,6 +33,7 @@ public record SubscriptionResponse
             subscription.DueDate,
             subscription.AsaasPaymentLink,
             subscription.AsaasPaymentId,
+            subscription.AsaasSubscriptionId,
             subscription.PaidAt,
             (PlanResponse)subscription.Plan,
             (UserResponse)subscription.User

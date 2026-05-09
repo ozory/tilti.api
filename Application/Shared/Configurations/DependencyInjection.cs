@@ -43,6 +43,7 @@ public static class DependencyInjection
 
         services.AddHostedService<UserCreatedConsumer>();
         services.AddHostedService<CloseExpiredOrdersConsumer>();
+        services.AddHostedService<OrderFinishedConsumer>();
 
         return services;
     }

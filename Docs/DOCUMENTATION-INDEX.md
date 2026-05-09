@@ -265,6 +265,16 @@ Após implementar com esta documentação, você deve ter:
 
 ---
 
+## 📋 Fluxos Específicos
+
+### Subscription Cancellation Flow
+- **Arquivo:** `SUBSCRIPTION-CANCELLATION-FLOW.md`
+- **Conteúdo:** Documentação completa do fluxo de cancelamento de assinatura
+- **Componentes:** CancelSubscriptionCommand, Webhook integration, Asaas API integration
+- **Para:** Desenvolvedores, Agentes IA
+
+---
+
 **Próximas etapas:**
 1. Salve este arquivo para referência
 2. Compartilhe com seu time

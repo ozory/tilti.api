@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data.Postgreesql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Data.Postgreesql.Migrations
 {
     [DbContext(typeof(TILTContext))]
-    partial class TILTContextModelSnapshot : ModelSnapshot
+    [Migration("20260509164810_CreateDriverTransfersTable")]
+    partial class CreateDriverTransfersTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -419,23 +422,16 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "Sequence-Payments");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric")
-                        .HasColumnName("Amount");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime?>("ApprovedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("ApprovedAt");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("AsaasPaymentId")
-                        .HasColumnType("text")
-                        .HasColumnName("AsaasPaymentId");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("CancelledAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("CancelledAt");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -447,27 +443,22 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<long?>("OrderId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("OrderId");
+                        .HasColumnType("bigint");
 
                     b.Property<string>("PixLink")
-                        .HasColumnType("text")
-                        .HasColumnName("PixLink");
+                        .HasColumnType("text");
 
                     b.Property<string>("PixQrCode")
-                        .HasColumnType("text")
-                        .HasColumnName("PixQrCode");
+                        .HasColumnType("text");
 
                     b.Property<long>("ReceiverId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("Status");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
-                        .HasColumnName("Type");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -479,10 +470,6 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AsaasPaymentId");
-
-                    b.HasIndex("OrderId");
 
                     b.HasIndex("ReceiverId");
 

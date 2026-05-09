@@ -84,3 +84,26 @@ public record WalletRequest(
 /// Response from Asaas wallet creation
 /// </summary>
 public record WalletResponse(string id, string name, string email, string status);
+
+/// <summary>
+/// Request to transfer funds in Asaas
+/// </summary>
+public record TransferRequest(
+    string value,
+    string? pixTransferId,
+    string? walletId,
+    string? externalReference
+);
+
+/// <summary>
+/// Response from Asaas transfer creation
+/// </summary>
+public record TransferResponse(
+    string id,
+    string status,
+    decimal value,
+    string? pixTransferId,
+    string? walletId,
+    DateTime dateCreated,
+    string? externalReference
+);

@@ -14,16 +14,19 @@ public class CancelSubscriptionCommandHandler : ICommandHandler<CancelSubscripti
 {
     private readonly ISubscriptionRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ISubscriptionPaymentService _paymentService;
     private readonly ILogger<CancelSubscriptionCommandHandler> _logger;
     private readonly string className = nameof(CancelSubscriptionCommandHandler);
 
     public CancelSubscriptionCommandHandler(
         ISubscriptionRepository repository,
         IUnitOfWork unitOfWork,
+        ISubscriptionPaymentService paymentService,
         ILogger<CancelSubscriptionCommandHandler> logger)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
+        _paymentService = paymentService;
         _logger = logger;
     }
 
@@ -45,7 +48,19 @@ public class CancelSubscriptionCommandHandler : ICommandHandler<CancelSubscripti
                 return Result.Fail("Cannot cancel subscription in current status");
             }
 
-            // Cancel subscription
+            // Cancel subscription in Asaas if it has an AsaasSubscriptionId
+            if (!string.IsNullOrEmpty(subscription.AsaasSubscriptionId))
+            {
+                var asaasCanceled = await _paymentService.CancelSubscriptionAsync(subscription.AsaasSubscriptionId, cancellationToken);
+                if (!asaasCanceled)
+                {
+                    _logger.LogWarning("[{className}] Failed to cancel subscription in Asaas: {AsaasSubscriptionId}",
+                        className, subscription.AsaasSubscriptionId);
+                    // Continue with local cancellation even if Asaas fails
+                }
+            }
+
+            // Cancel subscription locally
             subscription.SetStatus(SubscriptionStatus.Canceled);
 
             await _repository.UpdateAsync(subscription);

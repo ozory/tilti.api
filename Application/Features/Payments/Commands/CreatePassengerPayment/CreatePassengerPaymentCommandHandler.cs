@@ -1,7 +1,10 @@
 using Application.Features.Orders.Contracts;
 using Application.Features.Payments.Contracts;
 using Application.Shared.Abstractions;
+using Domain.Features.Payments.Entities;
 using Domain.Features.Users.Repository;
+using Domain.Shared.Abstractions;
+using Domain.ValueObjects;
 using FluentResults;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
@@ -15,6 +18,7 @@ public class CreatePassengerPaymentCommandHandler : ICommandHandler<CreatePassen
 {
     private readonly IPassengerPaymentService _paymentService;
     private readonly IUserRepository _userRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<CreatePassengerPaymentCommandHandler> _logger;
     private readonly IValidator<CreatePassengerPaymentCommand> _validator;
     private readonly string _className = nameof(CreatePassengerPaymentCommandHandler);
@@ -23,11 +27,13 @@ public class CreatePassengerPaymentCommandHandler : ICommandHandler<CreatePassen
         ILogger<CreatePassengerPaymentCommandHandler> logger,
         IPassengerPaymentService paymentService,
         IUserRepository userRepository,
+        IUnitOfWork unitOfWork,
         IValidator<CreatePassengerPaymentCommand> validator)
     {
         _logger = logger;
         _paymentService = paymentService;
         _userRepository = userRepository;
+        _unitOfWork = unitOfWork;
         _validator = validator;
     }
 
@@ -63,6 +69,22 @@ public class CreatePassengerPaymentCommandHandler : ICommandHandler<CreatePassen
                 dueDate: request.DueDate,
                 cancellationToken: cancellationToken
             );
+
+            // Create and save payment record in database
+            var payment = Payment.Create(
+                id: null,
+                identifier: null,
+                user: user,
+                type: Domain.Features.Payments.Enums.PaymentType.Pix,
+                requestedTime: DateTime.Now);
+
+            payment.SetAsaasPaymentId(paymentId);
+            payment.SetPixLink(pixLink);
+            payment.SetPixQrCode(qrCode);
+            payment.SetAmount(new Amount(request.Amount));
+
+            await _unitOfWork.PaymentRepository.SaveAsync(payment);
+            await _unitOfWork.CommitAsync(cancellationToken);
 
             _logger.LogInformation("[{ClassName}] Payment created: {PaymentId} for User {UserId}",
                 _className, paymentId, request.UserId);

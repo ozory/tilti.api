@@ -22,6 +22,7 @@ public class TILTContext : DbContext
     public DbSet<Rate> Rates { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Payment> Payments { get; set; }  // NEW
+    public DbSet<DriverTransfer> DriverTransfers { get; set; }  // NEW
 
     public TILTContext(DbContextOptions<TILTContext> options) : base(options)
     {
@@ -37,7 +38,6 @@ public class TILTContext : DbContext
         modelBuilder.HasPostgresExtension("postgis");
 
         // Ignore ValueObjects that are not entities
-        modelBuilder.Ignore<Domain.ValueObjects.Amount>();
         modelBuilder.Ignore<Domain.ValueObjects.Name>();
         modelBuilder.Ignore<Domain.ValueObjects.Description>();
     }

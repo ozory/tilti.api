@@ -96,5 +96,29 @@ public class Payment : Entity
         Amount = amount;
     }
 
+    /// <summary>
+    /// Set the Asaas payment ID
+    /// </summary>
+    public void SetAsaasPaymentId(string asaasPaymentId)
+    {
+        AsaasPaymentId = asaasPaymentId;
+    }
+
+    /// <summary>
+    /// Set PIX QR code
+    /// </summary>
+    public void SetPixQrCode(string pixQrCode)
+    {
+        PixQrCode = pixQrCode;
+    }
+
+    /// <summary>
+    /// Set PIX link
+    /// </summary>
+    public void SetPixLink(string pixLink)
+    {
+        PixLink = pixLink;
+    }
+
     #endregion
 }

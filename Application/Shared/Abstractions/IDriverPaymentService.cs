@@ -7,4 +7,5 @@ public interface ISubscriptionPaymentService
 {
     Task<string> CreatePaymentLinkAsync(Subscription subscription, SubscriptionType subscriptionType, CancellationToken cancellationToken = default);
     Task<(string subscriptionId, string paymentLink)> CreateSubscriptionAsync(Subscription subscription, SubscriptionType subscriptionType, CancellationToken cancellationToken = default);
+    Task<bool> CancelSubscriptionAsync(string asaasSubscriptionId, CancellationToken cancellationToken = default);
 }

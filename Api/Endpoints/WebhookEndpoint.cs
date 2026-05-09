@@ -91,22 +91,29 @@ public static class WebhookEndpoint
         IMediator mediator,
         ILogger logger)
     {
-        if (string.IsNullOrEmpty(payment.ExternalReference))
+        if (string.IsNullOrEmpty(payment.Id))
         {
-            logger.LogWarning("Cannot process passenger ride payment - no externalReference in payment {PaymentId}",
-                payment.Id);
+            logger.LogWarning("Cannot process passenger ride payment - no payment ID");
             return;
         }
 
-        // For passenger rides, payment confirmation means we can create the order
-        // The externalReference contains the order info
-        logger.LogInformation("Passenger ride payment confirmed: {PaymentId}, ExternalRef: {ExternalRef}",
-            payment.Id, payment.ExternalReference);
+        // Update payment status in database
+        var command = new Application.Features.Payments.Commands.UpdatePaymentStatus.UpdatePaymentStatusCommand(
+            payment.Id,
+            payment.Status ?? "CONFIRMED"
+        );
 
-        // TODO: Implement order creation logic here
-        // This depends on how you want to handle the flow:
-        // Option 1: Create order in webhook (if you have all order details)
-        // Option 2: Set a flag and let frontend poll/retry order creation
+        var result = await mediator.Send(command);
+        if (result.IsFailed)
+        {
+            logger.LogWarning("Failed to update passenger payment status for {PaymentId}: {Errors}",
+                payment.Id, result.Errors);
+        }
+        else
+        {
+            logger.LogInformation("Passenger ride payment status updated: {PaymentId}, Status: {Status}",
+                payment.Id, payment.Status);
+        }
     }
 
     /// <summary>
@@ -171,12 +178,33 @@ public static class WebhookEndpoint
             return;
         }
 
-        // Need to get internal subscription ID from AsaasSubscriptionId
-        // For now, we'll need to update CancelSubscriptionCommand to accept AsaasSubscriptionId
-        // or create a new query to get subscription by AsaasSubscriptionId
-        // Temporary solution: Use a placeholder - this needs proper implementation
-        logger.LogWarning("Webhook inactivation needs proper implementation for AsaasSubscriptionId: {AsaasSubscriptionId}",
-            asaasSubscriptionId);
-        return;
+        // Buscar subscription pelo AsaasSubscriptionId
+        var query = new Application.Features.Subscriptions.Queries.GetSubscriptionByAsaasId.GetSubscriptionByAsaasIdQuery(asaasSubscriptionId);
+        var queryResult = await mediator.Send(query);
+
+        if (queryResult.IsFailed || queryResult.Value == null)
+        {
+            logger.LogWarning("Cannot inactivate subscription — subscription not found for AsaasSubscriptionId: {AsaasSubscriptionId}",
+                asaasSubscriptionId);
+            return;
+        }
+
+        // Cancelar a assinatura usando o ID interno
+        var command = new Application.Features.Subscriptions.Commands.CancelSubscription.CancelSubscriptionCommand(
+            subscriptionId: queryResult.Value.Id,
+            reason: $"Payment {reason.ToLower()} - {payment.Id}"
+        );
+
+        var result = await mediator.Send(command);
+        if (result.IsFailed)
+        {
+            logger.LogWarning("Failed to cancel subscription for AsaasSubscriptionId {AsaasSubscriptionId}: {Errors}",
+                asaasSubscriptionId, result.Errors);
+        }
+        else
+        {
+            logger.LogInformation("Subscription canceled for AsaasSubscriptionId {AsaasSubscriptionId} (reason: {Reason})",
+                asaasSubscriptionId, reason);
+        }
     }
 }

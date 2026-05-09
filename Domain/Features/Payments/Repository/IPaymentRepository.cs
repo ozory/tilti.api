@@ -9,5 +9,7 @@ namespace Domain.Features.Payments.Repository;
 public interface IPaymentRepository
 {
     Task<Payment?> GetByAsaasPaymentId(string asaasPaymentId);
+    Task<Payment?> GetByOrderIdAsync(long orderId);
+    Task<Payment> SaveAsync(Payment payment);
     Task UpdateAsync(Payment payment);
 }
