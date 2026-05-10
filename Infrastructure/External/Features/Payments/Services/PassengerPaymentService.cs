@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Application.Features.Payments.Contracts;
+using Domain.Features.Payments.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Users.Entities;
 using Domain.Features.Users.Repository;
@@ -41,11 +41,10 @@ public class PassengerPaymentService : IPassengerPaymentService
     /// </summary>
     public async Task<string> CreateOrGetWalletAsync(long userId, CancellationToken cancellationToken = default)
     {
-        var user = await _unitOfWork.UserRepository.GetByIdAsync(userId)
-            ?? throw new Exception("User not found");
+        var user = await _unitOfWork.UserRepository.GetByIdAsync(userId) ?? throw new Exception("User not found");
 
         // Check if user already has a wallet
-        if (!string.IsNullOrEmpty(user.AsaasWalletId))
+        if (!string.IsNullOrEmpty(user?.AsaasWalletId))
         {
             _logger.LogInformation("[{ClassName}] User {UserId} already has wallet: {WalletId}",
                 nameof(PassengerPaymentService), userId, user.AsaasWalletId);
@@ -57,9 +56,9 @@ public class PassengerPaymentService : IPassengerPaymentService
         var request = new RestRequest("v3/accounts", Method.Post);
 
         var walletRequest = new WalletRequest(
-            name: user.Name.Value,
-            cpfCnpj: user.Document.Value,
-            email: user.Email.Value,
+            name: user?.Name.Value!,
+            cpfCnpj: user?.Document.Value!,
+            email: user?.Email?.Value!,
             phone: null,
             mobilePhone: null,
             address: "",
@@ -92,7 +91,7 @@ public class PassengerPaymentService : IPassengerPaymentService
             ?? throw new Exception("Failed to deserialize wallet response");
 
         // Update user with wallet ID
-        user.SetAsaasWalletId(walletResponse.id);
+        user!.SetAsaasWalletId(walletResponse.id);
         await _unitOfWork.UserRepository.UpdateAsync(user);
         await _unitOfWork.CommitAsync(cancellationToken);
 

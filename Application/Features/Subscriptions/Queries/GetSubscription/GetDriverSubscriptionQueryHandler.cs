@@ -11,7 +11,6 @@ namespace Application.Features.Subscriptions.Queries.GetSubscription;
 public class GetSubscriptionQueryHandler : IQueryHandler<GetSubscriptionQuery, SubscriptionResponse>
 {
     private readonly ISubscriptionRepository _repository;
-    private readonly string className = nameof(GetSubscriptionQueryHandler);
 
     public GetSubscriptionQueryHandler(ISubscriptionRepository repository)
     {

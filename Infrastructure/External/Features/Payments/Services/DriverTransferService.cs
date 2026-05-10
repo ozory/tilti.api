@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Application.Features.Payments.Contracts;
+using Domain.Features.Payments.Contracts;
 using Domain.Features.Orders.Repository;
 using Domain.Features.Payments.Entities;
 using Domain.Features.Payments.Repository;

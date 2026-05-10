@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Application.Features.Payments.Contracts;
+using Domain.Features.Payments.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Orders.Events;
 using Domain.Shared.Abstractions;

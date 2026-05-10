@@ -1,4 +1,4 @@
-namespace Application.Features.Payments.Contracts;
+namespace Domain.Features.Payments.Contracts;
 
 /// <summary>
 /// Interface for passenger payment service operations

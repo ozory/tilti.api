@@ -2,7 +2,7 @@ using Application.Features.Subscriptions.Contracts;
 using Application.Shared.Abstractions;
 using FluentResults;
 
-namespace Application.Features.Subscriptions.Commands.Update;
+namespace Application.Features.Subscriptions.Commands.UpdateSubscription;
 
 public sealed record UpdateSubscriptionCommand
 (

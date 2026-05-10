@@ -1,7 +1,7 @@
 using Application.Features.Subscriptions.Commands.CreateSubscription;
 using Application.Features.Subscriptions.Commands.ActivateSubscription;
 using Application.Features.Subscriptions.Commands.CancelSubscription;
-using Application.Features.Subscriptions.Commands.Update;
+using Application.Features.Subscriptions.Commands.UpdateSubscription;
 using Application.Features.Subscriptions.Queries.GetAllSubscriptions;
 using Application.Features.Subscriptions.Queries.GetMemberById;
 using Application.Features.Subscriptions.Queries.GetSubscriptionByUser;

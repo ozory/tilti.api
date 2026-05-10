@@ -1,6 +1,6 @@
 using Application.Features.Orders.Contracts;
 using Application.Features.Payments.Commands.CreatePassengerPayment;
-using Application.Features.Payments.Contracts;
+using Domain.Features.Payments.Contracts;
 using Application.Features.Users.Commands.CreateUser;
 using Application.Shared.Abstractions;
 using Domain.Features.Orders.Entities;

@@ -9,7 +9,7 @@ using FluentResults;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Features.Subscriptions.Commands.Update;
+namespace Application.Features.Subscriptions.Commands.UpdateSubscription;
 
 public class UpdateSubscriptionCommandHandler : ICommandHandler<UpdateSubscriptionCommand, SubscriptionResponse>
 {

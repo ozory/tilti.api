@@ -60,6 +60,8 @@ public class FinishOrderCommandHandler : ICommandHandler<FinishOrderCommand, Ord
             if (order.DriverId == null)
                 return Result.Fail("Order has no driver assigned. Cannot finish.");
 
+            var driverId = order.DriverId.Value;
+
             // Validate user is the passenger
             if (order.UserId != request.UserId)
                 return Result.Fail("User is not the passenger of this order.");
@@ -76,7 +78,7 @@ public class FinishOrderCommandHandler : ICommandHandler<FinishOrderCommand, Ord
                 savedOrder.Id,
                 savedOrder.Amount.Value,
                 savedOrder.UserId,
-                savedOrder.DriverId.Value
+                driverId
             ));
 
             await _unitOfWork.CommitAsync(cancellationToken);

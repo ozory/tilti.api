@@ -1,5 +1,5 @@
 using Application.Features.Orders.Contracts;
-using Application.Features.Payments.Contracts;
+using Domain.Features.Payments.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Payments.Entities;
 using Domain.Features.Users.Repository;
@@ -8,6 +8,7 @@ using Domain.ValueObjects;
 using FluentResults;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
+using Application.Features.Payments.Contracts;
 
 namespace Application.Features.Payments.Commands.CreatePassengerPayment;
 

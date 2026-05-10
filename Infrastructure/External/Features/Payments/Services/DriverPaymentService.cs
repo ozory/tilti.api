@@ -162,9 +162,9 @@ public class DriverPaymentService : ISubscriptionPaymentService
         var request = new RestRequest("v3/accounts", Method.Post);
 
         var walletRequest = new WalletRequest(
-            name: user.Name.Value,
-            cpfCnpj: user.Document.Value,
-            email: user.Email.Value,
+            name: user.Name.Value!,
+            cpfCnpj: user.Document.Value!,
+            email: user.Email.Value!,
             phone: null,
             mobilePhone: null,
             address: "",

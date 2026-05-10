@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Reflection;
 using Application.Features.Users.Consumers;
 using Application.Features.Payments.Contracts;
+using Domain.Features.Payments.Contracts;
 using Application.Shared.Abstractions;
 using Domain.Features.Orders.Repository;
 using Domain.Features.Payments.Repository;

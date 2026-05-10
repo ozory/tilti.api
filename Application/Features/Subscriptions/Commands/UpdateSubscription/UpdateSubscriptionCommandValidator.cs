@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Application.Features.Subscriptions.Commands.Update;
+namespace Application.Features.Subscriptions.Commands.UpdateSubscription;
 
 public class UpdateSubscriptionCommandValidator : AbstractValidator<UpdateSubscriptionCommand>
 {
