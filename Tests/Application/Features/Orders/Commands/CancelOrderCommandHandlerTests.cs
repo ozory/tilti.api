@@ -11,10 +11,10 @@ using Domain.Shared.ValueObjects;
 using Domain.ValueObjects;
 using FluentAssertions;
 using FluentValidation;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NetTopologySuite.Geometries;
+using Domain.Features.Orders.Events;
 
 namespace Tests.Application.Features.Orders.Commands;
 
@@ -24,7 +24,6 @@ public class CancelOrderCommandHandlerTests
     private readonly Mock<IUserRepository> _userRepositoryMock;
     private readonly Mock<IValidator<CancelOrderCommand>> _validatorMock;
     private readonly Mock<IMessageRepository> _messageRepositoryMock;
-    private readonly Mock<IConfiguration> _configurationMock;
     private readonly Mock<ILogger<CancelOrderCommandHandler>> _loggerMock;
     private readonly CancelOrderCommandHandler _handler;
 
@@ -34,26 +33,14 @@ public class CancelOrderCommandHandlerTests
         _userRepositoryMock = new Mock<IUserRepository>();
         _validatorMock = new Mock<IValidator<CancelOrderCommand>>();
         _messageRepositoryMock = new Mock<IMessageRepository>();
-        _configurationMock = new Mock<IConfiguration>();
         _loggerMock = new Mock<ILogger<CancelOrderCommandHandler>>();
 
-        // Setup configuration for RabbitMQ
-        _configurationMock.Setup(c => c["Infrastructure:OrderCanceledPaymentRefundMessages:exchange"])
-            .Returns("tilt.order.canceled.payment.refund.exchange");
-        _configurationMock.Setup(c => c["Infrastructure:OrderCanceledPaymentRefundMessages:exchangeType"])
-            .Returns("topic");
-        _configurationMock.Setup(c => c["Infrastructure:OrderCanceledPaymentRefundMessages:queue"])
-            .Returns("tilt.order.canceled.payment.refund.queue");
-        _configurationMock.Setup(c => c["Infrastructure:OrderCanceledPaymentRefundMessages:routingKey"])
-            .Returns("tilt.order.canceled.payment.refund");
-
+        // The handler no longer requires IMessageRepository or IConfiguration directly.
         _handler = new CancelOrderCommandHandler(
             _loggerMock.Object,
             _orderRepositoryMock.Object,
             _validatorMock.Object,
-            _userRepositoryMock.Object,
-            _messageRepositoryMock.Object,
-            _configurationMock.Object);
+            _userRepositoryMock.Object);
     }
 
     [Fact]
@@ -95,13 +82,8 @@ public class CancelOrderCommandHandlerTests
         result.Value.Status.Should().Be("Canceled");
         result.Value.CancelledBy.Should().Be("User");
 
-        _orderRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Order>()), Times.Once);
-        _messageRepositoryMock.Verify(m => m.PublishAsync(
-            It.IsAny<IDomainEvent>(),
-            It.IsAny<string>(),
-            It.IsAny<string>(),
-            It.IsAny<string>(),
-            It.IsAny<string>()), Times.Once);
+        _orderRepositoryMock.Verify(r => r.UpdateAsync(It.Is<Order>(o =>
+            o.DomainEvents.Any(e => e is OrderCanceledDomainEvent))), Times.Once);
     }
 
     [Fact]

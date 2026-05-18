@@ -9,7 +9,6 @@ using Domain.Features.Users.Repository;
 using Domain.Orders.Enums;
 using FluentResults;
 using FluentValidation;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Orders.Commands.CancelOrder;
@@ -20,32 +19,19 @@ public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Ord
     private readonly IUserRepository _userRepository;
     private readonly ILogger<CancelOrderCommandHandler> _logger;
     private readonly IValidator<CancelOrderCommand> _validator;
-    private readonly IMessageRepository _messageRepository;
-    private readonly IConfiguration _configuration;
     private readonly string className = nameof(CancelOrderCommandHandler);
-    private readonly string _exchangeName = null!;
-    private readonly string _exchangeType = null!;
-    private readonly string _queueName = null!;
-    private readonly string _routingKey = null!;
 
     public CancelOrderCommandHandler(
         ILogger<CancelOrderCommandHandler> logger,
         IOrderRepository repository,
         IValidator<CancelOrderCommand> validator,
-        IUserRepository userRepository,
-        IMessageRepository messageRepository,
-        IConfiguration configuration)
+        IUserRepository userRepository)
     {
         _repository = repository;
         _logger = logger;
         _validator = validator;
         _userRepository = userRepository;
-        _messageRepository = messageRepository;
-        _configuration = configuration;
-        _exchangeName = _configuration["Infrastructure:OrderCanceledPaymentRefundMessages:exchange"] ?? string.Empty;
-        _exchangeType = _configuration["Infrastructure:OrderCanceledPaymentRefundMessages:exchangeType"] ?? _configuration["Infrastructure:OrderCanceledPaymentRefundMessages:exchanteType"] ?? "topic";
-        _queueName = _configuration["Infrastructure:OrderCanceledPaymentRefundMessages:queue"] ?? string.Empty;
-        _routingKey = _configuration["Infrastructure:OrderCanceledPaymentRefundMessages:routingKey"] ?? string.Empty;
+        // No longer publishing directly; domain events will be handled by OrderCanceledEventHandler.
     }
 
     public async Task<Result<OrderResponse>> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
@@ -90,20 +76,14 @@ public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Ord
 
             // Publish refund event regardless of who cancelled the order.
             // The consumer will decide whether to apply a penalty based on the CancelledBy flag.
-            var refundEvent = new OrderCanceledPaymentRefundDomainEvent(
+            // Raise the domain event that will be handled by the corresponding event handler.
+            openedOrder.AddDomainEvent(new OrderCanceledPaymentRefundDomainEvent(
                 request.OrderId,
                 request.UserId,
                 openedOrder.Amount.Value,
                 request.reason ?? new List<string>(),
                 request.description ?? string.Empty,
-                DateTime.UtcNow);
-
-            await _messageRepository.PublishAsync(
-                refundEvent,
-                _exchangeName,
-                _exchangeType,
-                _routingKey,
-                _queueName);
+                DateTime.UtcNow));
 
             _logger.LogInformation("[{className}] Published OrderCanceledPaymentRefund for Order {Id}", className, request.OrderId);
 
