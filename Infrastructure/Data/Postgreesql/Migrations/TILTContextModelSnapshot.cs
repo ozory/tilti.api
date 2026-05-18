@@ -31,6 +31,12 @@ namespace Infrastructure.Data.Postgreesql.Migrations
             modelBuilder.HasSequence("Sequence-Orders")
                 .IncrementsBy(10);
 
+            modelBuilder.HasSequence("Sequence-Payments")
+                .IncrementsBy(10);
+
+            modelBuilder.HasSequence("Sequence-RefundTransactions")
+                .IncrementsBy(10);
+
             modelBuilder.HasSequence("Sequence-Users")
                 .IncrementsBy(10);
 
@@ -119,6 +125,9 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                         .HasColumnType("timestamp")
                         .HasColumnName("CancelationTime")
                         .HasColumnOrder(10);
+
+                    b.Property<int?>("CancelledBy")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("CompletionTime")
                         .HasColumnType("timestamp")
@@ -254,6 +263,89 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.HasIndex("TargetUserId");
 
                     b.ToTable("Rates", "tilt");
+                });
+
+            modelBuilder.Entity("Domain.Features.Orders.Entities.RefundTransaction", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "Sequence-RefundTransactions");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric")
+                        .HasColumnName("Amount")
+                        .HasColumnOrder(3);
+
+                    b.Property<string>("AsaasTransferId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("AsaasTransferId")
+                        .HasColumnOrder(8);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("Created")
+                        .HasColumnOrder(9);
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(10);
+
+                    b.Property<string>("CustomerWalletId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("CustomerWalletId")
+                        .HasColumnOrder(4);
+
+                    b.Property<string>("ErrorDetails")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("ErrorDetails")
+                        .HasColumnOrder(7);
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(2);
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("RetryCount")
+                        .HasColumnOrder(6);
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("Status")
+                        .HasColumnOrder(5);
+
+                    b.Property<Guid>("TransactionId")
+                        .HasColumnType("uuid")
+                        .HasColumnOrder(1);
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("Updated")
+                        .HasColumnOrder(11);
+
+                    b.Property<long?>("UpdatedBy")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(12);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("TransactionId");
+
+                    b.HasOne("Domain.Features.Orders.Entities.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.ToTable("RefundTransactions", "tilt");
                 });
 
             modelBuilder.Entity("Domain.Features.Orders.Entities.Rejection", b =>
@@ -873,6 +965,15 @@ namespace Infrastructure.Data.Postgreesql.Migrations
                     b.Navigation("SourceUser");
 
                     b.Navigation("TargetUser");
+                });
+
+            modelBuilder.Entity("Domain.Features.Orders.Entities.RefundTransaction", b =>
+                {
+                    b.HasOne("Domain.Features.Orders.Entities.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Features.Orders.Entities.Rejection", b =>
