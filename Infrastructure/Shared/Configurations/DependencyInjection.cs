@@ -80,6 +80,8 @@ public static class DependencyInjection
         services.AddScoped<IDriverTransferService, DriverTransferService>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IDriverTransferRepository, DriverTransferRepository>();
+        services.AddScoped<IRefundTransactionRepository, RefundTransactionRepository>();
+        services.AddScoped<IPixTransferService, PixTransferService>();
 
         return services;
     }

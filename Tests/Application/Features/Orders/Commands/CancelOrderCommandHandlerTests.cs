@@ -83,7 +83,7 @@ public class CancelOrderCommandHandlerTests
         result.Value.CancelledBy.Should().Be("User");
 
         _orderRepositoryMock.Verify(r => r.UpdateAsync(It.Is<Order>(o =>
-            o.DomainEvents.Any(e => e is OrderCanceledDomainEvent))), Times.Once);
+            o.DomainEvents.Any(e => e is OrderCanceledPaymentRefundDomainEvent))), Times.Once);
     }
 
     [Fact]

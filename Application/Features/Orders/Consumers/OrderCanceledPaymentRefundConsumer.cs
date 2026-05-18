@@ -2,9 +2,11 @@ using System.Threading.Tasks;
 using Domain.Features.Orders.Events;
 using Application.Shared.Abstractions;
 using Application.Features.Orders.Services;
+using Application.Features.Orders.Commands.RefundPixTransfer;
 using Domain.Shared.Abstractions;
 using Domain.Orders.Enums;
 using Domain.Features.Orders.Repository;
+using Domain.Features.Users.Repository;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -183,6 +185,28 @@ public class OrderCanceledPaymentRefundConsumer : BackgroundService
                     penaltyResult.PenaltyAmount,
                     penaltyResult.RefundAmount,
                     penaltyResult.DistanceRatio);
+
+                // Get customer wallet ID from user profile
+                var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+                var user = await userRepository.GetByIdAsync(order.UserId);
+                var customerWalletId = user?.AsaasWalletId;
+
+                if (string.IsNullOrEmpty(customerWalletId))
+                {
+                    _logger.LogWarning(
+                        "[{Classe}] Customer AsaasWalletId not found for UserId={UserId}, OrderId={OrderId}. Skipping PIX transfer.",
+                        nameof(OrderCanceledPaymentRefundConsumer), order.UserId, order.Id);
+                    return;
+                }
+
+                // Dispatch RefundPixTransferCommand
+                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                var refundCommand = new RefundPixTransferCommand(
+                    order.Id,
+                    penaltyResult.RefundAmount,
+                    customerWalletId);
+
+                await mediator.Send(refundCommand, CancellationToken.None);
 
                 _logger.LogInformation("[{Classe}] Order canceled payment refund processed successfully: OrderId={OrderId}",
                     nameof(OrderCanceledPaymentRefundConsumer), order.Id);

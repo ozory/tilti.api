@@ -97,3 +97,13 @@ When a PIX transfer fails due to a transient error (e.g., network issue), the sy
 
 - **Q:** Which type of WalletId (PIX key) should be used for the refund transfer?
 	**A:** Random UUID (system‑generated) key.
+- **Q:** What is the preferred PIX transfer execution pattern?
+	**A:** Synchronous PIX transfer - call PIX API and wait for response before completing.
+- **Q:** What retry interval strategy should be used for failed PIX transfers?
+	**A:** 30-second exponential backoff (30s, 60s, 120s).
+- **Q:** How should refund transactions be persisted for audit purposes?
+	**A:** RefundTransaction entity with IRefundTransactionRepository.
+- **Q:** Which PIX provider should be used for the transfer?
+	**A:** Asaas PIX API - use existing Asaas integration.
+- **Q:** How should the PIX transfer be triggered in the existing flow?
+	**A:** Extend existing `OrderCanceledPaymentRefundDomainEventHandler` to call PIX service.

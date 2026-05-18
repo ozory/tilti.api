@@ -23,6 +23,7 @@ public class TILTContext : DbContext
     public DbSet<Message> Messages { get; set; }
     public DbSet<Payment> Payments { get; set; }  // NEW
     public DbSet<DriverTransfer> DriverTransfers { get; set; }  // NEW
+    public DbSet<RefundTransaction> RefundTransactions { get; set; }  // NEW
 
     public TILTContext(DbContextOptions<TILTContext> options) : base(options)
     {
