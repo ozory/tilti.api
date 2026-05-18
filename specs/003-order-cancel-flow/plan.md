@@ -7,7 +7,7 @@
 
 ## Summary
 
-[Extract from feature spec: primary requirement + technical approach from research]
+Implement order cancellation functionality that allows users to cancel orders before driver acceptance, with proper validation, status updates, and RabbitMQ event publishing for refund processing. The system prevents cancellation of active orders and tracks who initiated the cancellation.
 
 ## Technical Context
 
@@ -17,15 +17,15 @@
   the iteration process.
 -->
 
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [e.g., library/cli/web-service/mobile-app/compiler/desktop-app or NEEDS CLARIFICATION]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Language/Version**: C# 12 (.NET 8.0)  
+**Primary Dependencies**: ASP.NET Core, Entity Framework Core, FluentResults, RabbitMQ.Client  
+**Storage**: MongoDB and PostgreSQL  
+**Testing**: xUnit  
+**Target Platform**: Linux server  
+**Project Type**: Web-service (REST API)  
+**Performance Goals**: 1000 req/s, <200ms p95 latency  
+**Constraints**: <500ms for cancellation processing, ACID transactions for order state changes  
+**Scale/Scope**: 10k active users, horizontal scaling capability
 
 ## Constitution Check
 
@@ -63,39 +63,15 @@ specs/[###-feature]/
 -->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
-src/
-├── models/
-├── services/
-├── cli/
-└── lib/
-
-tests/
-├── contract/
-├── integration/
-└── unit/
-
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+# Tilt API Structure (as seen in workspace)
+Api/
+Application/
+Domain/
+Infrastructure/
+Tests/
+Resources/
+Docs/
+specs/
 ```
 
 **Structure Decision**: [Document the selected structure and reference the real

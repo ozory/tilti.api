@@ -1,5 +1,6 @@
 using System.Reflection;
 using Application.Features.Orders.Consumers;
+using Application.Features.Orders.Services;
 using Application.Features.Security.Extensions;
 using Application.Features.Users.Consumers;
 using Application.Shared.Abstractions;
@@ -40,10 +41,12 @@ public static class DependencyInjection
         services.AddFluentValidationClientsideAdapters();
         services.AddValidatorsFromAssembly(assembly);
         services.AddScoped<ISecurityExtensions, SecurityExtensions>();
+        services.AddScoped<RefundPenaltyCalculationService>();
 
         services.AddHostedService<UserCreatedConsumer>();
         services.AddHostedService<CloseExpiredOrdersConsumer>();
         services.AddHostedService<OrderFinishedConsumer>();
+        services.AddHostedService<OrderCanceledPaymentRefundConsumer>();
 
         return services;
     }

@@ -1,4 +1,3 @@
-
 using System.Collections.ObjectModel;
 using Domain.Abstractions;
 using Domain.Features.Users.Entities;
@@ -65,6 +64,10 @@ public class Order : Entity
     public string? CancelDescription { get; protected set; } = null;
 
     public string? CancelRasons { get; protected set; } = null;
+
+    public CancellationInitiator? CancelledBy { get; protected set; } = null;
+
+    public void SetCancelledBy(CancellationInitiator? cancelledBy) => this.CancelledBy = cancelledBy;
 
     #endregion
 

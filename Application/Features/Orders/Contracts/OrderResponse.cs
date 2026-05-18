@@ -28,7 +28,8 @@ public record OrderResponse
     DateTime? CancelationTime,
     int DistanceInKM,
     int DurationInSeconds,
-    string? Notes
+    string? Notes,
+    string? CancelledBy
 ) : IGeoData
 {
     public long UserId { get; set; }
@@ -58,7 +59,8 @@ public record OrderResponse
                   order.CancelationTime,
                   order.DistanceInKM,
                   order.DurationInSeconds,
-                  order.Notes);
+                  order.Notes,
+                  order.CancelledBy?.ToString());
 
         orderResponse.UserId = order.User.Id;
         orderResponse.Location = order.Location ?? new Location(order.Point.Y, order.Point.X);
@@ -89,7 +91,8 @@ public record OrderResponse
                   order.CancelationTime,
                   order.DistanceInKM,
                   order.DurationInSeconds,
-                  order.Notes);
+                  order.Notes,
+                  null);
 
         orderResponse.UserId = order.UserId;
         orderResponse.Location = order.Location;

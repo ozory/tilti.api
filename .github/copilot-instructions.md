@@ -150,5 +150,4 @@ public class GetOrderByIdQueryHandler : IQueryHandler<GetOrderByIdQuery, OrderRe
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan:
-specs/002-unify-subscriptions/plan.md
-<!-- SPECKIT END -->
+specs/004-refund-penalty-consumer/plan.md

@@ -1,5 +1,6 @@
 using Application.Features.Orders.Commands.AddMessage;
 using Application.Features.Orders.Commands.AddTracking;
+using Application.Features.Orders.Commands.CancelOrder;
 using Application.Features.Orders.Commands.CreateOrder;
 using Application.Features.Orders.Commands.FinishOrder;
 using Application.Features.Orders.Commands.PrecifyOrder;
@@ -21,6 +22,7 @@ public static class OrdersEndpoint
         orders.MapPost("/message", AddMessage).WithOpenApi();
         orders.MapPost("/tracking", AddTracking).WithOpenApi();
         orders.MapPost("/{orderId}/finish", FinishOrder).WithOpenApi();
+        orders.MapPost("/{orderId}/cancel", CancelOrder).WithOpenApi();
         orders.MapGet("/user/{userId}", GetOrdersByUser).WithOpenApi();
     }
 
@@ -102,6 +104,24 @@ public static class OrdersEndpoint
         try
         {
             var result = await mediator.Send(new GetOrdersByUserQuery(userId));
+            if (result.IsFailed) return TypedResults.BadRequest(result.Errors);
+            return TypedResults.Ok(result.Value);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    private static async Task<IResult> CancelOrder(
+        [FromRoute] long orderId,
+        [FromBody] CancelOrderCommand cancelOrderCommand,
+        [FromServices] IMediator mediator)
+    {
+        try
+        {
+            var command = cancelOrderCommand with { OrderId = orderId };
+            var result = await mediator.Send(command);
             if (result.IsFailed) return TypedResults.BadRequest(result.Errors);
             return TypedResults.Ok(result.Value);
         }
